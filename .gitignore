@@ -2,4 +2,5 @@
 !floating_wonders/Assets/*
 !floating_wonders/ProjectSettings/*
 !floating_wonders/Packages/*
+!floating_wonders
 !.gitignore
