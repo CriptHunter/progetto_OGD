@@ -1,2 +1,7 @@
 floating_wonders/Logs
 floating_wonders/Library
+floating_wonders/obj
+floating_wonders/Temp
+floating_wonders/Assembly-CSharp.csproj
+floating_wonders/floating_wonders.sln
+floating_wonders/.vs
