@@ -139,8 +139,8 @@ GameObject:
   - component: {fileID: 2276709104259088296}
   - component: {fileID: 4165673635756170392}
   - component: {fileID: 8764573832067949318}
-  - component: {fileID: 6271627967586305929}
   - component: {fileID: 2887424429333848259}
+  - component: {fileID: 4165660249129313606}
   m_Layer: 0
   m_Name: Character
   m_TagString: Player
@@ -348,18 +348,6 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
---- !u!114 &6271627967586305929
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4165673635756170399}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1792dd295648885429223adb0141a195, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &2887424429333848259
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -373,6 +361,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currentHealth: 5
+--- !u!114 &4165660249129313606
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4165673635756170399}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1792dd295648885429223adb0141a195, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &7703982961066848109
 GameObject:
   m_ObjectHideFlags: 0
