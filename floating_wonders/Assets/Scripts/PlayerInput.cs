@@ -10,7 +10,7 @@ public class PlayerInput : NetworkBehaviour
         playerController = GetComponent<PlayerController>();
     }
 
-    void FixedUpdate()
+    void Update()
     {
         PlayerMovement();
     }
@@ -24,17 +24,13 @@ public class PlayerInput : NetworkBehaviour
             float move = 0;
             //se il giocatore vuole saltare
             bool jump = false;
-            //se il giocatore vuole abbasarsi
-            bool crouch = false;
             if (Input.GetKey(KeyCode.A))
                 move = -1;
             else if (Input.GetKey(KeyCode.D))
                 move = 1;
-            if (Input.GetKey(KeyCode.W) && isLocalPlayer)
+            if (Input.GetKey(KeyCode.W))
                 jump = true;
-            //if(move != 0 || jump || crouch)
-                playerController.Move(move, crouch, jump);
+            playerController.Move(move, jump);
         }
-
     }
 }
