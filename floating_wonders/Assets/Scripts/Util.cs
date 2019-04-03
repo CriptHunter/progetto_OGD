@@ -146,6 +146,11 @@ public static class Util
         return Mathf.Sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
     }
 
+    public static float PointDistance(Vector2 a, Vector2 b)
+    {
+        return PointDistance(a.x, a.y, b.x, b.y);
+    }
+
     public static float RadianToDegree(float angle)
     {
         return angle * (180.0f / (float)Math.PI);
@@ -894,5 +899,25 @@ public static class Util
         }
         s = cmax == 0 ? 0 : d / cmax;
         v = cmax;
+    }
+
+    public static Vector2 RadianToVector2(float radian)
+    {
+        return new Vector2(Mathf.Cos(radian), Mathf.Sin(radian));
+    }
+
+    public static Vector2 RadianToVector2(float radian, float length)
+    {
+        return RadianToVector2(radian) * length;
+    }
+
+    public static Vector2 DegreeToVector2(float degree)
+    {
+        return RadianToVector2(degree * Mathf.Deg2Rad);
+    }
+
+    public static Vector2 DegreeToVector2(float degree, float length)
+    {
+        return RadianToVector2(degree * Mathf.Deg2Rad) * length;
     }
 }

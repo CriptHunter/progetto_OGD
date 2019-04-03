@@ -18,17 +18,20 @@ public class AnotherCharacterController : MonoBehaviour
     private Verse verse = Verse.Right;
     private new Rigidbody2D rigidbody;
     private new CapsuleCollider2D collider;
+    private bool nearWallLeft = false;
+    private bool nearWallRight = false;
     private bool grounded = false;
+    //private float groundedDist = 0f;
     private bool running = false;
-    private float rundelay = 0;
-    private float distToGround;
+    private float runDelay = 0;
+    private float groundedDelay = 0;
+    private float dontStickDelay = 0;
 
     // Start is called before the first frame update
     void Awake()
     {
         collider = GetComponent<CapsuleCollider2D>();
         rigidbody = GetComponent<Rigidbody2D>();
-        distToGround = collider.bounds.extents.y;
 
         speed = 0;
     }
@@ -37,49 +40,32 @@ public class AnotherCharacterController : MonoBehaviour
     void FixedUpdate()
     {
         var delta = Time.fixedDeltaTime;
-
-        Vector2 position = transform.position;
-        Vector2 direction = Vector2.down;
-        float distance = 1.1f;
-
-        RaycastHit2D hit = Physics2D.CapsuleCast(collider.bounds.center, collider.bounds.size, collider.direction, 0, Vector2.down, 0.05f, groundLayer);//Physics2D.Raycast(position, direction, distance, groundLayer);
-
-        //Debug.DrawRay(position, direction, Color.green);
+        /*var dir = Util.DegreeToVector2(270);
+        RaycastHit2D hit = Physics2D.CapsuleCast(collider.bounds.center, collider.bounds.size, collider.direction, 0, dir, maxDist, groundLayer);
         if (hit.collider != null)
         {
-            grounded=true;
+            groundedDist = transform.position.y - hit.centroid.y;
         }
         else
         {
-            grounded = false;
-        }
+            groundedDist = float.MaxValue;
+        }*/
 
-        if (running)
+        CalculateProximity();
+        CalculateSpeed(delta);
+
+        if (!grounded)
         {
-            if (verse == Verse.Left)
-            {
-                speed = Mathf.Max(speed - runAcceleration*delta - (speed > 0 ? runFriction * delta : 0), -runSpeed);
-            }
-            if (verse == Verse.Right)
-            {
-                speed = Mathf.Min(speed + runAcceleration * delta + (speed < 0 ? runFriction * delta : 0), runSpeed);
-            }
+            groundedDelay = Mathf.Max(0, groundedDelay - delta);
+            //dontStickDelay = 0.25f;
         }
         else
         {
-            if (speed > speedThreshold)
-            {
-                speed = speed - runFriction * delta;
-                if (speed <= speedThreshold)
-                    speed = 0;
-            }
-            if (speed < -speedThreshold)
-            {
-                speed = speed + runFriction * delta;
-                if (speed >= speedThreshold)
-                    speed = 0;
-            }
+            groundedDelay = 0.1f;
         }
+        dontStickDelay = Mathf.Max(0, dontStickDelay - delta);
+        StickToGround();
+        
         rigidbody.velocity = new Vector2(speed, rigidbody.velocity.y);
 
         /*if (rigidbody.velocity.x < -speedThreshold)
@@ -127,13 +113,16 @@ public class AnotherCharacterController : MonoBehaviour
             rigidbody.velocity = new Vector2(-runSpeed, rigidbody.velocity.y);
         }*/
 
-        rundelay -= delta;
-        if (rundelay <= 0)
+        runDelay -= delta;
+        if (runDelay <= 0)
         {
             StopRunning();
         }
 
         debug.text = "grounded: " + grounded + "\n" +
+                    "dont stick: " + dontStickDelay + "\n" +
+                    "wall left: " + nearWallLeft + "\n" +
+                    "wall right: " + nearWallRight + "\n" +
                     "running: " + running + "\n" +
                     "speed: " + speed + "\n";
     }
@@ -141,7 +130,7 @@ public class AnotherCharacterController : MonoBehaviour
     public void Run()
     {
         running = true;
-        rundelay = 0.05f;
+        runDelay = 0.05f;
     }
 
     private void StopRunning()
@@ -151,13 +140,106 @@ public class AnotherCharacterController : MonoBehaviour
 
     public void Jump()
     {
-        rigidbody.velocity = new Vector2(rigidbody.velocity.x, 0);
-        rigidbody.AddForce(new Vector2(0, jumpForce), ForceMode2D.Impulse);
+        if (grounded)
+        {
+            groundedDelay = 0;
+            dontStickDelay = 0.25f;
+            rigidbody.velocity = new Vector2(rigidbody.velocity.x, 0);
+            rigidbody.AddForce(new Vector2(0, jumpForce), ForceMode2D.Impulse);
+        }
     }
 
     public void Turn(Verse verse)
     {
         this.verse = verse;
+    }
+
+    private void CalculateProximity()
+    {
+        RaycastHit2D hit = Physics2D.CapsuleCast(collider.bounds.center, collider.bounds.size, collider.direction, 0, Vector2.down, 0.05f, groundLayer);
+        if (hit.collider != null)
+            grounded = true;
+        else
+            grounded = false;
+
+        hit = Physics2D.CapsuleCast(collider.bounds.center, collider.bounds.size - new Vector3(0, 0.1f, 0), collider.direction, 0, new Vector2(1, 2), 0.05f, groundLayer);
+        if (hit.collider != null)
+            nearWallRight = true;
+        else
+            nearWallRight = false;
+
+        hit = Physics2D.CapsuleCast(collider.bounds.center, collider.bounds.size - new Vector3(0, 0.1f, 0), collider.direction, 0, new Vector2(-1, 2), 0.05f, groundLayer);
+        if (hit.collider != null)
+            nearWallLeft = true;
+        else
+            nearWallLeft = false;
+    }
+
+    private void CalculateSpeed(float delta)
+    {
+        if (running)
+        {
+            if (verse == Verse.Left)
+            {
+                speed = Mathf.Max(speed - runAcceleration * delta - (speed > 0 ? runFriction * delta : 0), -runSpeed);
+            }
+            if (verse == Verse.Right)
+            {
+                speed = Mathf.Min(speed + runAcceleration * delta + (speed < 0 ? runFriction * delta : 0), runSpeed);
+            }
+        }
+        else
+        {
+            if (speed > speedThreshold)
+            {
+                speed = speed - runFriction * delta;
+                if (speed <= speedThreshold)
+                    speed = 0;
+            }
+            if (speed < -speedThreshold)
+            {
+                speed = speed + runFriction * delta;
+                if (speed >= speedThreshold)
+                    speed = 0;
+            }
+        }
+
+        if (nearWallLeft && speed<-speedThreshold)
+        {
+            speed = 0;
+        }
+
+        if (nearWallRight && speed > speedThreshold)
+        {
+            speed = 0;
+        }
+    }
+
+    private void StickToGround()
+    {
+        if (/*groundedDelay > speedThreshold &&*/ dontStickDelay < speedThreshold)
+        {
+            if (!(speed>-speedThreshold && speed<speedThreshold))
+            {
+                //rigidbody.velocity = new Vector2(rigidbody.velocity.x, 0);
+                MoveToSolid(270, 0.5f);
+            }
+        }
+    }
+
+    private bool MoveToSolid(float direction, float maxDist)
+    {
+        var dir = Util.DegreeToVector2(direction);
+        RaycastHit2D hit = Physics2D.CapsuleCast(collider.bounds.center, collider.bounds.size, collider.direction, 0, dir, maxDist, groundLayer);
+        if (hit.collider!=null)
+        {
+            transform.position = hit.centroid;
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 }
 
