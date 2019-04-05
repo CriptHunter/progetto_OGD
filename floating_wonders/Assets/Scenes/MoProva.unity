@@ -159,6 +159,7 @@ MonoBehaviour:
   sightDistance: 5
   speedAfterSeen: 0
   groundDetection: {fileID: 607688767}
+  enemyType: 0
 --- !u!1 &849969281
 GameObject:
   m_ObjectHideFlags: 0
@@ -316,6 +317,7 @@ MonoBehaviour:
   sightDistance: 10
   speedAfterSeen: 5
   groundDetection: {fileID: 1387533944}
+  enemyType: 0
 --- !u!61 &948031124
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -616,7 +618,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1277830951}
   m_LocalRotation: {x: 0.40821788, y: -0.23456968, z: 0.10938163, w: 0.8754261}
-  m_LocalPosition: {x: 3.84, y: 5.6, z: 11.52}
+  m_LocalPosition: {x: 1.24, y: 3.21, z: 16.02}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
