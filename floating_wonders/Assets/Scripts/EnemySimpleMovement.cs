@@ -2,7 +2,7 @@
 using UnityEngine.Events;
 using UnityEngine.Networking;
 
-public class EnemySimpleMovement : NetworkBehaviour
+public class EnemySimpleMovement : MonoBehaviour
 {
     private PlayerController pc;
 
@@ -26,7 +26,7 @@ public class EnemySimpleMovement : NetworkBehaviour
         RaycastHit2D groundInfo = Physics2D.Raycast(groundDetection.position, Vector2.down, distance);
         if (groundInfo.collider == false)
         {
-            Debug.Log("ciao");
+            Debug.Log("FloorEnded");
             if (movingRight)
             {
                 transform.eulerAngles = new Vector3(0, -180, 0);
