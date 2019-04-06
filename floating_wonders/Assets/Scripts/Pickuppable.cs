@@ -8,6 +8,6 @@ using UnityEngine.Networking;
 //un gameobject con questo componente è un oggetto che si può raccogliere e utilizzare
 public class Pickuppable : NetworkBehaviour
 {
-    [SerializeField] public EnumCollection.itemsEnum type;
+    [SerializeField] private EnumCollection.itemsEnum type;
     public EnumCollection.itemsEnum Type { get { return type; }}
 }
