@@ -662,6 +662,30 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1805660483}
     m_Modifications:
+    - target: {fileID: 0}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: groundRayDistance
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: sightDistance
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: speedAfterSeen
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: untilEndPlatform
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: moveDistance
+      value: 0.1
+      objectReference: {fileID: 0}
     - target: {fileID: 4349132040424964134, guid: 5688fb4905ee37f42a7c344a8a156f28,
         type: 3}
       propertyPath: m_Name
@@ -807,30 +831,15 @@ PrefabInstance:
       propertyPath: m_AssetId.i15
       value: 40
       objectReference: {fileID: 0}
+    - target: {fileID: 4349132040424964155, guid: 5688fb4905ee37f42a7c344a8a156f28,
+        type: 3}
+      propertyPath: m_ServerOnly
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8745630327996332483, guid: 5688fb4905ee37f42a7c344a8a156f28,
         type: 3}
       propertyPath: m_Constraints
       value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 8745630327996332486, guid: 5688fb4905ee37f42a7c344a8a156f28,
-        type: 3}
-      propertyPath: m_Enabled
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8745630327996332486, guid: 5688fb4905ee37f42a7c344a8a156f28,
-        type: 3}
-      propertyPath: groundRayDistance
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 8745630327996332486, guid: 5688fb4905ee37f42a7c344a8a156f28,
-        type: 3}
-      propertyPath: sightDistance
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 8745630327996332486, guid: 5688fb4905ee37f42a7c344a8a156f28,
-        type: 3}
-      propertyPath: speedAfterSeen
-      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 8745630327996332481, guid: 5688fb4905ee37f42a7c344a8a156f28,
         type: 3}
@@ -847,5 +856,69 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 2
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 8745630327996332481, guid: 5688fb4905ee37f42a7c344a8a156f28, type: 3}
+    - {fileID: 8745630327996332486, guid: 5688fb4905ee37f42a7c344a8a156f28, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 5688fb4905ee37f42a7c344a8a156f28, type: 3}
+--- !u!1 &8745630327456799806 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4349132040424964134, guid: 5688fb4905ee37f42a7c344a8a156f28,
+    type: 3}
+  m_PrefabInstance: {fileID: 8745630327456799805}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &8745630327456799807
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8745630327456799806}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7148581519359754aad1617520dad780, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_JumpForce: 400
+  m_MovementSmoothing: 0.05
+  m_AirControl: 0
+  m_WhatIsGround:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_GroundCheck: {fileID: 8745630327456799808}
+  OnLandEvent:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+--- !u!4 &8745630327456799808 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8745630327047374377, guid: 5688fb4905ee37f42a7c344a8a156f28,
+    type: 3}
+  m_PrefabInstance: {fileID: 8745630327456799805}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &8745630327456799809 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8745630327134456745, guid: 5688fb4905ee37f42a7c344a8a156f28,
+    type: 3}
+  m_PrefabInstance: {fileID: 8745630327456799805}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &8745630327456799810
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8745630327456799806}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 70d2c0ef9de481c4bb14226c77a52910, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  speed: 2
+  groundRayDistance: 2
+  sightDistance: 10
+  speedAfterSeen: 5
+  groundDetection: {fileID: 8745630327456799809}
+  untilEndPlatform: 1
+  moveDistance: 0
+  enemyType: 0
