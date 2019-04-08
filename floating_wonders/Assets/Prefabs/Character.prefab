@@ -405,6 +405,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   firePoint: {fileID: 8145497464604069843}
+  BombRBPrefab: {fileID: 4347175937712634760, guid: 72a39f29716ddeb4e888b4a111780b7a,
+    type: 3}
 --- !u!1 &7703982961066848109
 GameObject:
   m_ObjectHideFlags: 0
