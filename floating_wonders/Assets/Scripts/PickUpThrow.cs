@@ -1,11 +1,13 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 using UnityEngine.Networking;
 
 public class PickUpThrow : NetworkBehaviour
 {
     private bool pickUpAllowed; //true quando il giocatore è in contatto con un oggetto che si può raccogliere
     private GameObject collidedObject; //con quale gameobject il giocatore è entrato in contatto
-    private int pickedUpItem = (int)EnumCollection.itemsEnum.nullItem; //quale oggetto è stato raccolto, -1 --> nessun oggetto
+    private int pickedUpItemType = (int)EnumCollection.itemsEnum.nullItem; //quale oggetto è stato raccolto, -1 --> nessun oggetto
+    private GameObject pickedUpItem = null;
     [SerializeField] private Transform firePoint = null; // da quale punto usa l'oggetto
     //i veri oggetti utilizzabili
     [SerializeField] private GameObject BombRBPrefab = null;
@@ -15,12 +17,13 @@ public class PickUpThrow : NetworkBehaviour
         //se posso raccogliere qualcosa e premo E --> raccoglie oggetto
         if (pickUpAllowed && Input.GetKeyDown(KeyCode.E) && isLocalPlayer)
         {
-            pickedUpItem = (int)collidedObject.GetComponent<Pickuppable>().Type;
-            Cmd_Pickup(collidedObject);
+            pickedUpItemType = (int)collidedObject.GetComponent<Pickuppable>().Type;
+            pickedUpItem = collidedObject;
+            Cmd_setActive(collidedObject, false);
         }
 
         //se o un oggetto in mano e premo R --> usa oggetto
-        else if (pickedUpItem >= 0 && Input.GetKeyDown(KeyCode.R) && isLocalPlayer)
+        else if (pickedUpItemType >= 0 && Input.GetKeyDown(KeyCode.R) && isLocalPlayer)
         {
             useItem();
         }
@@ -49,11 +52,14 @@ public class PickUpThrow : NetworkBehaviour
     //usa l'oggetto equipaggiato
     private void useItem()
     {
-        switch (pickedUpItem)
+        switch (pickedUpItemType)
         {
             case (int)EnumCollection.itemsEnum.bomb:
                 print("uso bomba");
                 Cmd_SpawnBomb();
+                StartCoroutine(RespawnPickuppable(5));
+                //metto a null solo il type del game object raccolto perché l'oggetto vero serve alla coroutine
+                pickedUpItemType = (int)EnumCollection.itemsEnum.nullItem;  
                 break;
             case (int)EnumCollection.itemsEnum.redItem:
                 print("uso oggetto 1");
@@ -64,13 +70,13 @@ public class PickUpThrow : NetworkBehaviour
         }
     }
 
-
-
-    //chiede al server di distruggere l'oggetto
-    [Command]
-    void Cmd_Pickup(GameObject obj)
+    // [WARNING] non funziona se raccolgo un altro oggetto mentre la coroutine sta aspettando per respawnare il pickuppable
+    // aspetta secondsToWait e poi rimette visibile l'oggetto raccolto
+    private IEnumerator RespawnPickuppable(int secondsToWait)
     {
-        Destroy(obj);
+        yield return new WaitForSeconds(secondsToWait);
+        Cmd_setActive(pickedUpItem, true);
+        pickedUpItem = null;
     }
 
     //Ad un command non si può passare un gameobject / prefab da spawnare, quindi ho fatto un metodo specifico per la bomba
@@ -82,4 +88,16 @@ public class PickUpThrow : NetworkBehaviour
         NetworkServer.Spawn(obj);
     }
 
+    //chiede al server di nascondere l'oggetto
+    [Command]
+    void Cmd_setActive(GameObject obj, bool active)
+    {
+        Rpc_setActive(obj, active);
+    }
+    //tutti i client nascondono effettivamente l'oggetto
+    [ClientRpc]
+    void Rpc_setActive(GameObject obj, bool active)
+    {
+        obj.SetActive(active);
+    }
 }
