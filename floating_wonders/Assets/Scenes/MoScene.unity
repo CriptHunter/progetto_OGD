@@ -921,4 +921,4 @@ MonoBehaviour:
   groundDetection: {fileID: 8745630327456799809}
   untilEndPlatform: 1
   moveDistance: 0
-  enemyType: 0
+  enemyType: 1

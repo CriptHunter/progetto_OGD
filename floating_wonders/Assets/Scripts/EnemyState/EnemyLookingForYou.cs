@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 
-public class EnemyLookingForYou : NetworkBehaviour
+public class EnemyLookingForYou : MonoBehaviour
 {
     private PlayerController playerController;
     private float startingSpeed;
@@ -22,7 +22,8 @@ public class EnemyLookingForYou : NetworkBehaviour
     private RaycastHit2D groundInfo;
     private RaycastHit2D playerAtLeft;
     private RaycastHit2D playerAtRight;
-    private RaycastHit2D enemyToPlayerHit;
+
+    private LayerMask mask;
 
     [SerializeField]
     private bool untilEndPlatform;
@@ -30,47 +31,17 @@ public class EnemyLookingForYou : NetworkBehaviour
     [SerializeField]
     private float moveDistance;
 
-    private enum EnemyType
-    {
-        onlyPatrol,
-        patrolAndSpeedUp,
-        onlyShoot,
-        patrolAndShoot
-    }
-    [SerializeField]
-    private EnemyType enemyType;
 
-    
     private void InstantiateRay()
     {
         groundInfo = Physics2D.Raycast(groundDetection.position, Vector2.down, groundRayDistance);
-        playerAtLeft = Physics2D.Raycast(transform.position, Vector2.left, sightDistance);
-        playerAtRight = Physics2D.Raycast(transform.position, Vector2.right, sightDistance);
-        enemyToPlayerHit = Physics2D.Raycast(transform.position, playerPosition.transform.position - transform.position, sightDistance);
+        playerAtLeft = Physics2D.Raycast(transform.position, Vector2.left, sightDistance, mask);
+        playerAtRight = Physics2D.Raycast(transform.position, Vector2.right, sightDistance, mask);
+
 
         Debug.DrawRay(transform.position, Vector2.right * sightDistance, Color.green);
         Debug.DrawRay(transform.position, Vector2.left * sightDistance, Color.green);
-        
-    }
 
-    private void LookForPlayer()
-    {
-        // If right the enemy is moving right, if == false left
-        if (playerAtRight.collider && movingRight)
-        {
-            Debug.Log("Player At RIGHT: " + playerAtRight.collider.name);
-            speed = speedAfterSeen;
-        }
-        else if (playerAtLeft.collider && !movingRight)
-        {
-            Debug.Log("Player At LEFT: " + playerAtLeft.collider.name);
-            speed = speedAfterSeen;
-        }
-        else
-        {
-            Debug.Log("Blind");
-            speed = startingSpeed;
-        }
     }
 
     private void Patrol()
@@ -104,8 +75,28 @@ public class EnemyLookingForYou : NetworkBehaviour
         else
         {
             Debug.Log("FloorOk");
-            if (enemyType != EnemyType.onlyPatrol)
-                LookForPlayer();
+            LookForPlayer();
+        }
+    }
+
+    private void LookForPlayer()
+    {
+        
+        // If right, the enemy is moving right, if == false left
+        if (playerAtRight.collider && movingRight)
+        {
+            Debug.Log("Player At RIGHT: " + playerAtRight.collider.name);
+            speed = speedAfterSeen;
+        }
+        else if (playerAtLeft.collider && !movingRight)
+        {
+            Debug.Log("Player At LEFT: " + playerAtLeft.collider.name);
+            speed = speedAfterSeen;
+        }
+        else
+        {
+            Debug.Log("Blind");
+            speed = startingSpeed;
         }
     }
 
@@ -113,12 +104,13 @@ public class EnemyLookingForYou : NetworkBehaviour
     {
         //playerController = GetComponent<PlayerController>();
         startingSpeed = speed;
-        playerPosition = GameObject.Find("Character");
     }
 
-    void Update()
-    {
 
+    void Update() 
+    {
+        playerPosition = GameObject.FindGameObjectWithTag("Player");
+        mask = LayerMask.GetMask("Player");
         //Instantiate ray to not fall and to see player
         InstantiateRay();
 
@@ -127,9 +119,6 @@ public class EnemyLookingForYou : NetworkBehaviour
 
         AvoideFall();
 
-        if (enemyType == EnemyType.onlyShoot)
-        {
-            Debug.DrawRay(transform.position, playerPosition.transform.position - transform.position, Color.red);
-        }
     }
+
 }
