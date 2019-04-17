@@ -17,13 +17,13 @@ public class EnemyLookingForYou : MonoBehaviour
     private bool movingRight = true;
 
     public Transform groundDetection;
-    private GameObject playerPosition;
 
     private RaycastHit2D groundInfo;
     private RaycastHit2D playerAtLeft;
     private RaycastHit2D playerAtRight;
 
-    private LayerMask mask;
+    private LayerMask playerMask;
+    private LayerMask enemyMask;
 
     [SerializeField]
     private bool untilEndPlatform;
@@ -35,8 +35,8 @@ public class EnemyLookingForYou : MonoBehaviour
     private void InstantiateRay()
     {
         groundInfo = Physics2D.Raycast(groundDetection.position, Vector2.down, groundRayDistance);
-        playerAtLeft = Physics2D.Raycast(transform.position, Vector2.left, sightDistance, mask);
-        playerAtRight = Physics2D.Raycast(transform.position, Vector2.right, sightDistance, mask);
+        playerAtLeft = Physics2D.Raycast(transform.position, Vector2.left, sightDistance, enemyMask);
+        playerAtRight = Physics2D.Raycast(transform.position, Vector2.right, sightDistance, enemyMask);
 
 
         Debug.DrawRay(transform.position, Vector2.right * sightDistance, Color.green);
@@ -59,17 +59,7 @@ public class EnemyLookingForYou : MonoBehaviour
         if (groundInfo.collider == false)
         {
             Debug.Log("FloorEnded");
-            // If enemy is moving right, change direction
-            if (movingRight)
-            {
-                transform.eulerAngles = new Vector3(0, -180, 0);
-                movingRight = false;
-            }
-            else
-            {
-                transform.eulerAngles = new Vector3(0, 0, 0);
-                movingRight = true;
-            }
+            ChangeDirection();
         }
         // If the enemy is not about to fall
         else
@@ -81,14 +71,14 @@ public class EnemyLookingForYou : MonoBehaviour
 
     private void LookForPlayer()
     {
-        
+
         // If right, the enemy is moving right, if == false left
-        if (playerAtRight.collider && movingRight)
+        if (playerAtRight.collider != null && playerAtRight.transform.gameObject.layer == playerMask && movingRight)
         {
             Debug.Log("Player At RIGHT: " + playerAtRight.collider.name);
             speed = speedAfterSeen;
         }
-        else if (playerAtLeft.collider && !movingRight)
+        else if (playerAtLeft.collider != null && playerAtLeft.transform.gameObject.layer == playerMask && !movingRight)
         {
             Debug.Log("Player At LEFT: " + playerAtLeft.collider.name);
             speed = speedAfterSeen;
@@ -100,17 +90,31 @@ public class EnemyLookingForYou : MonoBehaviour
         }
     }
 
+    private void ChangeDirection()
+    {
+        // If enemy is moving right, change direction
+        if (movingRight)
+        {
+            transform.eulerAngles = new Vector3(0, -180, 0);
+            movingRight = false;
+        }
+        else
+        {
+            transform.eulerAngles = new Vector3(0, 0, 0);
+            movingRight = true;
+        }
+    }
+
     void Start()
     {
-        //playerController = GetComponent<PlayerController>();
+        playerMask = LayerMask.NameToLayer("Player");
+        enemyMask = ~(1 << 10);
         startingSpeed = speed;
     }
 
 
-    void Update() 
+    void Update()
     {
-        playerPosition = GameObject.FindGameObjectWithTag("Player");
-        mask = LayerMask.GetMask("Player");
         //Instantiate ray to not fall and to see player
         InstantiateRay();
 
@@ -119,6 +123,23 @@ public class EnemyLookingForYou : MonoBehaviour
 
         AvoideFall();
 
+    }
+
+    // Sent when another object enters a trigger collider attached to this object
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        // If the enemy collide with an Enemy, hurt him and change direction
+        if (collision.transform.gameObject.layer == playerMask)
+        {
+            Debug.Log("Collision with player");
+            //Eventually damage the player
+            ChangeDirection();
+        }
+        else
+        {
+            Debug.Log("Collision with something (No player)");
+            ChangeDirection();
+        }
     }
 
 }

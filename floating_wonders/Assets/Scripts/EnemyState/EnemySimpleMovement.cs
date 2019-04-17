@@ -4,19 +4,18 @@ using UnityEngine.Networking;
 
 public class EnemySimpleMovement : MonoBehaviour
 {
-    private PlayerController pc;
-
     public float speed;
     public float distance;
 
     private bool movingRight = true;
+    private LayerMask playerMask;
 
     public Transform groundDetection;
 
 
     private void Start()
     {
-        pc = GetComponent<PlayerController>();
+        playerMask = LayerMask.NameToLayer("Player");
     }
 
     void Update()
@@ -27,18 +26,40 @@ public class EnemySimpleMovement : MonoBehaviour
         if (groundInfo.collider == false)
         {
             Debug.Log("FloorEnded");
-            if (movingRight)
-            {
-                transform.eulerAngles = new Vector3(0, -180, 0);
-                movingRight = false;
-            }
-            else
-            {
-                transform.eulerAngles = new Vector3(0, 0, 0);
-                movingRight = true;
-            }
+            ChangeDirection();
         }
         else
             Debug.Log("Nope");
+    }
+
+    private void ChangeDirection()
+    {
+        if (movingRight)
+        {
+            transform.eulerAngles = new Vector3(0, -180, 0);
+            movingRight = false;
+        }
+        else
+        {
+            transform.eulerAngles = new Vector3(0, 0, 0);
+            movingRight = true;
+        }
+    }
+
+    // Sent when another object enters a trigger collider attached to this object
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        // If the enemy collide with an Enemy, hurt him and change direction
+        if (collision.transform.gameObject.layer == playerMask)
+        {
+            Debug.Log("Collision with player");
+            //Eventually damage the player
+            ChangeDirection();
+        }
+        else
+        {
+            Debug.Log("Collision with something (No player)");
+            ChangeDirection();
+        }
     }
 }
