@@ -167,10 +167,10 @@ GameObject:
   - component: {fileID: 4165673635756170393}
   - component: {fileID: 6079352028896656040}
   - component: {fileID: 2276709104259088296}
-  - component: {fileID: 4165673635756170392}
-  - component: {fileID: 8764573832067949318}
   - component: {fileID: 2887424429333848259}
   - component: {fileID: 4165660249129313606}
+  - component: {fileID: 4470503423114518177}
+  - component: {fileID: 266351454979793811}
   m_Layer: 0
   m_Name: Character
   m_TagString: Player
@@ -343,42 +343,6 @@ MonoBehaviour:
     i15: 0
   m_ServerOnly: 0
   m_LocalPlayerAuthority: 1
---- !u!114 &4165673635756170392
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4165673635756170399}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 93196e801d1cbf247a350812a1a8044f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &8764573832067949318
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4165673635756170399}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7148581519359754aad1617520dad780, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_JumpForce: 400
-  m_MovementSmoothing: 0.05
-  m_AirControl: 1
-  m_WhatIsGround:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_GroundCheck: {fileID: 1803078703}
-  OnLandEvent:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
 --- !u!114 &2887424429333848259
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -407,6 +371,42 @@ MonoBehaviour:
   firePoint: {fileID: 8145497464604069843}
   BombRBPrefab: {fileID: 4347175937712634760, guid: 72a39f29716ddeb4e888b4a111780b7a,
     type: 3}
+--- !u!114 &4470503423114518177
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4165673635756170399}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7148581519359754aad1617520dad780, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_JumpForce: 400
+  m_MovementSmoothing: 0.05
+  m_AirControl: 1
+  m_WhatIsGround:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_GroundCheck: {fileID: 1803078703}
+  OnLandEvent:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+--- !u!114 &266351454979793811
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4165673635756170399}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 93196e801d1cbf247a350812a1a8044f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &7703982961066848109
 GameObject:
   m_ObjectHideFlags: 0

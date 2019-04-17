@@ -9,8 +9,12 @@ public class Bomb : NetworkBehaviour
     void Start()
     {
         rb = this.GetComponent<Rigidbody2D>();
-        print((transform.right + transform.up)*speed);
-        rb.velocity = (transform.right + transform.up) * speed;
+        //rb.velocity = (transform.right + transform.up) * speed;
+    }
+
+    public void addVelocity(Vector2 direction)
+    {
+        this.GetComponent<Rigidbody2D>().velocity = direction * speed;
     }
     // Update is called once per frame
     void Update()

@@ -10,4 +10,34 @@ public class Pickuppable : NetworkBehaviour
 {
     [SerializeField] private EnumCollection.itemsEnum type = EnumCollection.itemsEnum.nullItem;
     public EnumCollection.itemsEnum Type { get { return type; }}
+
+    public void Pickup()
+    {
+        Cmd_setActive(false);
+    }
+
+    public void Respawn(int time)
+    {
+        StartCoroutine(WaitCoroutine(time));
+    }
+
+    private IEnumerator WaitCoroutine(int secondsToWait)
+    {
+        yield return new WaitForSeconds(secondsToWait);
+        Cmd_setActive(true);
+    }
+
+    //chiede al server di nascondere l'oggetto
+    [Command]
+    void Cmd_setActive(bool active)
+    {
+        Rpc_setActive(active);
+    }
+    //tutti i client nascondono effettivamente l'oggetto
+    [ClientRpc]
+    void Rpc_setActive(bool active)
+    {
+        this.gameObject.GetComponent<Renderer>().enabled = active;
+        this.gameObject.GetComponent<Collider2D>().enabled = active;
+    }
 }
