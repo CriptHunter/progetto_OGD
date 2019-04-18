@@ -1,24 +1,33 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 using UnityEngine.Networking;
 
 public class Bomb : NetworkBehaviour
 {
-    [SerializeField] private float speed = 2;
+    [SerializeField] private float speed = 0;
+    [SerializeField] private int explosionCountdown = 0;
     private Rigidbody2D rb = null;
-    // Start is called before the first frame update
+
     void Start()
     {
-        rb = this.GetComponent<Rigidbody2D>();
-        //rb.velocity = (transform.right + transform.up) * speed;
+        StartCoroutine(ExplosionCountdown(explosionCountdown));
     }
-
     public void addVelocity(Vector2 direction)
     {
-        this.GetComponent<Rigidbody2D>().velocity = direction * speed;
+        rb = this.GetComponent<Rigidbody2D>();
+        rb.velocity = direction * speed;
     }
-    // Update is called once per frame
-    void Update()
+
+    //aspetta n secondi, poi la bomba esplode
+    private IEnumerator ExplosionCountdown(int secondsToWait)
     {
-        
+        yield return new WaitForSeconds(secondsToWait);
+        Cmd_Destroy(this.gameObject);
+    }
+
+    [Command]
+    public void Cmd_Destroy(GameObject obj)
+    {
+        NetworkServer.Destroy(obj);
     }
 }

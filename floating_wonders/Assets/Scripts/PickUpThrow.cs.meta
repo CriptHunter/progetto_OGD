@@ -3,7 +3,10 @@ guid: 1792dd295648885429223adb0141a195
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - firePoint: {instanceID: 0}
+  - bombRBPrefab: {instanceID: 0}
+  - bombSprite: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

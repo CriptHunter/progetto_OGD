@@ -11,7 +11,7 @@ public class PickUpThrow : NetworkBehaviour
     private Vector2 shootDirection;
     [SerializeField] private Transform firePoint = null; // da quale punto usa l'oggetto
     //i veri oggetti utilizzabili
-    [SerializeField] private GameObject BombRBPrefab = null;
+    [SerializeField] private GameObject bombRBPrefab = null;
 
     private void Update()
     {
@@ -23,10 +23,11 @@ public class PickUpThrow : NetworkBehaviour
             pickedUpItem.GetComponent<Pickuppable>().Pickup();
         }
 
-        //se o un oggetto in mano e premo R --> entra in fase di mira
-        else if (pickedUpItemType >= 0 && Input.GetKeyDown(KeyCode.R) && isLocalPlayer)
+        //se o un oggetto in mano e tengo premuto R --> entra in fase di mira
+        else if (pickedUpItemType >= 0 && Input.GetKey(KeyCode.R) && isLocalPlayer)
             shootDirection = getAimDirection();
 
+        //quando rilascio R --> usa l'oggetto
         else if (pickedUpItemType >= 0 && Input.GetKeyUp(KeyCode.R) && isLocalPlayer)
             useItem();
 
@@ -35,6 +36,7 @@ public class PickUpThrow : NetworkBehaviour
     //quando il giocatore collide con un oggetto
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        //se collido con un oggetto che si può raccogliere, sono il local player e non ho oggetti in mano ---> posso raccogliere
         if (collision.gameObject.GetComponent<Pickuppable>() != null && isLocalPlayer && pickedUpItemType == (int)EnumCollection.itemsEnum.nullItem)
         {
             pickUpAllowed = true;
@@ -60,17 +62,15 @@ public class PickUpThrow : NetworkBehaviour
             case (int)EnumCollection.itemsEnum.bomb:
                 print("uso bomba");
                 Cmd_ThrowBomb();
-                pickedUpItem.GetComponent<Pickuppable>().Respawn(5);
                 break;
             case (int)EnumCollection.itemsEnum.redItem:
                 print("uso oggetto 1");
-                pickedUpItem.GetComponent<Pickuppable>().Respawn(3);
                 break;
             case (int)EnumCollection.itemsEnum.blueItem:
                 print("uso oggetto 2");
-                pickedUpItem.GetComponent<Pickuppable>().Respawn(3);
                 break;        
         }
+        pickedUpItem.GetComponent<Pickuppable>().Respawn(5);
         pickedUpItemType = (int)EnumCollection.itemsEnum.nullItem;
     }
 
@@ -84,12 +84,13 @@ public class PickUpThrow : NetworkBehaviour
         shootDirection = shootDirection - firePoint.transform.position;
         return new Vector2(shootDirection.x, shootDirection.y).normalized;
     }
+
     //Ad un command non si può passare un gameobject / prefab da spawnare, quindi ho fatto un metodo specifico per la bomba
     //un'alternativa brutta è fare un Resource.load() del prefab
     [Command]
     void Cmd_ThrowBomb()
     {
-        GameObject obj = (GameObject)Instantiate(BombRBPrefab, firePoint.position, firePoint.rotation);
+        GameObject obj = (GameObject)Instantiate(bombRBPrefab, firePoint.position, firePoint.rotation);
         NetworkServer.Spawn(obj);
         obj.GetComponent<Bomb>().addVelocity(shootDirection);
     }
