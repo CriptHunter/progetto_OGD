@@ -16,7 +16,8 @@ public class Pickuppable : NetworkBehaviour
         Cmd_setActive(false);
     }
 
-    public void Respawn(int time)
+    [Command]
+    public void Cmd_Respawn(int time)
     {
         StartCoroutine(WaitCoroutine(time));
     }

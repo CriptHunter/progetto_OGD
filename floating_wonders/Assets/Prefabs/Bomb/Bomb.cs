@@ -12,22 +12,18 @@ public class Bomb : NetworkBehaviour
     {
         StartCoroutine(ExplosionCountdown(explosionCountdown));
     }
-    public void addVelocity(Vector2 direction)
+
+    public void AddVelocity(Vector2 direction)
     {
         rb = this.GetComponent<Rigidbody2D>();
         rb.velocity = direction * speed;
+        print(rb.velocity);
     }
 
     //aspetta n secondi, poi la bomba esplode
     private IEnumerator ExplosionCountdown(int secondsToWait)
     {
         yield return new WaitForSeconds(secondsToWait);
-        Cmd_Destroy(this.gameObject);
-    }
-
-    [Command]
-    public void Cmd_Destroy(GameObject obj)
-    {
-        NetworkServer.Destroy(obj);
+        NetworkServer.Destroy(this.gameObject);
     }
 }

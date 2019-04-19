@@ -10,7 +10,7 @@ public class PickUpThrow : NetworkBehaviour
     private GameObject pickedUpItem = null;
     private Vector2 shootDirection;
     [SerializeField] private Transform firePoint = null; // da quale punto usa l'oggetto
-    //i veri oggetti utilizzabili
+    //bomba con rigid body
     [SerializeField] private GameObject bombRBPrefab = null;
 
     private void Update()
@@ -25,7 +25,10 @@ public class PickUpThrow : NetworkBehaviour
 
         //se o un oggetto in mano e tengo premuto R --> entra in fase di mira
         else if (pickedUpItemType >= 0 && Input.GetKey(KeyCode.R) && isLocalPlayer)
+        {
             shootDirection = getAimDirection();
+            firePoint.GetComponent<SpriteRenderer>().sprite = Resources.Load("Sprites/Arrow", typeof(Sprite)) as Sprite; 
+        }
 
         //quando rilascio R --> usa l'oggetto
         else if (pickedUpItemType >= 0 && Input.GetKeyUp(KeyCode.R) && isLocalPlayer)
@@ -41,6 +44,7 @@ public class PickUpThrow : NetworkBehaviour
         {
             pickUpAllowed = true;
             collidedObject = collision.gameObject;
+            Cmd_SetAuthority(collidedObject.GetComponent<NetworkIdentity>(), this.GetComponent<NetworkIdentity>());
         }
     }
 
@@ -50,7 +54,7 @@ public class PickUpThrow : NetworkBehaviour
         if (collision.gameObject.GetComponent<Pickuppable>() != null && isLocalPlayer)
         {
             pickUpAllowed = false;
-            collidedObject = collision.gameObject;
+            collidedObject = null;
         }
     }
 
@@ -60,17 +64,15 @@ public class PickUpThrow : NetworkBehaviour
         switch (pickedUpItemType)
         {
             case (int)EnumCollection.itemsEnum.bomb:
-                print("uso bomba");
-                Cmd_ThrowBomb();
+                Cmd_ThrowBomb(shootDirection);
                 break;
             case (int)EnumCollection.itemsEnum.redItem:
-                print("uso oggetto 1");
                 break;
             case (int)EnumCollection.itemsEnum.blueItem:
-                print("uso oggetto 2");
                 break;        
         }
-        pickedUpItem.GetComponent<Pickuppable>().Respawn(5);
+        pickedUpItem.GetComponent<Pickuppable>().Cmd_Respawn(5);
+        Cmd_RemoveAuthority(pickedUpItem.GetComponent<NetworkIdentity>(), this.GetComponent<NetworkIdentity>());
         pickedUpItemType = (int)EnumCollection.itemsEnum.nullItem;
     }
 
@@ -88,10 +90,25 @@ public class PickUpThrow : NetworkBehaviour
     //Ad un command non si può passare un gameobject / prefab da spawnare, quindi ho fatto un metodo specifico per la bomba
     //un'alternativa brutta è fare un Resource.load() del prefab
     [Command]
-    void Cmd_ThrowBomb()
+    private void Cmd_ThrowBomb(Vector2 shootDirection)
     {
         GameObject obj = (GameObject)Instantiate(bombRBPrefab, firePoint.position, firePoint.rotation);
         NetworkServer.Spawn(obj);
-        obj.GetComponent<Bomb>().addVelocity(shootDirection);
+        obj.GetComponent<Bomb>().AddVelocity(shootDirection);
+    }
+
+    //i client non possono chiamare command su oggetti di cui non hanno l'autority
+    //questo metodo assegna l'autority (toglierla quando si ha finito di usare l'oggetto)
+    //nel network manager va spuntata una roba sul local player
+    [Command]
+    void Cmd_SetAuthority(NetworkIdentity item, NetworkIdentity player)
+    {
+        bool b = item.AssignClientAuthority(player.connectionToClient);
+    }
+
+    [Command]
+    void Cmd_RemoveAuthority(NetworkIdentity item, NetworkIdentity player)
+    {
+        bool b = item.RemoveClientAuthority(player.connectionToClient);
     }
 }

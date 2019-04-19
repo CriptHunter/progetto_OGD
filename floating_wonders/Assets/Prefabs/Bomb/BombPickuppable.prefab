@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 2224535575317698913}
   - component: {fileID: 5615913588845393924}
   m_Layer: 0
-  m_Name: bomb
+  m_Name: BombPickuppable
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -115,7 +115,7 @@ MonoBehaviour:
     i14: 0
     i15: 0
   m_ServerOnly: 0
-  m_LocalPlayerAuthority: 0
+  m_LocalPlayerAuthority: 1
 --- !u!114 &5494704095372825840
 MonoBehaviour:
   m_ObjectHideFlags: 0
