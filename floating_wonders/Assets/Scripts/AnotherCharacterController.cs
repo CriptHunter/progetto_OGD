@@ -13,7 +13,10 @@ public class AnotherCharacterController : MonoBehaviour
     public float jumpForce;
     public LayerMask groundLayer;
 
+    private float initialGravityScale;
     private float speed;
+    private float impulseHSpeed;
+    private float impulseHfriction = 0.5f;
     private const float speedThreshold = 0.001f;
     private Verse verse = Verse.Right;
     private new Rigidbody2D rigidbody;
@@ -34,6 +37,7 @@ public class AnotherCharacterController : MonoBehaviour
         rigidbody = GetComponent<Rigidbody2D>();
 
         speed = 0;
+        initialGravityScale = rigidbody.gravityScale;
     }
 
     // Update is called once per frame
@@ -56,18 +60,28 @@ public class AnotherCharacterController : MonoBehaviour
 
         if (!grounded)
         {
+            //rigidbody.gravityScale = initialGravityScale;
             groundedDelay = Mathf.Max(0, groundedDelay - delta);
             //dontStickDelay = 0.25f;
         }
         else
         {
             groundedDelay = 0.1f;
+            //MoveToSolid(270, 1.5f);
         }
         dontStickDelay = Mathf.Max(0, dontStickDelay - delta);
         StickToGround();
         
-        rigidbody.velocity = new Vector2(speed, rigidbody.velocity.y);
+        rigidbody.velocity = new Vector2(speed+impulseHSpeed, rigidbody.velocity.y);
 
+        if (impulseHSpeed < -speedThreshold)
+        {
+            impulseHSpeed = Mathf.Min(impulseHSpeed + impulseHfriction, 0);
+        }
+        if (impulseHSpeed > speedThreshold)
+        {
+            impulseHSpeed = Mathf.Max(impulseHSpeed - impulseHfriction, 0);
+        }
         /*if (rigidbody.velocity.x < -speedThreshold)
         {
             speed = Mathf.Max(speed, rigidbody.velocity.x);
@@ -142,11 +156,19 @@ public class AnotherCharacterController : MonoBehaviour
     {
         if (grounded)
         {
+            VerticalImpulse(jumpForce);
+        }
+    }
+
+    private void VerticalImpulse(float strength)
+    {
+        if (strength > 0)
+        {
             groundedDelay = 0;
             dontStickDelay = 0.25f;
-            rigidbody.velocity = new Vector2(rigidbody.velocity.x, 0);
-            rigidbody.AddForce(new Vector2(0, jumpForce), ForceMode2D.Impulse);
         }
+        rigidbody.velocity = new Vector2(rigidbody.velocity.x, 0);
+        rigidbody.AddForce(new Vector2(0, strength), ForceMode2D.Impulse);
     }
 
     public void Turn(Verse verse)
@@ -156,7 +178,7 @@ public class AnotherCharacterController : MonoBehaviour
 
     private void CalculateProximity()
     {
-        RaycastHit2D hit = Physics2D.CapsuleCast(collider.bounds.center, collider.bounds.size, collider.direction, 0, Vector2.down, 0.05f, groundLayer);
+        RaycastHit2D hit = Physics2D.CapsuleCast(collider.bounds.center, collider.bounds.size, collider.direction, 0, Vector2.down, 0.1f, groundLayer);
         if (hit.collider != null)
             grounded = true;
         else
@@ -204,14 +226,16 @@ public class AnotherCharacterController : MonoBehaviour
             }
         }
 
-        if (nearWallLeft && speed<-speedThreshold)
+        if (nearWallLeft && speed+impulseHSpeed<-speedThreshold)
         {
             speed = 0;
+            impulseHSpeed = 0;
         }
 
-        if (nearWallRight && speed > speedThreshold)
+        if (nearWallRight && speed+impulseHSpeed > speedThreshold)
         {
             speed = 0;
+            impulseHSpeed = 0;
         }
     }
 
@@ -219,7 +243,7 @@ public class AnotherCharacterController : MonoBehaviour
     {
         if (/*groundedDelay > speedThreshold &&*/ dontStickDelay < speedThreshold)
         {
-            if (!(speed>-speedThreshold && speed<speedThreshold))
+            //if (!(speed>-speedThreshold && speed<speedThreshold))
             {
                 //rigidbody.velocity = new Vector2(rigidbody.velocity.x, 0);
                 MoveToSolid(270, 0.5f);
@@ -233,13 +257,21 @@ public class AnotherCharacterController : MonoBehaviour
         RaycastHit2D hit = Physics2D.CapsuleCast(collider.bounds.center, collider.bounds.size, collider.direction, 0, dir, maxDist, groundLayer);
         if (hit.collider!=null)
         {
-            transform.position = hit.centroid;
+            //transform.position = hit.centroid;
+            rigidbody.position = hit.centroid;
             return true;
         }
         else
         {
             return false;
         }
+    }
+
+    public void ApplyImpulse(float direction, float strength)
+    {
+        speed = 0;
+        impulseHSpeed = Util.LengthDirX(strength, direction);
+        VerticalImpulse(Util.LengthDirY(strength, direction));
     }
 }
 

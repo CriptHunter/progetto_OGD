@@ -25,6 +25,8 @@ public class AnotherCharacterInput : MonoBehaviour
             move = Verse.Right;
         if (Input.GetKeyDown(KeyCode.W))
             jump = true;
+        if (Input.GetKeyDown(KeyCode.S))
+            cc.ApplyImpulse(45, 18);
 
         if (move != Verse.None)
         {
