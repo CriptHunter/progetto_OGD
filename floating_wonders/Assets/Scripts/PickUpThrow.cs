@@ -26,14 +26,13 @@ public class PickUpThrow : NetworkBehaviour
         //se o un oggetto in mano e tengo premuto R --> entra in fase di mira
         else if (pickedUpItemType >= 0 && Input.GetKey(KeyCode.R) && isLocalPlayer)
         {
-            shootDirection = getAimDirection();
-            firePoint.GetComponent<SpriteRenderer>().sprite = Resources.Load("Sprites/Arrow", typeof(Sprite)) as Sprite; 
+            shootDirection = GetAimDirection();
+            RotateArrowPointer(shootDirection);
         }
 
         //quando rilascio R --> usa l'oggetto
         else if (pickedUpItemType >= 0 && Input.GetKeyUp(KeyCode.R) && isLocalPlayer)
             useItem();
-
     }
 
     //quando il giocatore collide con un oggetto
@@ -77,7 +76,7 @@ public class PickUpThrow : NetworkBehaviour
     }
 
     //restituisce un vettore 2D che va dal fire point al puntatore del mouse, usato per la direzione in cui lancio gli oggetti
-    private Vector2 getAimDirection()
+    private Vector2 GetAimDirection()
     {
         Vector3 shootDirection;
         shootDirection = Input.mousePosition;
@@ -85,6 +84,20 @@ public class PickUpThrow : NetworkBehaviour
         shootDirection = Camera.main.ScreenToWorldPoint(shootDirection);
         shootDirection = shootDirection - firePoint.transform.position;
         return new Vector2(shootDirection.x, shootDirection.y).normalized;
+    }
+
+    //ruota il puntatore a forma di freccia in modo da seguire il cursore del mouse
+    private void RotateArrowPointer(Vector2 shootDirection)
+    {
+        //calcolo l'angolo tra l'asse x e il vettore della direzione di tiro
+        float angle = Vector2.SignedAngle(shootDirection, transform.forward);
+        angle = -angle;
+        //ruoto la freccia sull'asse Z di un valore pari all'angolo
+        firePoint.eulerAngles = new Vector3(0, 0, angle);
+        if (angle > 90 || angle < -90)
+            firePoint.GetComponent<SpriteRenderer>().enabled = false;
+        else
+            firePoint.GetComponent<SpriteRenderer>().enabled = true;
     }
 
     //Ad un command non si può passare un gameobject / prefab da spawnare, quindi ho fatto un metodo specifico per la bomba
