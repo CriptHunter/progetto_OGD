@@ -6,12 +6,11 @@ public class PickUpThrow : NetworkBehaviour
 {
     private bool pickUpAllowed; //true quando il giocatore è in contatto con un oggetto che si può raccogliere
     private GameObject collidedObject; //con quale gameobject il giocatore è entrato in contatto
-    private int pickedUpItemType = (int)EnumCollection.itemsEnum.nullItem; //quale oggetto è stato raccolto, -1 --> nessun oggetto
-    private GameObject pickedUpItem = null;
-    private Vector2 shootDirection;
+    private int pickedUpItemType = (int)EnumCollection.itemsEnum.nullItem; //che tipo è stato raccolto, -1 --> nessun oggetto
+    private GameObject pickedUpItem = null; //quale oggetto è stato raccolto
+    private Vector2 shootDirection; //vettore che indica in quale direzione vado a lanciare l'oggetto
     [SerializeField] private Transform firePoint = null; // da quale punto usa l'oggetto
-    //bomba con rigid body
-    [SerializeField] private GameObject bombRBPrefab = null;
+    [SerializeField] private GameObject bombRBPrefab = null; //bomba con rigid body
 
     private void Update()
     {
@@ -32,7 +31,10 @@ public class PickUpThrow : NetworkBehaviour
 
         //quando rilascio R --> usa l'oggetto
         else if (pickedUpItemType >= 0 && Input.GetKeyUp(KeyCode.R) && isLocalPlayer)
+        {
             useItem();
+            firePoint.GetComponent<SpriteRenderer>().enabled = false;
+        }
     }
 
     //quando il giocatore collide con un oggetto
@@ -90,7 +92,7 @@ public class PickUpThrow : NetworkBehaviour
     private void RotateArrowPointer(Vector2 shootDirection)
     {
         //calcolo l'angolo tra l'asse x e il vettore della direzione di tiro
-        float angle = Vector2.SignedAngle(shootDirection, transform.forward);
+        float angle = Vector2.SignedAngle(shootDirection, transform.right);
         angle = -angle;
         //ruoto la freccia sull'asse Z di un valore pari all'angolo
         firePoint.eulerAngles = new Vector3(0, 0, angle);
