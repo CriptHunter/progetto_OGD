@@ -141,6 +141,7 @@ public class AnotherCharacterController : MonoBehaviour
     public void Turn(Verse verse)
     {
         this.verse = verse;
+        transform.localScale = new Vector3((int)verse, 1, 1);
     }
 
     private void CalculateProximity()
