@@ -7,7 +7,7 @@ public class Bullet : MonoBehaviour
     public float speed;
 
     private Transform player;
-    private Vector2 target;
+    //private Vector2 target;
     private LayerMask playerMask;
     private LayerMask enemyMask;
     private bool set = false;
@@ -23,7 +23,7 @@ public class Bullet : MonoBehaviour
         playerMask = LayerMask.NameToLayer("Player");
         enemyMask = LayerMask.NameToLayer("Enemy");
 
-        target = new Vector2(player.position.x, player.position.y);
+        //target = new Vector2(player.position.x, player.position.y);
     }
 
     void Update()
