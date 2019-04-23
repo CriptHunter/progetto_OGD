@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 
-public class EnemyLookingForYou : MonoBehaviour
+public class EnemyLookingForYou : NetworkBehaviour
 {
     private PlayerController playerController;
     private float startingSpeed;

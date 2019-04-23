@@ -751,6 +751,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4349132040424964159, guid: 5688fb4905ee37f42a7c344a8a156f28,
+        type: 3}
+      propertyPath: m_TransformSyncMode
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 4349132040424964155, guid: 5688fb4905ee37f42a7c344a8a156f28,
         type: 3}
       propertyPath: m_AssetId.i0
@@ -921,4 +926,3 @@ MonoBehaviour:
   groundDetection: {fileID: 8745630327456799809}
   untilEndPlatform: 1
   moveDistance: 0
-  enemyType: 1

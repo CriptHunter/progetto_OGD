@@ -15,9 +15,9 @@ GameObject:
   - component: {fileID: 4349132040424964155}
   - component: {fileID: 8745630327996332483}
   - component: {fileID: 8745630327996332480}
-  - component: {fileID: 8745630327996332486}
-  - component: {fileID: 8745630327996332481}
-  m_Layer: 0
+  - component: {fileID: 9204433535144165152}
+  - component: {fileID: 5110648292727664727}
+  m_Layer: 10
   m_Name: MoEnemyCube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -97,7 +97,7 @@ MonoBehaviour:
   m_Script: {fileID: -1768714887, guid: dc443db3e92b4983b9738c1131f555cb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_TransformSyncMode: 1
+  m_TransformSyncMode: 2
   m_SendInterval: 0.1
   m_SyncRotationAxis: 7
   m_RotationSyncCompression: 0
@@ -187,7 +187,7 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
---- !u!114 &8745630327996332486
+--- !u!114 &9204433535144165152
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -199,11 +199,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 70d2c0ef9de481c4bb14226c77a52910, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 4
-  distance: 3
-  sightDistance: 100
+  speed: 2
+  groundRayDistance: 2
+  sightDistance: 5
+  speedAfterSeen: 5
   groundDetection: {fileID: 8745630327134456745}
---- !u!114 &8745630327996332481
+  untilEndPlatform: 1
+  moveDistance: 0
+--- !u!114 &5110648292727664727
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -212,12 +215,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 4349132040424964134}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1acc21bdc23d26a4dad905ac0bb1ee87, type: 3}
+  m_Script: {fileID: 11500000, guid: af94e7e53bb6c9144a8f7e434a48be0a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 4
-  distance: 2
-  groundDetection: {fileID: 8745630327134456745}
+  bullet: {fileID: 6491948067176224257, guid: bc0e2e2c34b165f4f876e2f000fcec5d, type: 3}
+  player: {fileID: 4165673635756170399, guid: e64e0f8a99746fe4da76a05edcf5fe04, type: 3}
+  sightSee: 5
+  shootWaitingTime: 2
 --- !u!1 &8745630327047374382
 GameObject:
   m_ObjectHideFlags: 0
@@ -227,7 +231,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8745630327047374377}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: GroundCheck
   m_TagString: Untagged
   m_Icon: {fileID: -964228994112308473, guid: 0000000000000000d000000000000000, type: 0}
@@ -257,7 +261,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8745630327134456745}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: GameObject
   m_TagString: Untagged
   m_Icon: {fileID: 0}
