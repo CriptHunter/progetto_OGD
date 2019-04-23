@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class JumpingAI : MonoBehaviour
+public class EnemySimpleJump : MonoBehaviour
 {
     public float speed;
     public float distance;

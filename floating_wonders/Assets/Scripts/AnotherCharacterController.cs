@@ -71,8 +71,8 @@ public class AnotherCharacterController : MonoBehaviour
         }
         dontStickDelay = Mathf.Max(0, dontStickDelay - delta);
         StickToGround();
-        
-        rigidbody.velocity = new Vector2(speed+impulseHSpeed, rigidbody.velocity.y);
+
+        rigidbody.velocity = new Vector2(speed + impulseHSpeed, rigidbody.velocity.y);
 
         if (impulseHSpeed < -speedThreshold)
         {
@@ -82,50 +82,6 @@ public class AnotherCharacterController : MonoBehaviour
         {
             impulseHSpeed = Mathf.Max(impulseHSpeed - impulseHfriction, 0);
         }
-        /*if (rigidbody.velocity.x < -speedThreshold)
-        {
-            speed = Mathf.Max(speed, rigidbody.velocity.x);
-        }
-        if (rigidbody.velocity.x > speedThreshold)
-        {
-            speed = Mathf.Min(speed, rigidbody.velocity.x);
-        }*/
-
-        /*if (running)
-        {
-            if (verse == Verse.Left)
-            {
-                rigidbody.AddForce(new Vector2(-runAcceleration, 0), ForceMode2D.Impulse);
-            }
-            if (verse == Verse.Right)
-            {
-                rigidbody.AddForce(new Vector2(runAcceleration, 0), ForceMode2D.Impulse);
-            }
-        }
-        else
-        {
-            if (rigidbody.velocity.x > speedThreshold)
-            {
-                rigidbody.velocity = new Vector2(rigidbody.velocity.x - runFriction * delta,rigidbody.velocity.y);
-                if (rigidbody.velocity.x <= speedThreshold)
-                    rigidbody.velocity = new Vector2(0, rigidbody.velocity.y);
-            }
-            if (rigidbody.velocity.x < -speedThreshold)
-            {
-                rigidbody.velocity = new Vector2(rigidbody.velocity.x + runFriction * delta, rigidbody.velocity.y);
-                if (rigidbody.velocity.x >= speedThreshold)
-                    rigidbody.velocity = new Vector2(0, rigidbody.velocity.y);
-            }
-        }
-
-        if (rigidbody.velocity.x > runSpeed)
-        {
-            rigidbody.velocity = new Vector2(runSpeed, rigidbody.velocity.y);
-        }
-        if (rigidbody.velocity.x < -runSpeed)
-        {
-            rigidbody.velocity = new Vector2(-runSpeed, rigidbody.velocity.y);
-        }*/
 
         runDelay -= delta;
         if (runDelay <= 0)
@@ -141,6 +97,10 @@ public class AnotherCharacterController : MonoBehaviour
                     "speed: " + speed + "\n";
     }
 
+    /// <summary>
+    /// Call this method every frame and the character will run/move toward the direction it is currently facing.
+    /// Don't call this method and the player will stop running/moving.
+    /// </summary>
     public void Run()
     {
         running = true;
@@ -152,6 +112,9 @@ public class AnotherCharacterController : MonoBehaviour
         running = false;
     }
 
+    /// <summary>
+    /// Commands the character to jump, if possible.
+    /// </summary>
     public void Jump()
     {
         if (grounded)
@@ -171,9 +134,14 @@ public class AnotherCharacterController : MonoBehaviour
         rigidbody.AddForce(new Vector2(0, strength), ForceMode2D.Impulse);
     }
 
+    /// <summary>
+    /// Commands the character to turn to the specified direction.
+    /// </summary>
+    /// <param name="verse">Direction to turn to</param>
     public void Turn(Verse verse)
     {
         this.verse = verse;
+        transform.localScale = new Vector3((int)verse, 1, 1);
     }
 
     private void CalculateProximity()
@@ -226,13 +194,13 @@ public class AnotherCharacterController : MonoBehaviour
             }
         }
 
-        if (nearWallLeft && speed+impulseHSpeed<-speedThreshold)
+        if (nearWallLeft && speed + impulseHSpeed < -speedThreshold)
         {
             speed = 0;
             impulseHSpeed = 0;
         }
 
-        if (nearWallRight && speed+impulseHSpeed > speedThreshold)
+        if (nearWallRight && speed + impulseHSpeed > speedThreshold)
         {
             speed = 0;
             impulseHSpeed = 0;
@@ -255,7 +223,7 @@ public class AnotherCharacterController : MonoBehaviour
     {
         var dir = Util.DegreeToVector2(direction);
         RaycastHit2D hit = Physics2D.CapsuleCast(collider.bounds.center, collider.bounds.size, collider.direction, 0, dir, maxDist, groundLayer);
-        if (hit.collider!=null)
+        if (hit.collider != null)
         {
             //transform.position = hit.centroid;
             rigidbody.position = hit.centroid;
@@ -267,14 +235,28 @@ public class AnotherCharacterController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Applies an impulse to the character. Useful for a knockback.
+    /// </summary>
+    /// <param name="direction">Direction of the impulse.</param>
+    /// <param name="strength">Strength of the impulse.</param>
     public void ApplyImpulse(float direction, float strength)
     {
         speed = 0;
         impulseHSpeed = Util.LengthDirX(strength, direction);
         VerticalImpulse(Util.LengthDirY(strength, direction));
     }
+
+    public Verse GetVerse()
+    {
+        return verse;
+    }
+
 }
 
+/// <summary>
+/// List of possible directions for the character.
+/// </summary>
 public enum Verse:int
 {
     Left=-1,

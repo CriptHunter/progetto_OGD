@@ -5,7 +5,7 @@ using UnityEngine;
 public class EnumCollection : MonoBehaviour
 {
     //lista di oggetti che si possono raccogliere e lanciare
-    public enum itemsEnum : int
+    public enum ItemType : int
     {
         nullItem = -1,
         bomb = 0,
