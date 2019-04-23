@@ -91,8 +91,13 @@ public class PickUpThrow : NetworkBehaviour
     //ruota il puntatore a forma di freccia in modo da seguire il cursore del mouse
     private void RotateArrowPointer(Vector2 shootDirection)
     {
+        float angle = 0f;
         //calcolo l'angolo tra l'asse x e il vettore della direzione di tiro
-        float angle = Vector2.SignedAngle(shootDirection, transform.right);
+        //ci sono 2 casi: personaggio girato a destra o a sinistra
+        if (GetComponent<AnotherCharacterController>().GetVerse() == Verse.Right)
+            angle = Vector2.SignedAngle(shootDirection, transform.right);
+        else if(GetComponent<AnotherCharacterController>().GetVerse() == Verse.Left)
+            angle = Vector2.SignedAngle(shootDirection, -transform.right);
         angle = -angle;
         //ruoto la freccia sull'asse Z di un valore pari all'angolo
         firePoint.eulerAngles = new Vector3(0, 0, angle);

@@ -71,8 +71,8 @@ public class AnotherCharacterController : MonoBehaviour
         }
         dontStickDelay = Mathf.Max(0, dontStickDelay - delta);
         StickToGround();
-        
-        rigidbody.velocity = new Vector2(speed+impulseHSpeed, rigidbody.velocity.y);
+
+        rigidbody.velocity = new Vector2(speed + impulseHSpeed, rigidbody.velocity.y);
 
         if (impulseHSpeed < -speedThreshold)
         {
@@ -194,13 +194,13 @@ public class AnotherCharacterController : MonoBehaviour
             }
         }
 
-        if (nearWallLeft && speed+impulseHSpeed<-speedThreshold)
+        if (nearWallLeft && speed + impulseHSpeed < -speedThreshold)
         {
             speed = 0;
             impulseHSpeed = 0;
         }
 
-        if (nearWallRight && speed+impulseHSpeed > speedThreshold)
+        if (nearWallRight && speed + impulseHSpeed > speedThreshold)
         {
             speed = 0;
             impulseHSpeed = 0;
@@ -223,7 +223,7 @@ public class AnotherCharacterController : MonoBehaviour
     {
         var dir = Util.DegreeToVector2(direction);
         RaycastHit2D hit = Physics2D.CapsuleCast(collider.bounds.center, collider.bounds.size, collider.direction, 0, dir, maxDist, groundLayer);
-        if (hit.collider!=null)
+        if (hit.collider != null)
         {
             //transform.position = hit.centroid;
             rigidbody.position = hit.centroid;
@@ -246,6 +246,12 @@ public class AnotherCharacterController : MonoBehaviour
         impulseHSpeed = Util.LengthDirX(strength, direction);
         VerticalImpulse(Util.LengthDirY(strength, direction));
     }
+
+    public Verse GetVerse()
+    {
+        return verse;
+    }
+
 }
 
 /// <summary>
