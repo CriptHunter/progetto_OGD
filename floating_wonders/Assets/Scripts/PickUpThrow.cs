@@ -6,7 +6,7 @@ public class PickUpThrow : NetworkBehaviour
 {
     private bool pickUpAllowed; //true quando il giocatore è in contatto con un oggetto che si può raccogliere
     private GameObject collidedObject; //con quale gameobject il giocatore è entrato in contatto
-    private int pickedUpItemType = (int)EnumCollection.itemsEnum.nullItem; //che tipo è stato raccolto, -1 --> nessun oggetto
+    private EnumCollection.ItemType pickedUpItemType = EnumCollection.ItemType.nullItem; //che tipo è stato raccolto, -1 --> nessun oggetto
     private GameObject pickedUpItem = null; //quale oggetto è stato raccolto
     private Vector2 shootDirection; //vettore che indica in quale direzione vado a lanciare l'oggetto
     [SerializeField] private Transform firePoint = null; // da quale punto usa l'oggetto
@@ -17,7 +17,7 @@ public class PickUpThrow : NetworkBehaviour
         //se posso raccogliere qualcosa e premo E --> raccoglie oggetto
         if (pickUpAllowed && Input.GetKeyDown(KeyCode.E) && isLocalPlayer)
         {
-            pickedUpItemType = (int)collidedObject.GetComponent<Pickuppable>().Type;
+            pickedUpItemType = collidedObject.GetComponent<Pickuppable>().Type;
             pickedUpItem = collidedObject;
             pickedUpItem.GetComponent<Pickuppable>().Pickup();
         }
@@ -29,10 +29,12 @@ public class PickUpThrow : NetworkBehaviour
             RotateArrowPointer(shootDirection);
         }
 
-        //quando rilascio R --> usa l'oggetto
+        //quando rilascio R --> usa l'oggetto se l'angolazione è valida
         else if (pickedUpItemType >= 0 && Input.GetKeyUp(KeyCode.R) && isLocalPlayer)
         {
-            useItem();
+            //se lo sprite della freccia per mirare è visibile allora l'angolo è tra -90 e 90
+            if(firePoint.GetComponent<SpriteRenderer>().enabled)
+                useItem();
             firePoint.GetComponent<SpriteRenderer>().enabled = false;
         }
     }
@@ -41,7 +43,7 @@ public class PickUpThrow : NetworkBehaviour
     private void OnTriggerEnter2D(Collider2D collision)
     {
         //se collido con un oggetto che si può raccogliere, sono il local player e non ho oggetti in mano ---> posso raccogliere
-        if (collision.gameObject.GetComponent<Pickuppable>() != null && isLocalPlayer && pickedUpItemType == (int)EnumCollection.itemsEnum.nullItem)
+        if (collision.gameObject.GetComponent<Pickuppable>() != null && isLocalPlayer && pickedUpItemType == EnumCollection.ItemType.nullItem)
         {
             pickUpAllowed = true;
             collidedObject = collision.gameObject;
@@ -64,17 +66,17 @@ public class PickUpThrow : NetworkBehaviour
     {
         switch (pickedUpItemType)
         {
-            case (int)EnumCollection.itemsEnum.bomb:
+            case EnumCollection.ItemType.bomb:
                 Cmd_ThrowBomb(shootDirection);
                 break;
-            case (int)EnumCollection.itemsEnum.redItem:
+            case EnumCollection.ItemType.redItem:
                 break;
-            case (int)EnumCollection.itemsEnum.blueItem:
+            case EnumCollection.ItemType.blueItem:
                 break;        
         }
         pickedUpItem.GetComponent<Pickuppable>().Cmd_Respawn(5);
         Cmd_RemoveAuthority(pickedUpItem.GetComponent<NetworkIdentity>(), this.GetComponent<NetworkIdentity>());
-        pickedUpItemType = (int)EnumCollection.itemsEnum.nullItem;
+        pickedUpItemType = EnumCollection.ItemType.nullItem;
     }
 
     //restituisce un vettore 2D che va dal fire point al puntatore del mouse, usato per la direzione in cui lancio gli oggetti
@@ -93,9 +95,10 @@ public class PickUpThrow : NetworkBehaviour
     {
         float angle = 0f;
         //calcolo l'angolo tra l'asse x e il vettore della direzione di tiro
-        //ci sono 2 casi: personaggio girato a destra o a sinistra
+        //se il personaggio è girato verso destra
         if (GetComponent<AnotherCharacterController>().GetVerse() == Verse.Right)
             angle = Vector2.SignedAngle(shootDirection, transform.right);
+        //se il personaggio è girato verso sinistra
         else if(GetComponent<AnotherCharacterController>().GetVerse() == Verse.Left)
             angle = Vector2.SignedAngle(shootDirection, -transform.right);
         angle = -angle;
