@@ -920,4 +920,9 @@ public static class Util
     {
         return RadianToVector2(degree * Mathf.Deg2Rad) * length;
     }
+
+    public static RaycastHit2D SelfCast(this BoxCollider2D collider, LayerMask layerMask)
+    {
+        return Physics2D.BoxCast(collider.bounds.center, collider.bounds.size, collider.gameObject.transform.rotation.z, Vector2.one, 0f, layerMask);
+    }
 }

@@ -7701,6 +7701,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1283438191}
   - component: {fileID: 1283438192}
+  - component: {fileID: 1283438193}
   m_Layer: 0
   m_Name: EdgeGrabCollider
   m_TagString: Untagged
@@ -7748,6 +7749,21 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.5, y: 0.5}
   m_EdgeRadius: 0
+--- !u!114 &1283438193
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1283438190}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d6e64972d858ddc47acb4b6eeb102e58, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  target:
+    serializedVersion: 2
+    m_Bits: 2048
 --- !u!1 &1606011715
 GameObject:
   m_ObjectHideFlags: 0

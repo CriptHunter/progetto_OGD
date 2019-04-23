@@ -11,9 +11,9 @@ GameObject:
   - component: {fileID: 2417087179830781628}
   - component: {fileID: 5665188205867315987}
   - component: {fileID: 2033626510758519476}
-  - component: {fileID: 5433432303853249328}
-  m_Layer: 0
-  m_Name: Sphere
+  - component: {fileID: 8083948697282299752}
+  m_Layer: 11
+  m_Name: Edge
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -78,16 +78,19 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!135 &5433432303853249328
-SphereCollider:
+--- !u!58 &8083948697282299752
+CircleCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3815764135132979400}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
   m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 0.5
-  m_Center: {x: 0, y: 0, z: 0}
