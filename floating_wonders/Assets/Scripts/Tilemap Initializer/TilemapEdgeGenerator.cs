@@ -35,6 +35,11 @@ public class TilemapEdgeGenerator : MonoBehaviour
             {
                 var go = Instantiate(edgeGameObject);
                 go.transform.position = edgePosition.transform.position;
+                var prop = go.GetComponent<EdgeProperties>();
+                if (transform.localScale.x > 0)
+                    prop.EdgeVerse = Verse.Left; // invertito per fare match col verse del character
+                else
+                    prop.EdgeVerse = Verse.Right;
             }
         }
         Destroy(gameObject);

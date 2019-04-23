@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 5665188205867315987}
   - component: {fileID: 2033626510758519476}
   - component: {fileID: 8083948697282299752}
+  - component: {fileID: 8339527993446328289}
   m_Layer: 11
   m_Name: Edge
   m_TagString: Untagged
@@ -94,3 +95,15 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 0.5
+--- !u!114 &8339527993446328289
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3815764135132979400}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bcd2032f9ecf160449af080b1b81b2d7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

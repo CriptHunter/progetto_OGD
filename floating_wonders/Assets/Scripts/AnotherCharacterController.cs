@@ -13,6 +13,7 @@ public class AnotherCharacterController : MonoBehaviour
     public float jumpForce;
     public LayerMask groundLayer;
 
+    private CharacterEdgeGrab edgeGrabCollider;
     private float initialGravityScale;
     private float speed;
     private float impulseHSpeed;
@@ -30,11 +31,42 @@ public class AnotherCharacterController : MonoBehaviour
     private float groundedDelay = 0;
     private float dontStickDelay = 0;
 
+    private bool physicsActive = true; // se la fisica normale del movimento è attiva
+    private bool PhysicsActive
+    {
+        get
+        {
+            return physicsActive;
+        }
+        set
+        {
+            physicsActive = value;
+            if (!physicsActive)
+            {
+                rigidbody.gravityScale = 0;
+                speed = 0;
+                impulseHSpeed = 0;
+            }
+            else
+            {
+                rigidbody.gravityScale = initialGravityScale;
+            }
+        }
+    }
+    private GameObject targetEdge; // se è attaccato a un edge gameobject, altrimenti null
+    private Verse targetEdgeVerse= Verse.None; // verso dal quale stai aggrappato
+    private float dontGrabEdgeDelay = 0; // ritardo entro il quale non può richiappare un edge
+
     // Start is called before the first frame update
     void Awake()
     {
         collider = GetComponent<CapsuleCollider2D>();
         rigidbody = GetComponent<Rigidbody2D>();
+        var egc = gameObject.GetChild("EdgeGrabCollider");
+        if (egc != null)
+        {
+            edgeGrabCollider = egc.GetComponent<CharacterEdgeGrab>();
+        }
 
         speed = 0;
         initialGravityScale = rigidbody.gravityScale;
@@ -55,6 +87,18 @@ public class AnotherCharacterController : MonoBehaviour
             groundedDist = float.MaxValue;
         }*/
 
+        var edg = edgeGrabCollider.GetEdge();
+        if (edg != null && !IsDanglingFromEdge() && dontGrabEdgeDelay<speedThreshold)
+        {
+            if (rigidbody.velocity.y<0.2f)
+            GrabEdge(edg);
+        }
+
+        if (IsDanglingFromEdge())
+        {
+            StickToEdge(targetEdge);
+        }
+
         CalculateProximity();
         CalculateSpeed(delta);
 
@@ -70,9 +114,13 @@ public class AnotherCharacterController : MonoBehaviour
             //MoveToSolid(270, 1.5f);
         }
         dontStickDelay = Mathf.Max(0, dontStickDelay - delta);
+        dontGrabEdgeDelay = Mathf.Max(0, dontGrabEdgeDelay - delta);
         StickToGround();
 
-        rigidbody.velocity = new Vector2(speed + impulseHSpeed, rigidbody.velocity.y);
+        if (physicsActive)
+        {
+            rigidbody.velocity = new Vector2(speed + impulseHSpeed, rigidbody.velocity.y);
+        }
 
         if (impulseHSpeed < -speedThreshold)
         {
@@ -94,7 +142,8 @@ public class AnotherCharacterController : MonoBehaviour
                     "wall left: " + nearWallLeft + "\n" +
                     "wall right: " + nearWallRight + "\n" +
                     "running: " + running + "\n" +
-                    "speed: " + speed + "\n";
+                    "speed: " + speed + "\n" +
+                    "dangling: " + IsDanglingFromEdge() + "\n";
     }
 
     /// <summary>
@@ -117,21 +166,32 @@ public class AnotherCharacterController : MonoBehaviour
     /// </summary>
     public void Jump()
     {
-        if (grounded)
+        if (IsDanglingFromEdge())
         {
+            ReleaseEdge();
             VerticalImpulse(jumpForce);
+        }
+        else
+        {
+            if (grounded)
+            {
+                VerticalImpulse(jumpForce);
+            }
         }
     }
 
     private void VerticalImpulse(float strength)
     {
-        if (strength > 0)
+        if (PhysicsActive)
         {
-            groundedDelay = 0;
-            dontStickDelay = 0.25f;
+            if (strength > 0)
+            {
+                groundedDelay = 0;
+                dontStickDelay = 0.25f;
+            }
+            rigidbody.velocity = new Vector2(rigidbody.velocity.x, 0);
+            rigidbody.AddForce(new Vector2(0, strength), ForceMode2D.Impulse);
         }
-        rigidbody.velocity = new Vector2(rigidbody.velocity.x, 0);
-        rigidbody.AddForce(new Vector2(0, strength), ForceMode2D.Impulse);
     }
 
     /// <summary>
@@ -142,6 +202,10 @@ public class AnotherCharacterController : MonoBehaviour
     {
         this.verse = verse;
         transform.localScale = new Vector3((int)verse, 1, 1);
+        if (IsDanglingFromEdge() && targetEdgeVerse != verse)
+        {
+            ReleaseEdge();
+        }
     }
 
     private void CalculateProximity()
@@ -165,42 +229,84 @@ public class AnotherCharacterController : MonoBehaviour
             nearWallLeft = false;
     }
 
+    public bool IsDanglingFromEdge()
+    {
+        return targetEdge != null;
+    }
+
+    private void GrabEdge(GameObject edge)
+    {
+        if (!IsDanglingFromEdge())
+        {
+            Turn(edge.GetComponent<EdgeProperties>().EdgeVerse);
+            targetEdgeVerse = verse;
+
+            targetEdge = edge;
+            PhysicsActive = false;
+            //StickToEdge(edge);
+            rigidbody.velocity = Vector2.zero;
+        }
+    }
+
+    private void StickToEdge(GameObject edge)
+    {
+        rigidbody.position = edge.transform.position - (new Vector3(edgeGrabCollider.gameObject.transform.localPosition.x * (int)targetEdge.GetComponent<EdgeProperties>().EdgeVerse, edgeGrabCollider.gameObject.transform.localPosition.y, edgeGrabCollider.gameObject.transform.localPosition.z));
+    }
+
+    private void ReleaseEdge()
+    {
+        if (IsDanglingFromEdge())
+        {
+            PhysicsActive = true;
+            targetEdge = null;
+            dontGrabEdgeDelay = 0.35f;
+        }
+    }
+
     private void CalculateSpeed(float delta)
     {
-        if (running)
+        if (!IsDanglingFromEdge())
         {
-            if (verse == Verse.Left)
+            if (running)
             {
-                speed = Mathf.Max(speed - runAcceleration * delta - (speed > 0 ? runFriction * delta : 0), -runSpeed);
+                if (verse == Verse.Left)
+                {
+                    speed = Mathf.Max(speed - runAcceleration * delta - (speed > 0 ? runFriction * delta : 0), -runSpeed);
+                }
+                if (verse == Verse.Right)
+                {
+                    speed = Mathf.Min(speed + runAcceleration * delta + (speed < 0 ? runFriction * delta : 0), runSpeed);
+                }
             }
-            if (verse == Verse.Right)
+            else
             {
-                speed = Mathf.Min(speed + runAcceleration * delta + (speed < 0 ? runFriction * delta : 0), runSpeed);
+                if (speed > speedThreshold)
+                {
+                    speed = speed - runFriction * delta;
+                    if (speed <= speedThreshold)
+                        speed = 0;
+                }
+                if (speed < -speedThreshold)
+                {
+                    speed = speed + runFriction * delta;
+                    if (speed >= speedThreshold)
+                        speed = 0;
+                }
+            }
+
+            if (nearWallLeft && speed + impulseHSpeed < -speedThreshold)
+            {
+                speed = 0;
+                impulseHSpeed = 0;
+            }
+
+            if (nearWallRight && speed + impulseHSpeed > speedThreshold)
+            {
+                speed = 0;
+                impulseHSpeed = 0;
             }
         }
         else
-        {
-            if (speed > speedThreshold)
-            {
-                speed = speed - runFriction * delta;
-                if (speed <= speedThreshold)
-                    speed = 0;
-            }
-            if (speed < -speedThreshold)
-            {
-                speed = speed + runFriction * delta;
-                if (speed >= speedThreshold)
-                    speed = 0;
-            }
-        }
-
-        if (nearWallLeft && speed + impulseHSpeed < -speedThreshold)
-        {
-            speed = 0;
-            impulseHSpeed = 0;
-        }
-
-        if (nearWallRight && speed + impulseHSpeed > speedThreshold)
         {
             speed = 0;
             impulseHSpeed = 0;
@@ -242,9 +348,12 @@ public class AnotherCharacterController : MonoBehaviour
     /// <param name="strength">Strength of the impulse.</param>
     public void ApplyImpulse(float direction, float strength)
     {
-        speed = 0;
-        impulseHSpeed = Util.LengthDirX(strength, direction);
-        VerticalImpulse(Util.LengthDirY(strength, direction));
+        if (PhysicsActive)
+        {
+            speed = 0;
+            impulseHSpeed = Util.LengthDirX(strength, direction);
+            VerticalImpulse(Util.LengthDirY(strength, direction));
+        }
     }
 
     public Verse GetVerse()
