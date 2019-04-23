@@ -9,7 +9,6 @@ public class EnumCollection : MonoBehaviour
     {
         nullItem = -1,
         bomb = 0,
-        redItem = 1,
-        blueItem = 2
+        grapplingHook = 1,
     };
 }

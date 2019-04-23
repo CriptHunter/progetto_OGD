@@ -22,7 +22,7 @@ public class PickUpThrow : NetworkBehaviour
             pickedUpItem.GetComponent<Pickuppable>().Pickup();
         }
 
-        //se o un oggetto in mano e tengo premuto R --> entra in fase di mira
+        //se ho un oggetto in mano e tengo premuto R --> entra in fase di mira
         else if (pickedUpItemType >= 0 && Input.GetKey(KeyCode.R) && isLocalPlayer)
         {
             shootDirection = GetAimDirection();
@@ -69,10 +69,11 @@ public class PickUpThrow : NetworkBehaviour
             case EnumCollection.ItemType.bomb:
                 Cmd_ThrowBomb(shootDirection);
                 break;
-            case EnumCollection.ItemType.redItem:
+            case EnumCollection.ItemType.grapplingHook:
+                this.gameObject.AddComponent<GrapplingHook>();
+                this.gameObject.GetComponent<GrapplingHook>().Throw(this.gameObject.GetComponent<Rigidbody2D>() ,firePoint, shootDirection);
+                Destroy(this.gameObject.GetComponent<GrapplingHook>());
                 break;
-            case EnumCollection.ItemType.blueItem:
-                break;        
         }
         pickedUpItem.GetComponent<Pickuppable>().Cmd_Respawn(5);
         Cmd_RemoveAuthority(pickedUpItem.GetComponent<NetworkIdentity>(), this.GetComponent<NetworkIdentity>());

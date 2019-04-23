@@ -17,7 +17,6 @@ public class Bomb : NetworkBehaviour
     {
         rb = this.GetComponent<Rigidbody2D>();
         rb.velocity = direction * speed;
-        print(rb.velocity);
     }
 
     //aspetta n secondi, poi la bomba esplode
