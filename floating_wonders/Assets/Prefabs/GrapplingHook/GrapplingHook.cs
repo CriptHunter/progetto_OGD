@@ -4,26 +4,25 @@ using UnityEngine;
 
 public class GrapplingHook : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    DistanceJoint2D joint;
+    [SerializeField] private float maxDistance = 100f;
+    private RaycastHit2D hit;
+
+    private void Start()
     {
-        print("ho il rampino lmao");
+        joint = GetComponent<DistanceJoint2D>();
+        joint.enabled = false;
     }
 
-    // Update is called once per frame
-    void Update()
+    public void Throw(Transform firePoint, Vector2 direction)
     {
-        
-    }
-
-    public void Throw(Rigidbody2D playerRb, Transform firePoint, Vector2 direction)
-    {
-        RaycastHit2D hit = Physics2D.Raycast(firePoint.position, direction);
-;        if (hit.collider != null)
-        {
-            print(direction);
-            playerRb.velocity = direction * 50;
+        hit = Physics2D.Raycast(firePoint.position, direction, maxDistance);
+        if (hit.collider != null)
+        { 
+            print("colpito");
+            joint.enabled = true;
+            joint.connectedBody = hit.collider.gameObject.GetComponent<Rigidbody2D>();
+            joint.distance = Vector2.Distance(firePoint.position, hit.point);
         }
-
     }
 }

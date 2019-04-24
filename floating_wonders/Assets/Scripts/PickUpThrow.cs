@@ -68,16 +68,15 @@ public class PickUpThrow : NetworkBehaviour
         {
             case EnumCollection.ItemType.bomb:
                 Cmd_ThrowBomb(shootDirection);
+                pickedUpItem.GetComponent<Pickuppable>().Cmd_Respawn(5);
+                Cmd_RemoveAuthority(pickedUpItem.GetComponent<NetworkIdentity>(), this.GetComponent<NetworkIdentity>());
+                pickedUpItemType = EnumCollection.ItemType.nullItem;
                 break;
             case EnumCollection.ItemType.grapplingHook:
-                this.gameObject.AddComponent<GrapplingHook>();
-                this.gameObject.GetComponent<GrapplingHook>().Throw(this.gameObject.GetComponent<Rigidbody2D>() ,firePoint, shootDirection);
-                Destroy(this.gameObject.GetComponent<GrapplingHook>());
+                this.gameObject.GetComponent<GrapplingHook>().Throw(firePoint, shootDirection);
                 break;
         }
-        pickedUpItem.GetComponent<Pickuppable>().Cmd_Respawn(5);
-        Cmd_RemoveAuthority(pickedUpItem.GetComponent<NetworkIdentity>(), this.GetComponent<NetworkIdentity>());
-        pickedUpItemType = EnumCollection.ItemType.nullItem;
+
     }
 
     //restituisce un vettore 2D che va dal fire point al puntatore del mouse, usato per la direzione in cui lancio gli oggetti
