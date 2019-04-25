@@ -73,7 +73,7 @@ public class PickUpThrow : NetworkBehaviour
                 pickedUpItemType = EnumCollection.ItemType.nullItem;
                 break;
             case EnumCollection.ItemType.grapplingHook:
-                this.gameObject.GetComponent<GrapplingHook>().Throw(firePoint, shootDirection);
+                this.gameObject.GetComponent<GrapplingHook>().Throw(shootDirection);
                 break;
         }
 

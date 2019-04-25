@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 6276977268999153714}
   - component: {fileID: 7965833568959594905}
   - component: {fileID: 8880190770269621337}
-  - component: {fileID: 1938070175364931307}
+  - component: {fileID: 594316686862777863}
   m_Layer: 0
   m_Name: HookPoint
   m_TagString: HookPoint
@@ -129,7 +129,7 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 0.5
---- !u!50 &1938070175364931307
+--- !u!50 &594316686862777863
 Rigidbody2D:
   serializedVersion: 4
   m_ObjectHideFlags: 0
