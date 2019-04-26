@@ -1,8 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 
-public class GrapplingHook : MonoBehaviour
+public class GrapplingHook : NetworkBehaviour
 {
     [SerializeField] private Transform firePoint = null;
     [SerializeField] private LineRenderer line; //fune del rampino
@@ -24,12 +25,12 @@ public class GrapplingHook : MonoBehaviour
     {
         if (anchored)
         {
-            line.SetPosition(0, firePoint.position);
+            Cmd_DrawLine(true, firePoint.position, hit.point);
             if (joint.distance > breakDistance)
                 joint.distance = joint.distance - step;
             else
             {
-                line.enabled = false;
+                Cmd_DrawLine(false, firePoint.position, hit.point);
                 joint.enabled = false;
                 anchored = false;
             }
@@ -40,16 +41,27 @@ public class GrapplingHook : MonoBehaviour
     {
         hit = Physics2D.Raycast(firePoint.position, direction, maxDistance);
         if (hit.collider != null && hit.transform.gameObject.tag == "HookPoint")
-        { 
+        {
             anchored = true;
-
             joint.enabled = true;
             joint.connectedBody = hit.collider.gameObject.GetComponent<Rigidbody2D>();
             joint.distance = Vector2.Distance(firePoint.position, hit.point);
 
-            line.enabled = true;
-            line.SetPosition(0, firePoint.position);
-            line.SetPosition(1, hit.point);
+            Cmd_DrawLine(true, firePoint.position, hit.point);
         }
+    }
+
+    [Command]
+    private void Cmd_DrawLine(bool enabled, Vector3 start, Vector3 end)
+    {
+        Rpc_DrawLine(enabled, start, end);
+    }
+
+    [ClientRpc]
+    private void Rpc_DrawLine(bool enabled, Vector3 start, Vector3 end)
+    {
+        line.enabled = enabled;
+        line.SetPosition(0, start);
+        line.SetPosition(1, end);
     }
 }
