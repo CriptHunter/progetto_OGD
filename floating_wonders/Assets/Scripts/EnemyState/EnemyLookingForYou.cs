@@ -35,6 +35,7 @@ public class EnemyLookingForYou : MonoBehaviour
     void Start()
     {
         playerMask = LayerMask.NameToLayer("Player");
+        // Mask to not hit himself
         enemyMask = ~(1 << 10);
         startingSpeed = speed;
         groundMask = LayerMask.NameToLayer("Ground");
@@ -64,6 +65,8 @@ public class EnemyLookingForYou : MonoBehaviour
         Debug.DrawRay(transform.position, Vector2.left * sightDistance, Color.green);
 
     }
+
+
 
     private void Patrol()
     {
