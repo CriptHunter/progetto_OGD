@@ -4,26 +4,52 @@ using UnityEngine;
 
 public class GrapplingHook : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    [SerializeField] private Transform firePoint = null;
+    [SerializeField] private LineRenderer line; //fune del rampino
+    [SerializeField] private float maxDistance = 10f;  //massima distanza della fune del rampino
+    [SerializeField] private float breakDistance = 1f; //distanza minima dal punto di aggancio, se la distanza diventa minore il rampino si sgancia
+    [SerializeField] private float step = 0.2f; //di quanto si accorcia la corda ogni volta
+    private DistanceJoint2D joint; //linea che collega il giocatore con il punto di attacco
+    private RaycastHit2D hit;
+    private bool anchored; //true se il personaggio è attaccato con il rampino
+
+    private void Start()
     {
-        print("ho il rampino lmao");
+        joint = GetComponent<DistanceJoint2D>();
+        joint.enabled = false;
+        line.enabled = false;
     }
 
-    // Update is called once per frame
-    void Update()
+    public void Update()
     {
-        
-    }
-
-    public void Throw(Rigidbody2D playerRb, Transform firePoint, Vector2 direction)
-    {
-        RaycastHit2D hit = Physics2D.Raycast(firePoint.position, direction);
-;        if (hit.collider != null)
+        if (anchored)
         {
-            print(direction);
-            playerRb.velocity = direction * 50;
+            line.SetPosition(0, firePoint.position);
+            if (joint.distance > breakDistance)
+                joint.distance = joint.distance - step;
+            else
+            {
+                line.enabled = false;
+                joint.enabled = false;
+                anchored = false;
+            }
         }
+    }
 
+    public void Throw(Vector2 direction)
+    {
+        hit = Physics2D.Raycast(firePoint.position, direction, maxDistance);
+        if (hit.collider != null && hit.transform.gameObject.tag == "HookPoint")
+        { 
+            anchored = true;
+
+            joint.enabled = true;
+            joint.connectedBody = hit.collider.gameObject.GetComponent<Rigidbody2D>();
+            joint.distance = Vector2.Distance(firePoint.position, hit.point);
+
+            line.enabled = true;
+            line.SetPosition(0, firePoint.position);
+            line.SetPosition(1, hit.point);
+        }
     }
 }

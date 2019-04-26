@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 
-public class EnemyLookingForYou : NetworkBehaviour
+public class EnemyLookingForYou : MonoBehaviour
 {
     private PlayerController playerController;
     private float startingSpeed;
@@ -24,13 +24,34 @@ public class EnemyLookingForYou : NetworkBehaviour
 
     private LayerMask playerMask;
     private LayerMask enemyMask;
+    private LayerMask groundMask;
 
-    [SerializeField]
-    private bool untilEndPlatform;
+    //[SerializeField]
+    private bool untilEndPlatform = true;
 
-    [SerializeField]
-    private float moveDistance;
+    /*[SerializeField]
+    private float moveDistance;*/
 
+    void Start()
+    {
+        playerMask = LayerMask.NameToLayer("Player");
+        enemyMask = ~(1 << 10);
+        startingSpeed = speed;
+        groundMask = LayerMask.NameToLayer("Ground");
+    }
+
+
+    void Update()
+    {
+        //Instantiate ray to not fall and to see player
+        InstantiateRay();
+
+        //The enemy starts moving
+        Patrol();
+
+        AvoideFall();
+
+    }
 
     private void InstantiateRay()
     {
@@ -105,40 +126,26 @@ public class EnemyLookingForYou : NetworkBehaviour
         }
     }
 
-    void Start()
-    {
-        playerMask = LayerMask.NameToLayer("Player");
-        enemyMask = ~(1 << 10);
-        startingSpeed = speed;
-    }
-
-
-    void Update()
-    {
-        //Instantiate ray to not fall and to see player
-        InstantiateRay();
-
-        //The enemy starts moving
-        Patrol();
-
-        AvoideFall();
-
-    }
-
+ 
     // Sent when another object enters a trigger collider attached to this object
     void OnCollisionEnter2D(Collision2D collision)
     {
-        // If the enemy collide with an Enemy, hurt him and change direction
+        // If the enemy collide with a Player, hurt him and change direction
         if (collision.transform.gameObject.layer == playerMask)
         {
             Debug.Log("Collision with player");
             //Eventually damage the player
             ChangeDirection();
         }
+        else if (collision.transform.gameObject.layer != groundMask)
+        {
+            Debug.Log("Collision with something not player:" + collision.collider.name);
+
+            ChangeDirection();
+        }
         else
         {
-            Debug.Log("Collision with something (No player)");
-            ChangeDirection();
+            Debug.Log("Collision with Ground");
         }
     }
 

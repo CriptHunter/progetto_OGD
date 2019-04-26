@@ -5,7 +5,7 @@ using UnityEngine;
 public class EnemyOnlyShoot : MonoBehaviour
 {
     private RaycastHit2D enemyToPlayerHit;
-    private LayerMask mask;
+    private LayerMask playerMask;
     private LayerMask enemyMask;
 
     [SerializeField]
@@ -28,7 +28,7 @@ public class EnemyOnlyShoot : MonoBehaviour
     void Start()
     {
         // Take the number corresponding to the "Player" layer
-        mask = LayerMask.NameToLayer("Player");
+        playerMask = LayerMask.NameToLayer("Player");
         enemyMask = ~(1 << 10);
     }
 
@@ -47,7 +47,7 @@ public class EnemyOnlyShoot : MonoBehaviour
             enemyToPlayerVector = new Vector3((player.transform.position - transform.position).x, (player.transform.position - transform.position).y, 0);
 
             // If the raycast from enemy to player collide with a player, the enemy will shoot
-            if (enemyToPlayerHit.transform.gameObject.layer == mask)
+            if (enemyToPlayerHit.transform.gameObject.layer == playerMask)
             {
                 Debug.Log(enemyToPlayerHit.collider.name);
                 Debug.DrawRay(transform.position, player.transform.position - transform.position, Color.red);
