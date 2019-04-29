@@ -17,7 +17,6 @@ public class PickUpThrow : NetworkBehaviour
         if (pickUpAllowed && Input.GetKeyDown(KeyCode.E) && isLocalPlayer)
         {
             pickedUpItem = collidedObject;
-            //pickedUpItem.GetComponent<Pickuppable>().Pickup();
             Cmd_PickupItem(pickedUpItem);
         }
 
