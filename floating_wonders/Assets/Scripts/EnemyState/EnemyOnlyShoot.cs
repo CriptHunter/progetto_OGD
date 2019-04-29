@@ -29,11 +29,12 @@ public class EnemyOnlyShoot : MonoBehaviour
         // If the distance between enemy and player is less than sightSee 
         if (Vector2.Distance(transform.position, player.transform.position) <= sightSee)
         {
+           
             timer += Time.deltaTime;
             //raycast a cerchio, ritorna il primo oggetto colpito
             hit = Physics2D.CircleCast(transform.position, sightSee, Vector2.zero, enemyMask);
             // If the raycast from enemy to player collide with a player, the enemy will shoot
-            if (hit.collider != null && hit.transform.gameObject.GetComponent<AnotherCharacterInput>() != null)
+            if (hit.collider != null && hit.transform.gameObject.GetComponent<AnotherCharacterInput>() != null && hit.collider.gameObject.layer == playerMask)
             {
                 // Build new Vector3 from Enemy to Player. This is used to pass the initial player position in the bullet script
                 enemyToPlayerVector = hit.point - new Vector2(transform.position.x, transform.position.y);
