@@ -1,8 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 
-public class EnemyOnlyShoot : MonoBehaviour
+public class EnemyOnlyShoot : NetworkBehaviour
 {
     private RaycastHit2D hit;
     private LayerMask playerMask;
@@ -30,10 +31,23 @@ public class EnemyOnlyShoot : MonoBehaviour
         if (Vector2.Distance(transform.position, player.transform.position) <= sightSee)
         {
             timer += Time.deltaTime;
+<<<<<<< HEAD
             //raycast a cerchio, ritorna il primo oggetto colpito
             hit = Physics2D.CircleCast(transform.position, sightSee, Vector2.zero, enemyMask);
             // If the raycast from enemy to player collide with a player, the enemy will shoot
             if (hit.collider != null && hit.transform.gameObject.GetComponent<AnotherCharacterInput>() != null)
+=======
+            // Raycast between enemy and player
+            enemyToPlayerHit = Physics2D.Raycast(transform.position, player.transform.position - transform.position, sightSee, enemyMask);
+            Debug.DrawRay(transform.position, player.transform.position - transform.position, Color.green);
+            //Debug.Log(enemyToPlayerHit.collider.name);
+
+            // Build new Vector3 from Enemy to Player. This is used to pass the initial player position in the bullet script
+            enemyToPlayerVector = new Vector3((player.transform.position - transform.position).x, (player.transform.position - transform.position).y, 0);
+
+            // If the raycast from enemy to player collide with a player, the enemy will shoot
+            if (enemyToPlayerHit.collider != null && enemyToPlayerHit.transform.gameObject.layer == playerMask)
+>>>>>>> 7483013bba15aa0bfb598b805ad548604f90e852
             {
                 // Build new Vector3 from Enemy to Player. This is used to pass the initial player position in the bullet script
                 enemyToPlayerVector = hit.point - new Vector2(transform.position.x, transform.position.y);

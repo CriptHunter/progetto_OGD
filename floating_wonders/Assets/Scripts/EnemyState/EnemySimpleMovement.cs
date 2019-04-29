@@ -2,7 +2,7 @@
 using UnityEngine.Events;
 using UnityEngine.Networking;
 
-public class EnemySimpleMovement : MonoBehaviour
+public class EnemySimpleMovement : NetworkBehaviour
 {
     [SerializeField]
     private float speed;
