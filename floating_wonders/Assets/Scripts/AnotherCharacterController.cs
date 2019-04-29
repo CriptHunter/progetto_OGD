@@ -11,7 +11,9 @@ public class AnotherCharacterController : MonoBehaviour
     public float runAcceleration;
     public float runFriction;
     public float jumpForce;
+    public float climbSpeed;
     public LayerMask groundLayer;
+    public LayerMask climbableLayer;
 
     private CharacterEdgeGrab edgeGrabCollider;
     private float initialGravityScale;
@@ -25,6 +27,7 @@ public class AnotherCharacterController : MonoBehaviour
     private bool nearWallLeft = false;
     private bool nearWallRight = false;
     private bool grounded = false;
+    private bool nearCeiling = false;
     //private float groundedDist = 0f;
     private bool running = false;
     private float runDelay = 0;
@@ -115,6 +118,11 @@ public class AnotherCharacterController : MonoBehaviour
     private Verse targetEdgeVerse= Verse.None; // verso dal quale stai aggrappato
     private float dontGrabEdgeDelay = 0; // ritardo entro il quale non può richiappare un edge
 
+    private Climbable potentialClimbable; // se sei vicino a un climbable, reference del climbable altrimenti null
+    private Climbable targetClimbable; // se è attaccato a un climbable gameobject, altrimenti null
+    private bool climbUpRequest = false; // se è stata fatta richiesta di arrampicarsi su o giù
+    private bool climbDownRequest = false;
+
     // Start is called before the first frame update
     void Awake()
     {
@@ -147,20 +155,56 @@ public class AnotherCharacterController : MonoBehaviour
 
         if (Active)
         {
-            var edg = edgeGrabCollider.GetEdge();
-            if (edg != null && !IsDanglingFromEdge() && dontGrabEdgeDelay < speedThreshold)
+            if (!IsClimbing())
             {
-                if (rigidbody.velocity.y < 0.2f)
-                    GrabEdge(edg);
-            }
+                var edg = edgeGrabCollider.GetEdge();
+                if (edg != null && !IsDanglingFromEdge() && dontGrabEdgeDelay < speedThreshold)
+                {
+                    if (rigidbody.velocity.y < 0.2f)
+                        GrabEdge(edg);
+                }
 
-            if (IsDanglingFromEdge())
+                if (IsDanglingFromEdge())
+                {
+                    StickToEdge(targetEdge);
+                }
+            }
+            else
             {
-                StickToEdge(targetEdge);
+                if (!climbUpRequest && !climbDownRequest)
+                {
+                    //rigidbody.velocity = Vector2.zero;
+                }
+                else
+                {
+                    if (climbUpRequest)
+                    {
+                        Debug.Log("Climbing up");
+                        rigidbody.position = new Vector2(rigidbody.position.x, rigidbody.position.y + climbSpeed/50f);
+                        //rigidbody.velocity = Vector2.up * climbSpeed;
+                        climbUpRequest = false;
+                    }
+                    if (climbDownRequest)
+                    {
+                        rigidbody.position = new Vector2(rigidbody.position.x, rigidbody.position.y - climbSpeed/50f);
+                        //rigidbody.velocity = Vector2.down * climbSpeed;
+                        climbDownRequest = false;
+                    }
+                }
+            }
+        }
+        
+        CalculateProximity();
+
+        if (IsClimbing())
+        {
+            StickToClimbable(targetClimbable.gameObject);
+            if (grounded && !nearCeiling)
+            {
+                ReleaseClimbable();
             }
         }
 
-        CalculateProximity();
         CalculateSpeed(delta);
 
         if (!grounded)
@@ -202,11 +246,13 @@ public class AnotherCharacterController : MonoBehaviour
         }
 
         debug.text = "grounded: " + grounded + "\n" +
+                    "ceiling: " + nearCeiling + "\n" +
                     "dont stick: " + dontStickDelay + "\n" +
                     "wall left: " + nearWallLeft + "\n" +
                     "wall right: " + nearWallRight + "\n" +
                     "running: " + running + "\n" +
                     "speed: " + speed + "\n" +
+                    "climbing: " + targetClimbable + "\n" +
                     "dangling: " + IsDanglingFromEdge() + "\n";
     }
 
@@ -232,16 +278,26 @@ public class AnotherCharacterController : MonoBehaviour
     {
         if (Active)
         {
-            if (IsDanglingFromEdge())
+            if (IsClimbing())
             {
-                ReleaseEdge();
+                ReleaseClimbable();
+                Turn(verse.Opposite());
                 VerticalImpulse(jumpForce);
+                ApplyImpulse(verse.Angle(), 10f);
             }
             else
             {
-                if (grounded)
+                if (IsDanglingFromEdge())
                 {
+                    ReleaseEdge();
                     VerticalImpulse(jumpForce);
+                }
+                else
+                {
+                    if (grounded)
+                    {
+                        VerticalImpulse(jumpForce);
+                    }
                 }
             }
         }
@@ -267,11 +323,14 @@ public class AnotherCharacterController : MonoBehaviour
     /// <param name="verse">Direction to turn to</param>
     public void Turn(Verse verse)
     {
-        this.verse = verse;
-        transform.localScale = new Vector3((int)verse, 1, 1);
-        if (IsDanglingFromEdge() && targetEdgeVerse != verse)
+        if (!IsClimbing())
         {
-            ReleaseEdge();
+            this.verse = verse;
+            transform.localScale = new Vector3((int)verse, 1, 1);
+            if (IsDanglingFromEdge() && targetEdgeVerse != verse)
+            {
+                ReleaseEdge();
+            }
         }
     }
 
@@ -282,6 +341,12 @@ public class AnotherCharacterController : MonoBehaviour
             grounded = true;
         else
             grounded = false;
+
+        hit = Physics2D.CapsuleCast(collider.bounds.center, collider.bounds.size, collider.direction, 0, Vector2.up, 0.1f, groundLayer);
+        if (hit.collider != null)
+            nearCeiling = true;
+        else
+            nearCeiling = false;
 
         hit = Physics2D.CapsuleCast(collider.bounds.center, collider.bounds.size - new Vector3(0, 0.1f, 0), collider.direction, 0, new Vector2(1, 2), 0.05f, groundLayer);
         if (hit.collider != null)
@@ -294,6 +359,12 @@ public class AnotherCharacterController : MonoBehaviour
             nearWallLeft = true;
         else
             nearWallLeft = false;
+
+        hit = Physics2D.CapsuleCast(collider.bounds.center, collider.bounds.size - new Vector3(0, 0.1f, 0), collider.direction, 0, Vector2.one, 0.0f, climbableLayer);
+        if (hit.collider != null)
+            potentialClimbable = hit.collider.gameObject.GetComponent<Climbable>();
+        else
+            potentialClimbable = null;
     }
 
     public bool IsDanglingFromEdge()
@@ -305,15 +376,18 @@ public class AnotherCharacterController : MonoBehaviour
     {
         if (Active)
         {
-            if (!IsDanglingFromEdge())
+            if (!IsClimbing())
             {
-                Turn(edge.GetComponent<EdgeProperties>().EdgeVerse);
-                targetEdgeVerse = verse;
+                if (!IsDanglingFromEdge())
+                {
+                    Turn(edge.GetComponent<EdgeProperties>().EdgeVerse);
+                    targetEdgeVerse = verse;
 
-                targetEdge = edge;
-                PhysicsActive = false;
-                //StickToEdge(edge);
-                rigidbody.velocity = Vector2.zero;
+                    targetEdge = edge;
+                    PhysicsActive = false;
+                    //StickToEdge(edge);
+                    rigidbody.velocity = Vector2.zero;
+                }
             }
         }
     }
@@ -337,46 +411,115 @@ public class AnotherCharacterController : MonoBehaviour
         }
     }
 
+    public bool GrabClimbable()
+    {
+        if (Active)
+        {
+            if (potentialClimbable != null && !grounded)
+            {
+                ReleaseEdge();
+                PhysicsActive = false;
+                targetClimbable = potentialClimbable;
+                StickToClimbable(targetClimbable.gameObject);
+                rigidbody.velocity = Vector2.zero;
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        return false;
+    }
+
+    public void ClimbUp()
+    {
+        if (IsClimbing())
+            climbUpRequest = true;
+    }
+
+    public void ClimbDown()
+    {
+        if (IsClimbing())
+            climbDownRequest = true;
+    }
+
+    private void StickToClimbable(GameObject climbable)
+    {
+        if (Active)
+        {
+            BoxCollider2D box = climbable.GetComponent<BoxCollider2D>();
+            rigidbody.position = new Vector2(climbable.transform.position.x - 0.5f * (int)verse, Mathf.Clamp(rigidbody.position.y, box.bounds.center.y - box.bounds.extents.y, box.bounds.center.y + box.bounds.extents.y));
+        }
+    }
+
+    public void ReleaseClimbable()
+    {
+        if (IsClimbing())
+        {
+            if (Active)
+            {
+                PhysicsActive = true;
+            }
+            targetClimbable = null;
+            climbUpRequest = false;
+            climbDownRequest = false;
+        }
+    }
+
+    public bool IsClimbing()
+    {
+        return targetClimbable != null;
+    }
+
     private void CalculateSpeed(float delta)
     {
         if (Active)
         {
-            if (!IsDanglingFromEdge())
+            if (!IsClimbing())
             {
-                if (running)
+                if (!IsDanglingFromEdge())
                 {
-                    if (verse == Verse.Left)
+                    if (running)
                     {
-                        speed = Mathf.Max(speed - runAcceleration * delta - (speed > 0 ? runFriction * delta : 0), -runSpeed);
+                        if (verse == Verse.Left)
+                        {
+                            speed = Mathf.Max(speed - runAcceleration * delta - (speed > 0 ? runFriction * delta : 0), -runSpeed);
+                        }
+                        if (verse == Verse.Right)
+                        {
+                            speed = Mathf.Min(speed + runAcceleration * delta + (speed < 0 ? runFriction * delta : 0), runSpeed);
+                        }
                     }
-                    if (verse == Verse.Right)
+                    else
                     {
-                        speed = Mathf.Min(speed + runAcceleration * delta + (speed < 0 ? runFriction * delta : 0), runSpeed);
+                        if (speed > speedThreshold)
+                        {
+                            speed = speed - runFriction * delta;
+                            if (speed <= speedThreshold)
+                                speed = 0;
+                        }
+                        if (speed < -speedThreshold)
+                        {
+                            speed = speed + runFriction * delta;
+                            if (speed >= speedThreshold)
+                                speed = 0;
+                        }
+                    }
+
+                    if (nearWallLeft && speed + impulseHSpeed < -speedThreshold)
+                    {
+                        speed = 0;
+                        impulseHSpeed = 0;
+                    }
+
+                    if (nearWallRight && speed + impulseHSpeed > speedThreshold)
+                    {
+                        speed = 0;
+                        impulseHSpeed = 0;
                     }
                 }
                 else
-                {
-                    if (speed > speedThreshold)
-                    {
-                        speed = speed - runFriction * delta;
-                        if (speed <= speedThreshold)
-                            speed = 0;
-                    }
-                    if (speed < -speedThreshold)
-                    {
-                        speed = speed + runFriction * delta;
-                        if (speed >= speedThreshold)
-                            speed = 0;
-                    }
-                }
-
-                if (nearWallLeft && speed + impulseHSpeed < -speedThreshold)
-                {
-                    speed = 0;
-                    impulseHSpeed = 0;
-                }
-
-                if (nearWallRight && speed + impulseHSpeed > speedThreshold)
                 {
                     speed = 0;
                     impulseHSpeed = 0;
@@ -443,14 +586,8 @@ public class AnotherCharacterController : MonoBehaviour
         return verse;
     }
 
-}
-
-/// <summary>
-/// List of possible directions for the character.
-/// </summary>
-public enum Verse:int
-{
-    Left=-1,
-    None=0,
-    Right=1,
+    public bool IsTouchingGround()
+    {
+        return grounded;
+    }
 }

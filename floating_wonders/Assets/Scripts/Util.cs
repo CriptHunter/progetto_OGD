@@ -930,4 +930,28 @@ public static class Util
     {
         return Physics2D.BoxCast(collider.bounds.center, collider.bounds.size, collider.gameObject.transform.rotation.z, Vector2.one, 0f, layerMask);
     }
+
+    public static Verse Opposite(this Verse verse)
+    {
+        if (verse == Verse.Left) return Verse.Right;
+        if (verse == Verse.Right) return Verse.Left;
+        return Verse.None;
+    }
+
+    public static float Angle(this Verse verse)
+    {
+        if (verse == Verse.Left) return 180f;
+        if (verse == Verse.Right) return 0f;
+        return 90f;
+    }
+}
+
+/// <summary>
+/// List of possible directions for left/right.
+/// </summary>
+public enum Verse : int
+{
+    Left = -1,
+    None = 0,
+    Right = 1,
 }

@@ -16,36 +16,35 @@ public class AnotherCharacterInput : MonoBehaviour
     void Update()
     {
         Verse move = Verse.None;
-        //se il giocatore vuole saltare
-        bool jump = false;
 
         if (Input.GetKey(KeyCode.A))
             move = Verse.Left;
         else if (Input.GetKey(KeyCode.D))
             move = Verse.Right;
+
         if (Input.GetKeyDown(KeyCode.W))
-            jump = true;
-        if (Input.GetKeyDown(KeyCode.S))
         {
-            if (cc.Active)
+            if (cc.IsTouchingGround() || cc.IsDanglingFromEdge())
             {
-                cc.Deactivate(true);
+                cc.Jump();
             }
             else
             {
-                cc.Activate(true);
+                if (!cc.IsClimbing())
+                    cc.GrabClimbable();
             }
         }
+
+        if (Input.GetKey(KeyCode.W))
+            cc.ClimbUp();
+        else if (Input.GetKey(KeyCode.S))
+            cc.ClimbDown();
+
 
         if (move != Verse.None)
         {
             cc.Turn(move);
             cc.Run();
-        }
-
-        if (jump)
-        {
-            cc.Jump();
         }
     }
 }
