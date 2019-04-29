@@ -59,6 +59,36 @@ public class AnotherCharacterController : MonoBehaviour
         }
     }
 
+    public void Activate(bool keepMomentum)
+    {
+        float len=0, dir=0;
+        if (keepMomentum)
+        {
+            dir = rigidbody.velocity.GetAngle();
+            len = rigidbody.velocity.magnitude;
+        }
+        Active = true;
+
+        if (keepMomentum)
+        {
+            ApplyImpulse(dir, len);
+        }
+    }
+
+    public void Deactivate(bool keepMomentum)
+    {
+        Vector2 vel = Vector2.zero;
+        if (keepMomentum)
+        {
+            vel = rigidbody.velocity;
+        }
+        Active = false;
+        if (keepMomentum)
+        {
+            rigidbody.velocity = vel;
+        }
+    }
+
     private bool physicsActive = true; // se la fisica normale del movimento è attiva
     private bool PhysicsActive
     {

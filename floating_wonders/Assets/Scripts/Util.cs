@@ -198,7 +198,7 @@ public static class Util
     public static float LengthDirY(float len, float dir)
     {
         float ang = DegreeToRadian(-dir);
-        return -Mathf.Sin(ang) * len;
+        return Mathf.Sin(ang) * len;
     }
 
     public static bool RectangleOverlapsCircle(float x1, float y1, float x2, float y2,
@@ -899,6 +899,11 @@ public static class Util
         }
         s = cmax == 0 ? 0 : d / cmax;
         v = cmax;
+    }
+
+    public static float GetAngle(this Vector2 vector)
+    {
+        return PointDirection(0, 0, vector.x, vector.y);
     }
 
     public static Vector2 RadianToVector2(float radian)
