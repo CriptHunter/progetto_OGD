@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 
-public class EnemyLookingForYou : MonoBehaviour
+public class EnemyLookingForYou : NetworkBehaviour
 {
     private PlayerController playerController;
     private float startingSpeed;
@@ -65,8 +65,6 @@ public class EnemyLookingForYou : MonoBehaviour
         Debug.DrawRay(transform.position, Vector2.left * sightDistance, Color.green);
 
     }
-
-
 
     private void Patrol()
     {

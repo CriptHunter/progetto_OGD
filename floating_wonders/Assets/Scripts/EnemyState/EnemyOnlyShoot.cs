@@ -1,8 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 
-public class EnemyOnlyShoot : MonoBehaviour
+public class EnemyOnlyShoot : NetworkBehaviour
 {
     private RaycastHit2D enemyToPlayerHit;
     private LayerMask playerMask;
@@ -41,13 +42,13 @@ public class EnemyOnlyShoot : MonoBehaviour
             // Raycast between enemy and player
             enemyToPlayerHit = Physics2D.Raycast(transform.position, player.transform.position - transform.position, sightSee, enemyMask);
             Debug.DrawRay(transform.position, player.transform.position - transform.position, Color.green);
-            Debug.Log(enemyToPlayerHit.collider.name);
+            //Debug.Log(enemyToPlayerHit.collider.name);
 
             // Build new Vector3 from Enemy to Player. This is used to pass the initial player position in the bullet script
             enemyToPlayerVector = new Vector3((player.transform.position - transform.position).x, (player.transform.position - transform.position).y, 0);
 
             // If the raycast from enemy to player collide with a player, the enemy will shoot
-            if (enemyToPlayerHit.transform.gameObject.layer == playerMask)
+            if (enemyToPlayerHit.collider != null && enemyToPlayerHit.transform.gameObject.layer == playerMask)
             {
                 Debug.Log(enemyToPlayerHit.collider.name);
                 Debug.DrawRay(transform.position, player.transform.position - transform.position, Color.red);

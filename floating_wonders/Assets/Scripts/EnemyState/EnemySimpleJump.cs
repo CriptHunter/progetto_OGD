@@ -1,8 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 
-public class EnemySimpleJump : MonoBehaviour
+public class EnemySimpleJump : NetworkBehaviour
 {
     public float speed;
     public float distance;
