@@ -6,7 +6,6 @@ public class PickUpThrow : NetworkBehaviour
 {
     private bool pickUpAllowed; //true quando il giocatore è in contatto con un oggetto che si può raccogliere
     private GameObject collidedObject; //con quale gameobject il giocatore è entrato in contatto
-    private EnumCollection.ItemType pickedUpItemType = EnumCollection.ItemType.nullItem; //che tipo è stato raccolto, -1 --> nessun oggetto
     private GameObject pickedUpItem = null; //quale oggetto è stato raccolto
     private Vector2 shootDirection; //vettore che indica in quale direzione vado a lanciare l'oggetto
     [SerializeField] private Transform firePoint = null; // da quale punto usa l'oggetto
@@ -17,23 +16,23 @@ public class PickUpThrow : NetworkBehaviour
         //se posso raccogliere qualcosa e premo E --> raccoglie oggetto
         if (pickUpAllowed && Input.GetKeyDown(KeyCode.E) && isLocalPlayer)
         {
-            pickedUpItemType = collidedObject.GetComponent<Pickuppable>().Type;
             pickedUpItem = collidedObject;
-            pickedUpItem.GetComponent<Pickuppable>().Pickup();
+            //pickedUpItem.GetComponent<Pickuppable>().Pickup();
+            Cmd_PickupItem(pickedUpItem);
         }
 
         //se ho un oggetto in mano e tengo premuto R --> entra in fase di mira
-        else if (pickedUpItemType >= 0 && Input.GetKey(KeyCode.R) && isLocalPlayer)
+        else if (pickedUpItem != null && Input.GetKey(KeyCode.R) && isLocalPlayer)
         {
             shootDirection = GetAimDirection();
             RotateArrowPointer(shootDirection);
         }
 
         //quando rilascio R --> usa l'oggetto se l'angolazione è valida
-        else if (pickedUpItemType >= 0 && Input.GetKeyUp(KeyCode.R) && isLocalPlayer)
+        else if (pickedUpItem != null && Input.GetKeyUp(KeyCode.R) && isLocalPlayer)
         {
             //se lo sprite della freccia per mirare è visibile allora l'angolo è tra -90 e 90
-            if(firePoint.GetComponent<SpriteRenderer>().enabled)
+            if (firePoint.GetComponent<SpriteRenderer>().enabled)
                 useItem();
             firePoint.GetComponent<SpriteRenderer>().enabled = false;
         }
@@ -43,11 +42,11 @@ public class PickUpThrow : NetworkBehaviour
     private void OnTriggerEnter2D(Collider2D collision)
     {
         //se collido con un oggetto che si può raccogliere, sono il local player e non ho oggetti in mano ---> posso raccogliere
-        if (collision.gameObject.GetComponent<Pickuppable>() != null && isLocalPlayer && pickedUpItemType == EnumCollection.ItemType.nullItem)
+        if (collision.gameObject.GetComponent<Pickuppable>() != null && isLocalPlayer && pickedUpItem == null)
         {
             pickUpAllowed = true;
             collidedObject = collision.gameObject;
-            Cmd_SetAuthority(collidedObject.GetComponent<NetworkIdentity>(), this.GetComponent<NetworkIdentity>());
+            //Cmd_SetAuthority(collidedObject.GetComponent<NetworkIdentity>(), this.GetComponent<NetworkIdentity>());
         }
     }
 
@@ -64,13 +63,12 @@ public class PickUpThrow : NetworkBehaviour
     //usa l'oggetto equipaggiato
     private void useItem()
     {
-        switch (pickedUpItemType)
+        switch (pickedUpItem.GetComponent<Pickuppable>().Type)
         {
             case EnumCollection.ItemType.bomb:
                 Cmd_ThrowBomb(shootDirection);
-                pickedUpItem.GetComponent<Pickuppable>().Cmd_Respawn(5);
-                Cmd_RemoveAuthority(pickedUpItem.GetComponent<NetworkIdentity>(), this.GetComponent<NetworkIdentity>());
-                pickedUpItemType = EnumCollection.ItemType.nullItem;
+                Cmd_Respawn(pickedUpItem, 3);
+                pickedUpItem = null;
                 break;
             case EnumCollection.ItemType.grapplingHook:
                 this.gameObject.GetComponent<GrapplingHook>().Throw(shootDirection);
@@ -99,7 +97,7 @@ public class PickUpThrow : NetworkBehaviour
         if (GetComponent<AnotherCharacterController>().GetVerse() == Verse.Right)
             angle = Vector2.SignedAngle(shootDirection, transform.right);
         //se il personaggio è girato verso sinistra
-        else if(GetComponent<AnotherCharacterController>().GetVerse() == Verse.Left)
+        else if (GetComponent<AnotherCharacterController>().GetVerse() == Verse.Left)
             angle = Vector2.SignedAngle(shootDirection, -transform.right);
         angle = -angle;
         //ruoto la freccia sull'asse Z di un valore pari all'angolo
@@ -115,23 +113,21 @@ public class PickUpThrow : NetworkBehaviour
     [Command]
     private void Cmd_ThrowBomb(Vector2 shootDirection)
     {
-        GameObject obj = (GameObject)Instantiate(bombRBPrefab, firePoint.position, firePoint.rotation);
+        //quaternion.identity è rotazione pari a 0,0,0
+        GameObject obj = (GameObject)Instantiate(bombRBPrefab, firePoint.position, Quaternion.identity);
         NetworkServer.Spawn(obj);
         obj.GetComponent<Bomb>().AddVelocity(shootDirection);
     }
 
-    //i client non possono chiamare command su oggetti di cui non hanno l'autority
-    //questo metodo assegna l'autority (toglierla quando si ha finito di usare l'oggetto)
-    //nel network manager va spuntata una roba sul local player
     [Command]
-    void Cmd_SetAuthority(NetworkIdentity item, NetworkIdentity player)
+    private void Cmd_PickupItem(GameObject item)
     {
-        bool b = item.AssignClientAuthority(player.connectionToClient);
+        item.GetComponent<Pickuppable>().Pickup();
     }
 
     [Command]
-    void Cmd_RemoveAuthority(NetworkIdentity item, NetworkIdentity player)
+    private void Cmd_Respawn(GameObject item, int respawnTime)
     {
-        bool b = item.RemoveClientAuthority(player.connectionToClient);
+        item.GetComponent<Pickuppable>().Cmd_Respawn(respawnTime);
     }
 }

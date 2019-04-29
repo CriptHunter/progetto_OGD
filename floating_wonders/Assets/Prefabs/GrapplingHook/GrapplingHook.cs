@@ -39,6 +39,7 @@ public class GrapplingHook : NetworkBehaviour
 
     public void Throw(Vector2 direction)
     {
+        print(direction);
         hit = Physics2D.Raycast(firePoint.position, direction, maxDistance);
         if (hit.collider != null && hit.transform.gameObject.tag == "HookPoint")
         {
@@ -46,7 +47,6 @@ public class GrapplingHook : NetworkBehaviour
             joint.enabled = true;
             joint.connectedBody = hit.collider.gameObject.GetComponent<Rigidbody2D>();
             joint.distance = Vector2.Distance(firePoint.position, hit.point);
-
             Cmd_DrawLine(true, firePoint.position, hit.point);
         }
     }
