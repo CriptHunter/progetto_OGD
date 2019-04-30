@@ -198,7 +198,7 @@ public static class Util
     public static float LengthDirY(float len, float dir)
     {
         float ang = DegreeToRadian(-dir);
-        return Mathf.Sin(ang) * len;
+        return -Mathf.Sin(ang) * len;
     }
 
     public static bool RectangleOverlapsCircle(float x1, float y1, float x2, float y2,
@@ -943,6 +943,13 @@ public static class Util
         if (verse == Verse.Left) return 180f;
         if (verse == Verse.Right) return 0f;
         return 90f;
+    }
+
+    public static Vector2 Vector(this Verse verse)
+    {
+        if (verse == Verse.Left) return Vector2.left;
+        if (verse == Verse.Right) return Vector2.right;
+        return Vector2.up;
     }
 }
 

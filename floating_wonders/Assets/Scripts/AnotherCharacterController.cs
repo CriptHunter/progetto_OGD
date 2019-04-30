@@ -54,6 +54,7 @@ public class AnotherCharacterController : MonoBehaviour
             {
                 PhysicsActive = false;
                 ReleaseEdge();
+                ReleaseClimbable();
             }
             else
             {
@@ -173,21 +174,20 @@ public class AnotherCharacterController : MonoBehaviour
             {
                 if (!climbUpRequest && !climbDownRequest)
                 {
-                    //rigidbody.velocity = Vector2.zero;
+                    rigidbody.velocity = Vector2.zero;
                 }
                 else
                 {
                     if (climbUpRequest)
                     {
-                        Debug.Log("Climbing up");
-                        rigidbody.position = new Vector2(rigidbody.position.x, rigidbody.position.y + climbSpeed/50f);
-                        //rigidbody.velocity = Vector2.up * climbSpeed;
+                        //rigidbody.position = new Vector2(rigidbody.position.x, rigidbody.position.y + climbSpeed/50f);
+                        rigidbody.velocity = Vector2.up * climbSpeed;
                         climbUpRequest = false;
                     }
                     if (climbDownRequest)
                     {
-                        rigidbody.position = new Vector2(rigidbody.position.x, rigidbody.position.y - climbSpeed/50f);
-                        //rigidbody.velocity = Vector2.down * climbSpeed;
+                        //rigidbody.position = new Vector2(rigidbody.position.x, rigidbody.position.y - climbSpeed/50f);
+                        rigidbody.velocity = Vector2.down * climbSpeed;
                         climbDownRequest = false;
                     }
                 }
@@ -245,8 +245,11 @@ public class AnotherCharacterController : MonoBehaviour
             StopRunning();
         }
 
+        RaycastHit2D hit = Physics2D.CapsuleCast(collider.bounds.center, collider.bounds.size, collider.direction, 0, verse.Vector(), 0.99f, groundLayer);
+        bool spazio = hit.collider == null;
         debug.text = "grounded: " + grounded + "\n" +
                     "ceiling: " + nearCeiling + "\n" +
+                    "spazio di fronte: " + spazio + "\n" +
                     "dont stick: " + dontStickDelay + "\n" +
                     "wall left: " + nearWallLeft + "\n" +
                     "wall right: " + nearWallRight + "\n" +
@@ -262,8 +265,11 @@ public class AnotherCharacterController : MonoBehaviour
     /// </summary>
     public void Run()
     {
-        running = true;
-        runDelay = 0.05f;
+        if (Active && !IsDanglingFromEdge() && !IsClimbing())
+        {
+            running = true;
+            runDelay = 0.05f;
+        }
     }
 
     private void StopRunning()
@@ -282,8 +288,12 @@ public class AnotherCharacterController : MonoBehaviour
             {
                 ReleaseClimbable();
                 Turn(verse.Opposite());
-                VerticalImpulse(jumpForce);
-                ApplyImpulse(verse.Angle(), 10f);
+                //VerticalImpulse(jumpForce*10);
+                if (verse == Verse.Left)
+                    ApplyImpulse(90+25f, 17f);
+                else
+                    ApplyImpulse(90-25f, 17f);
+                //ApplyImpulse(verse.Angle(), 10f);
             }
             else
             {
@@ -316,12 +326,12 @@ public class AnotherCharacterController : MonoBehaviour
             rigidbody.AddForce(new Vector2(0, strength), ForceMode2D.Impulse);
         }
     }
-
     /// <summary>
-    /// Commands the character to turn to the specified direction.
+    /// Commands the character to turn to the specified direction. (The direction it will look at)
     /// </summary>
     /// <param name="verse">Direction to turn to</param>
-    public void Turn(Verse verse)
+    /// <returns>false if for some reason you couldn't turn, true otherwise</returns>
+    public bool Turn(Verse verse)
     {
         if (!IsClimbing())
         {
@@ -330,6 +340,31 @@ public class AnotherCharacterController : MonoBehaviour
             if (IsDanglingFromEdge() && targetEdgeVerse != verse)
             {
                 ReleaseEdge();
+            }
+            return true;
+        }
+        else
+        {
+            if (verse != this.verse)
+            {
+                // girati solo se c'è spazio
+                // per qualche motivo ci va l'opposite
+                RaycastHit2D hit = Physics2D.CapsuleCast(collider.bounds.center, collider.bounds.size, collider.direction, 0, verse.Opposite().Vector(), 0.99f, groundLayer);
+                //Debug.Log("provo a girarmi, il collider è " + hit.collider);
+                if (hit.collider == null)
+                {
+                    this.verse = verse;
+                    transform.localScale = new Vector3((int)verse, 1, 1);
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                return true;
             }
         }
     }
@@ -398,7 +433,7 @@ public class AnotherCharacterController : MonoBehaviour
             rigidbody.position = edge.transform.position - (new Vector3(edgeGrabCollider.gameObject.transform.localPosition.x * (int)targetEdge.GetComponent<EdgeProperties>().EdgeVerse, edgeGrabCollider.gameObject.transform.localPosition.y, edgeGrabCollider.gameObject.transform.localPosition.z));
     }
 
-    private void ReleaseEdge()
+    public void ReleaseEdge()
     {
         if (IsDanglingFromEdge())
         {
@@ -420,6 +455,14 @@ public class AnotherCharacterController : MonoBehaviour
                 ReleaseEdge();
                 PhysicsActive = false;
                 targetClimbable = potentialClimbable;
+                if (rigidbody.position.x > targetClimbable.gameObject.transform.position.x)
+                {
+                    Turn(Verse.Left);
+                }
+                else
+                {
+                    Turn(Verse.Right);
+                }
                 StickToClimbable(targetClimbable.gameObject);
                 rigidbody.velocity = Vector2.zero;
                 return true;
@@ -451,6 +494,26 @@ public class AnotherCharacterController : MonoBehaviour
             BoxCollider2D box = climbable.GetComponent<BoxCollider2D>();
             rigidbody.position = new Vector2(climbable.transform.position.x - 0.5f * (int)verse, Mathf.Clamp(rigidbody.position.y, box.bounds.center.y - box.bounds.extents.y, box.bounds.center.y + box.bounds.extents.y));
         }
+    }
+
+    public bool IsNearTopClimbable()
+    {
+        if (IsClimbing())
+        {
+            BoxCollider2D box = targetClimbable.GetComponent<BoxCollider2D>();
+            return (rigidbody.position.y > box.bounds.center.y + box.bounds.extents.y - 0.2f);
+        }
+        else return false;
+    }
+
+    public bool IsNearBottomClimbable()
+    {
+        if (IsClimbing())
+        {
+            BoxCollider2D box = targetClimbable.GetComponent<BoxCollider2D>();
+            return (rigidbody.position.y < box.bounds.center.y - box.bounds.extents.y + 0.2f);
+        }
+        else return false;
     }
 
     public void ReleaseClimbable()

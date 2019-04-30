@@ -22,29 +22,87 @@ public class AnotherCharacterInput : MonoBehaviour
         else if (Input.GetKey(KeyCode.D))
             move = Verse.Right;
 
-        if (Input.GetKeyDown(KeyCode.W))
+
+        if (cc.IsClimbing())
         {
-            if (cc.IsTouchingGround() || cc.IsDanglingFromEdge())
+            if (Input.GetKeyDown(KeyCode.W))
             {
-                cc.Jump();
+                if (cc.IsNearTopClimbable())
+                {
+                    cc.Jump();
+                }
             }
-            else
+            if (Input.GetKeyDown(KeyCode.S))
             {
-                if (!cc.IsClimbing())
-                    cc.GrabClimbable();
+                if (cc.IsNearBottomClimbable())
+                {
+                    cc.ReleaseClimbable();
+                }
+            }
+
+            if (Input.GetKey(KeyCode.W))
+                cc.ClimbUp();
+            else if (Input.GetKey(KeyCode.S))
+                cc.ClimbDown();
+
+            if (Input.GetKeyDown(KeyCode.A))
+            {
+                if (cc.GetVerse() != Verse.Right)
+                    cc.Turn(Verse.Right);
+                else
+                {
+                    if (Input.GetKey(KeyCode.W))
+                        cc.Jump();
+                    else
+                        cc.ReleaseClimbable();
+                }
+            }
+
+            if (Input.GetKeyDown(KeyCode.D))
+            {
+                if (cc.GetVerse() != Verse.Left)
+                    cc.Turn(Verse.Left);
+                else
+                {
+                    if (Input.GetKey(KeyCode.W))
+                        cc.Jump();
+                    else
+                        cc.ReleaseClimbable();
+                }
             }
         }
+        else
+        {
+            if (Input.GetKeyDown(KeyCode.W))
+            {
+                if (cc.IsTouchingGround() || cc.IsDanglingFromEdge())
+                {
+                    cc.Jump();
+                }
+                else
+                {
+                    if (!cc.IsClimbing())
+                        cc.GrabClimbable();
+                }
+            }
 
-        if (Input.GetKey(KeyCode.W))
-            cc.ClimbUp();
-        else if (Input.GetKey(KeyCode.S))
-            cc.ClimbDown();
+            if (Input.GetKeyDown(KeyCode.S))
+            {
+                if (cc.IsDanglingFromEdge())
+                {
+                    cc.ReleaseEdge();
+                }
+            }
+        }
 
 
         if (move != Verse.None)
         {
-            cc.Turn(move);
-            cc.Run();
+            if (!cc.IsClimbing())
+            {
+                cc.Turn(move);
+                cc.Run();
+            }
         }
     }
 }
