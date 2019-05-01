@@ -135,7 +135,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2945835196862302359}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.04, y: 1.56, z: -0.019064063}
+  m_LocalPosition: {x: 0.57, y: 0.7, z: -0.019064063}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4165673635756170396}
@@ -204,6 +204,7 @@ GameObject:
   - component: {fileID: 1045573049541129487}
   - component: {fileID: 2697727369893357687}
   - component: {fileID: 5299050778706221785}
+  - component: {fileID: 4072665338872741759}
   m_Layer: 9
   m_Name: Character
   m_TagString: Player
@@ -310,8 +311,8 @@ CapsuleCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
-  m_Size: {x: 1, y: 1}
+  m_Offset: {x: -0.0054438114, y: 0.24496865}
+  m_Size: {x: 1.2068624, y: 1.6532497}
   m_Direction: 0
 --- !u!114 &6079352028896656040
 MonoBehaviour:
@@ -400,9 +401,13 @@ MonoBehaviour:
   runAcceleration: 60
   runFriction: 50
   jumpForce: 20
+  climbSpeed: 0
   groundLayer:
     serializedVersion: 2
     m_Bits: 256
+  climbableLayer:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!114 &5839714348939639127
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -487,6 +492,19 @@ MonoBehaviour:
   maxDistance: 50
   breakDistance: 0.5
   step: 0.4
+--- !u!114 &4072665338872741759
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4165673635756170399}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 115333f226e79054f977c9199c0fd8dd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  type: 2
 --- !u!1 &5087045257302793634
 GameObject:
   m_ObjectHideFlags: 0

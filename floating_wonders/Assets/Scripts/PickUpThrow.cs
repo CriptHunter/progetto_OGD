@@ -45,12 +45,30 @@ public class PickUpThrow : NetworkBehaviour
         {
             pickUpAllowed = true;
             collidedObject = collision.gameObject;
-            //Cmd_SetAuthority(collidedObject.GetComponent<NetworkIdentity>(), this.GetComponent<NetworkIdentity>());
         }
     }
 
     //quando il giocatore esce dall'area di collisione
     private void OnTriggerExit2D(Collider2D collision)
+    {
+        if (collision.gameObject.GetComponent<Pickuppable>() != null && isLocalPlayer)
+        {
+            pickUpAllowed = false;
+            collidedObject = null;
+        }
+    }
+
+    //se un giocatore entra in collisione con un altro
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.GetComponent<Pickuppable>() != null && isLocalPlayer)
+        {
+            pickUpAllowed = true;
+            collidedObject = collision.gameObject;
+        }
+    }
+
+    private void OnCollisionExit2D(Collision2D collision)
     {
         if (collision.gameObject.GetComponent<Pickuppable>() != null && isLocalPlayer)
         {
@@ -71,6 +89,9 @@ public class PickUpThrow : NetworkBehaviour
                 break;
             case EnumCollection.ItemType.grapplingHook:
                 this.gameObject.GetComponent<GrapplingHook>().Throw(shootDirection);
+                break;
+            case EnumCollection.ItemType.player:
+                Cmd_Respawn(pickedUpItem, 3);
                 break;
         }
 

@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 7336404918646195811}
   - component: {fileID: 3985151813099113458}
   - component: {fileID: 7241368754283227799}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: GrapplingHookPickuppable
   m_TagString: Untagged
   m_Icon: {fileID: 0}

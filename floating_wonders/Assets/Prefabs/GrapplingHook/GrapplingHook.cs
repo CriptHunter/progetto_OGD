@@ -31,6 +31,7 @@ public class GrapplingHook : NetworkBehaviour
             else
             {
                 Cmd_DrawLine(false, firePoint.position, hit.point);
+                this.gameObject.GetComponent<AnotherCharacterController>().Activate(true);
                 joint.enabled = false;
                 anchored = false;
             }
@@ -47,6 +48,7 @@ public class GrapplingHook : NetworkBehaviour
             joint.enabled = true;
             joint.connectedBody = hit.collider.gameObject.GetComponent<Rigidbody2D>();
             joint.distance = Vector2.Distance(firePoint.position, hit.point);
+            this.gameObject.GetComponent<AnotherCharacterController>().Deactivate(true);
             Cmd_DrawLine(true, firePoint.position, hit.point);
         }
     }

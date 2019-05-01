@@ -37,6 +37,7 @@ public class Pickuppable : NetworkBehaviour
     [ClientRpc]
     void Rpc_setActive(bool active)
     {
+        print("set active = " + active);
         this.gameObject.GetComponent<Renderer>().enabled = active;
         this.gameObject.GetComponent<Collider2D>().enabled = active;
     }
