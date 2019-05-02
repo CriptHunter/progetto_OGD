@@ -31,19 +31,17 @@ public class GrapplingHook : NetworkBehaviour
             else
             {
                 Cmd_DrawLine(false, firePoint.position, hit.point);
-                //this.gameObject.GetComponent<Rigidbody2D>().velocity = new Vector2(-10,10);
-                print("prima "+this.gameObject.GetComponent<Rigidbody2D>().velocity);
-                //this.gameObject.GetComponent<AnotherCharacterController>().Activate(true);
-                print("dopo "+this.gameObject.GetComponent<Rigidbody2D>().velocity);
+                this.gameObject.GetComponent<AnotherCharacterController>().Activate(true);
                 joint.enabled = false;
                 anchored = false;
             }
         }
     }
 
+    //lancia il rampino in direzione direction
+    //se colpisce un punto con tag "hookpoint" si aggrappa
     public void Throw(Vector2 direction)
     {
-        print(direction);
         hit = Physics2D.Raycast(firePoint.position, direction, maxDistance);
         if (hit.collider != null && hit.transform.gameObject.tag == "HookPoint")
         {
@@ -51,7 +49,7 @@ public class GrapplingHook : NetworkBehaviour
             joint.enabled = true;
             joint.connectedBody = hit.collider.gameObject.GetComponent<Rigidbody2D>();
             joint.distance = Vector2.Distance(firePoint.position, hit.point);
-            //this.gameObject.GetComponent<AnotherCharacterController>().Deactivate(true);
+            this.gameObject.GetComponent<AnotherCharacterController>().Deactivate(true);
             Cmd_DrawLine(true, firePoint.position, hit.point);
         }
     }

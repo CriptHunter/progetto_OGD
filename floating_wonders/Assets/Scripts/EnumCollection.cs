@@ -10,6 +10,7 @@ public class EnumCollection : MonoBehaviour
         nullItem = -1,
         bomb = 0,
         grapplingHook = 1,
-        player = 2
+        player = 2,
+        extendableArm = 3
     };
 }

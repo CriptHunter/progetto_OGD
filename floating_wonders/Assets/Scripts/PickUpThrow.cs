@@ -59,7 +59,7 @@ public class PickUpThrow : NetworkBehaviour
     }
 
     //se un giocatore entra in collisione con un altro
-    private void OnCollisionEnter2D(Collision2D collision)
+    /*private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.GetComponent<Pickuppable>() != null && isLocalPlayer)
         {
@@ -75,7 +75,7 @@ public class PickUpThrow : NetworkBehaviour
             pickUpAllowed = false;
             collidedObject = null;
         }
-    }
+    }*/
 
     //usa l'oggetto equipaggiato
     private void useItem()
@@ -91,10 +91,11 @@ public class PickUpThrow : NetworkBehaviour
                 this.gameObject.GetComponent<GrapplingHook>().Throw(shootDirection);
                 break;
             case EnumCollection.ItemType.player:
-                Cmd_Respawn(pickedUpItem, 3);
+                break;
+            case EnumCollection.ItemType.extendableArm:
+                this.gameObject.GetComponent<ExtendableArm>().Throw(shootDirection);
                 break;
         }
-
     }
 
     //restituisce un vettore 2D che va dal fire point al puntatore del mouse, usato per la direzione in cui lancio gli oggetti
