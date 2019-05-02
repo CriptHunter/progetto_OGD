@@ -163,12 +163,21 @@ public static class Util
 
     public static float PointDirection(float x1, float y1, float x2, float y2)
     {
-        float angle = RadianToDegree(Mathf.Atan2(y2 - y1, x2 - x1));
+        /*float angle = RadianToDegree(Mathf.Atan2(y2 - y1, x2 - x1));
         if (angle <= 0)
         {
             angle += 360;
         }
-        return 360 - angle;
+        return 360 - angle;*/
+        float ang=Vector2.SignedAngle(Vector2.right, new Vector2(x2-x1, y2-y1));
+        if (ang < 0)
+        {
+            return 360 + ang;
+        }
+        else
+        {
+            return ang;
+        }
     }
 
     public static bool PointInCircle(float pointX, float pointY, float circleX, float circleY,

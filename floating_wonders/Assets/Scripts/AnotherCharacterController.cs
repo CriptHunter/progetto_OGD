@@ -69,6 +69,7 @@ public class AnotherCharacterController : MonoBehaviour
         if (keepMomentum)
         {
             dir = rigidbody.velocity.GetAngle();
+            print("angle is " + dir);
             len = rigidbody.velocity.magnitude;
         }
         Active = true;
