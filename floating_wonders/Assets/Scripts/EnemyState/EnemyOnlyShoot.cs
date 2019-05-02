@@ -17,86 +17,55 @@ public class EnemyOnlyShoot : NetworkBehaviour
     private float timeBtwShots;
     private float timer;
     private Vector3 enemyToPlayerVector;
-
-    Collider2D nearestCollider = null;
-    float minSqrDistance = Mathf.Infinity;
+    private int i;
+    private bool twoPlayers;
 
     void Start()
     {
         // Take the number corresponding to the "Player" layer
         playerMask = 1 << LayerMask.NameToLayer("Player");
         enemyMask = ~(1 << 10);
+        twoPlayers = false;
     }
 
     void Update()
     {
-
         timer += Time.deltaTime;
         //raycast a cerchio, ritorna il primo oggetto colpito
         //hit = Physics2D.CircleCast(transform.position, sightSee, Vector2.zero, playerMask);
         hit = Physics2D.OverlapCircleAll(transform.position, sightSee, playerMask);
 
         // If the raycast from enemy to player collide with a player, the enemy will shoot
-        if (hit.Length > 0)
+        for (i = 0; i < hit.Length; i++)
         {
-            if (hit.Length == 2)
-            {
-                CheckNearest();
-                enemyPlayerHit = Physics2D.Raycast(transform.position, nearestCollider.transform.position - transform.position, sightSee, enemyMask);
-                //Debug.DrawLine(transform.position, hit.transform.position, Color.green);
-                //Debug.Log(enemyPlayerHit.collider.name);
+            enemyPlayerHit = Physics2D.Raycast(transform.position, hit[i].transform.position - transform.position, sightSee, enemyMask);
+            //Debug.DrawLine(transform.position, hit.transform.position, Color.green);
+            //Debug.Log(enemyPlayerHit.collider.name);
 
-                if (enemyPlayerHit.collider != null && enemyPlayerHit.transform.gameObject.layer == LayerMask.NameToLayer("Player"))
-                {
-                    // Build new Vector3 from Enemy to Player. This is used to pass the initial player position in the bullet script
-                    Debug.DrawLine(transform.position, nearestCollider.transform.position, Color.red);
-                    enemyToPlayerVector = enemyPlayerHit.transform.position - new Vector3(transform.position.x, transform.position.y);
-                    Fire();
-                }
-                else
-                    Debug.DrawLine(transform.position, nearestCollider.transform.position, Color.green);
+            if (enemyPlayerHit.collider != null && enemyPlayerHit.transform.gameObject.layer == LayerMask.NameToLayer("Player"))
+            {
+                // Build new Vector3 from Enemy to Player. This is used to pass the initial player position in the bullet script
+                Debug.DrawLine(transform.position, hit[i].transform.position, Color.red);
+                enemyToPlayerVector = enemyPlayerHit.transform.position - new Vector3(transform.position.x, transform.position.y);
+                Fire(hit.Length - 1);
             }
             else
-            {
-                enemyPlayerHit = Physics2D.Raycast(transform.position, hit[0].transform.position - transform.position, sightSee, enemyMask);
-                //Debug.DrawLine(transform.position, hit.transform.position, Color.green);
-                //Debug.Log(enemyPlayerHit.collider.name);
-
-                if (enemyPlayerHit.collider != null && enemyPlayerHit.transform.gameObject.layer == LayerMask.NameToLayer("Player"))
-                {
-                    // Build new Vector3 from Enemy to Player. This is used to pass the initial player position in the bullet script
-                    Debug.DrawLine(transform.position, hit[0].transform.position, Color.red);
-                    enemyToPlayerVector = enemyPlayerHit.transform.position - new Vector3(transform.position.x, transform.position.y);
-                    Fire();
-                }
-                else
-                    Debug.DrawLine(transform.position, hit[0].transform.position, Color.green);
-            }
+                Debug.DrawLine(transform.position, hit[i].transform.position, Color.green);
         }
     }
 
-    void CheckNearest()
-    {
-        for (int i = 0; i < 2; i++)
-        {
-            float distanceToCenter = (transform.position - hit[i].transform.position).magnitude;
 
-            if (distanceToCenter < minSqrDistance)
-            {
-                minSqrDistance = distanceToCenter;
-                nearestCollider = hit[i];
-            }
-        }
-    }
-
-    public void Fire()
+    public void Fire(int nPlayers)
     {
         // Timer to fire every shootWaitingTime seconds
         if (timer > shootWaitingTime)
         {
             GameObject bulletInstance = Instantiate(bullet, transform.position, Quaternion.identity);
             bulletInstance.GetComponent<Bullet>().RecieveBulletParameter(enemyToPlayerVector);
-            timer = 0;
+            if (i == 1 && nPlayers == 1)
+                timer = 0;
+            else if(i == 0 && nPlayers == 0)
+                timer = 0;
         }
     }
 }
