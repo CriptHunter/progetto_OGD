@@ -260,8 +260,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   firePoint: {fileID: 4935003469436019557}
-  maxDistance: 10
-  step: 0.4
+  maxDistance: 30
+  grabForce: 10
 --- !u!1 &4935003469436019558
 GameObject:
   m_ObjectHideFlags: 0
