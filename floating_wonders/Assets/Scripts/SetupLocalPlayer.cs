@@ -16,5 +16,13 @@ public class SetupLocalPlayer : NetworkBehaviour
                 anotherCaracterInput.enabled = false;
             }
         }
+        else
+        {
+            CameraController controller = Camera.main.GetComponent<CameraController>();
+            if (controller != null)
+            {
+                controller.target = gameObject;
+            }
+        }
     }
 }
