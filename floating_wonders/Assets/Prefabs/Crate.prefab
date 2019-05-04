@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 6819255613767611981}
   - component: {fileID: 2203892847214543284}
   m_Layer: 10
-  m_Name: MorrisIlDevastatoreDiMondi
+  m_Name: Crate
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -60,7 +60,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 8410464dddf434e45857e4a577018512, type: 2}
+  - {fileID: 2100000, guid: 002f79b1bcb9ce04a836ee7d52943d51, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -121,12 +121,12 @@ Rigidbody2D:
   m_Mass: 1
   m_LinearDrag: 0
   m_AngularDrag: 0.05
-  m_GravityScale: 1
+  m_GravityScale: 5
   m_Material: {fileID: 0}
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 0
+  m_Constraints: 4
 --- !u!114 &2203892847214543284
 MonoBehaviour:
   m_ObjectHideFlags: 0

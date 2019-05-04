@@ -8,6 +8,7 @@ public class PickUpThrow : NetworkBehaviour
     private GameObject collidedObject; //con quale gameobject il giocatore è entrato in contatto
     private GameObject pickedUpItem = null; //quale oggetto è stato raccolto
     private Vector2 shootDirection; //vettore che indica in quale direzione vado a lanciare l'oggetto
+    private float shootingAngle;
     [SerializeField] private Transform firePoint = null; // da quale punto usa l'oggetto
     [SerializeField] private GameObject bombRBPrefab = null; //bomba con rigid body
 
@@ -17,7 +18,14 @@ public class PickUpThrow : NetworkBehaviour
         if (pickUpAllowed && Input.GetKeyDown(KeyCode.E) && isLocalPlayer)
         {
             pickedUpItem = collidedObject;
-            Cmd_PickupItem(pickedUpItem);
+            //se sto raccogliendo un giocatore disattivo l'input di movimento di entrambi
+            if (collidedObject.GetComponent<AnotherCharacterController>() != null)
+            {
+                this.gameObject.GetComponent<AnotherCharacterInput>().enabled = false;
+                pickedUpItem.gameObject.GetComponent<AnotherCharacterInput>().enabled = false;
+            }
+            else
+                Cmd_PickupItem(pickedUpItem);
         }
 
         //se ho un oggetto in mano e tengo premuto R --> entra in fase di mira
@@ -59,7 +67,7 @@ public class PickUpThrow : NetworkBehaviour
     }
 
     //se un giocatore entra in collisione con un altro
-    /*private void OnCollisionEnter2D(Collision2D collision)
+    private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.GetComponent<Pickuppable>() != null && isLocalPlayer)
         {
@@ -75,7 +83,7 @@ public class PickUpThrow : NetworkBehaviour
             pickUpAllowed = false;
             collidedObject = null;
         }
-    }*/
+    }
 
     //usa l'oggetto equipaggiato
     private void useItem()
@@ -91,6 +99,10 @@ public class PickUpThrow : NetworkBehaviour
                 this.gameObject.GetComponent<GrapplingHook>().Throw(shootDirection);
                 break;
             case EnumCollection.ItemType.player:
+                pickedUpItem.GetComponent<AnotherCharacterController>().ApplyImpulse(shootingAngle, 30);
+                this.gameObject.GetComponent<AnotherCharacterInput>().enabled = true;
+                pickedUpItem.gameObject.GetComponent<AnotherCharacterInput>().enabled = true;
+                pickedUpItem = null;
                 break;
             case EnumCollection.ItemType.extendableArm:
                 this.gameObject.GetComponent<ExtendableArm>().Throw(shootDirection);
@@ -112,18 +124,18 @@ public class PickUpThrow : NetworkBehaviour
     //ruota il puntatore a forma di freccia in modo da seguire il cursore del mouse
     private void RotateArrowPointer(Vector2 shootDirection)
     {
-        float angle = 0f;
+        shootingAngle = 0f;
         //calcolo l'angolo tra l'asse x e il vettore della direzione di tiro
         //se il personaggio è girato verso destra
         if (GetComponent<AnotherCharacterController>().GetVerse() == Verse.Right)
-            angle = Vector2.SignedAngle(shootDirection, transform.right);
+            shootingAngle = Vector2.SignedAngle(shootDirection, transform.right);
         //se il personaggio è girato verso sinistra
         else if (GetComponent<AnotherCharacterController>().GetVerse() == Verse.Left)
-            angle = Vector2.SignedAngle(shootDirection, -transform.right);
-        angle = -angle;
+            shootingAngle = Vector2.SignedAngle(shootDirection, -transform.right);
+        shootingAngle = -shootingAngle;
         //ruoto la freccia sull'asse Z di un valore pari all'angolo
-        firePoint.eulerAngles = new Vector3(0, 0, angle);
-        if (angle > 90 || angle < -90)
+        firePoint.eulerAngles = new Vector3(0, 0, shootingAngle);
+        if (shootingAngle > 90 || shootingAngle < -90)
             firePoint.GetComponent<SpriteRenderer>().enabled = false;
         else
             firePoint.GetComponent<SpriteRenderer>().enabled = true;

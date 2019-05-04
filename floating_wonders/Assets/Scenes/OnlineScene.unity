@@ -231,12 +231,12 @@ PrefabInstance:
     - target: {fileID: 2874783122565049423, guid: baa08db87bab9354baaba0589ec9b5aa,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 19
       objectReference: {fileID: 0}
     - target: {fileID: 2874783122565049423, guid: baa08db87bab9354baaba0589ec9b5aa,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: -1.5
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 2874783122565049423, guid: baa08db87bab9354baaba0589ec9b5aa,
         type: 3}
@@ -356,7 +356,7 @@ PrefabInstance:
     - target: {fileID: 6184545242103995516, guid: d3b170b83a3d33743af29a5c71add19d,
         type: 3}
       propertyPath: m_RootOrder
-      value: 11
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 6184545242103995516, guid: d3b170b83a3d33743af29a5c71add19d,
         type: 3}
@@ -637,8 +637,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1153864238}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 8, y: 1.5, z: 0}
-  m_LocalScale: {x: 6, y: 1, z: 1}
+  m_LocalPosition: {x: 15.5, y: 0.5, z: 0}
+  m_LocalScale: {x: 9, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1981367912}
   m_RootOrder: 8
@@ -1097,12 +1097,12 @@ PrefabInstance:
     - target: {fileID: 5427938928050975273, guid: 86a577b980bf7b24aa6db3ebf46b88c5,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 9
+      value: 13
       objectReference: {fileID: 0}
     - target: {fileID: 5427938928050975273, guid: 86a577b980bf7b24aa6db3ebf46b88c5,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 3
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 5427938928050975273, guid: 86a577b980bf7b24aa6db3ebf46b88c5,
         type: 3}
@@ -1206,7 +1206,7 @@ PrefabInstance:
     - target: {fileID: 6184545242103995516, guid: d3b170b83a3d33743af29a5c71add19d,
         type: 3}
       propertyPath: m_RootOrder
-      value: 12
+      value: 11
       objectReference: {fileID: 0}
     - target: {fileID: 6184545242103995516, guid: d3b170b83a3d33743af29a5c71add19d,
         type: 3}
@@ -1346,12 +1346,12 @@ PrefabInstance:
     - target: {fileID: 7116479704705474746, guid: 65f4d1b389188d542abb34949437c2d5,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 6
+      value: 16
       objectReference: {fileID: 0}
     - target: {fileID: 7116479704705474746, guid: 65f4d1b389188d542abb34949437c2d5,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 3
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 7116479704705474746, guid: 65f4d1b389188d542abb34949437c2d5,
         type: 3}

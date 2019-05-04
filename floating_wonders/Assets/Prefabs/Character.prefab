@@ -198,8 +198,6 @@ GameObject:
   - component: {fileID: 6079352028896656040}
   - component: {fileID: 2276709104259088296}
   - component: {fileID: 4165660249129313606}
-  - component: {fileID: 7936328879954027939}
-  - component: {fileID: 5839714348939639127}
   - component: {fileID: 2697727369893357687}
   - component: {fileID: 5299050778706221785}
   - component: {fileID: 4072665338872741759}
@@ -384,42 +382,6 @@ MonoBehaviour:
   firePoint: {fileID: 8502467504385790274}
   bombRBPrefab: {fileID: 4347175937712634760, guid: 72a39f29716ddeb4e888b4a111780b7a,
     type: 3}
---- !u!114 &7936328879954027939
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4165673635756170399}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3424e7bc41b072148be60c75a87644eb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  debug: {fileID: 2237401943366615199}
-  runSpeed: 10
-  runAcceleration: 60
-  runFriction: 50
-  jumpForce: 20
-  climbSpeed: 0
-  groundLayer:
-    serializedVersion: 2
-    m_Bits: 256
-  climbableLayer:
-    serializedVersion: 2
-    m_Bits: 0
---- !u!114 &5839714348939639127
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4165673635756170399}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 40e3a471dc0320b40b0ff0d0267bd98b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!232 &2697727369893357687
 DistanceJoint2D:
   m_ObjectHideFlags: 0
@@ -476,14 +438,14 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4165673635756170399}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7148581519359754aad1617520dad780, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_JumpForce: 400
   m_MovementSmoothing: 0.05
-  m_AirControl: 0
+  m_AirControl: 1
   m_WhatIsGround:
     serializedVersion: 2
     m_Bits: 4294967295
@@ -500,7 +462,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4165673635756170399}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 93196e801d1cbf247a350812a1a8044f, type: 3}
   m_Name: 
