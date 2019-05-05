@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Networking;
 
-public class AnotherCharacterController : MonoBehaviour
+public class AnotherCharacterController : NetworkBehaviour
 {
     public Text debug;
 
@@ -21,7 +22,10 @@ public class AnotherCharacterController : MonoBehaviour
     private float impulseHSpeed;
     private float impulseHfriction = 0.5f;
     private const float speedThreshold = 0.001f;
+
+    [SyncVar]
     private Verse verse = Verse.Right;
+
     private new Rigidbody2D rigidbody;
     private new CapsuleCollider2D collider;
     private bool nearWallLeft = false;

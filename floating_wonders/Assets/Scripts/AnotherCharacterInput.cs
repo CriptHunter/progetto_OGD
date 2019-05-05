@@ -1,9 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 
 [RequireComponent(typeof(AnotherCharacterController))]
-public class AnotherCharacterInput : MonoBehaviour
+public class AnotherCharacterInput : NetworkBehaviour
 {
     private AnotherCharacterController cc;
     // Start is called before the first frame update
