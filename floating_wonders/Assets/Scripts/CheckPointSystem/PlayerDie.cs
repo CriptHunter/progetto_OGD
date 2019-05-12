@@ -1,10 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 
-public class PlayerDie : MonoBehaviour
+public class PlayerDie : NetworkBehaviour
 {
-    [SerializeField]private GameObject lm;
+    [SerializeField] private GameObject levelManager;
     private CheckPointsManager cm;
     private bool died;
 
@@ -12,12 +13,14 @@ public class PlayerDie : MonoBehaviour
     void Start()
     {
         died = false; ;
-        cm = lm.GetComponent<CheckPointsManager>();
+        cm = levelManager.GetComponent<CheckPointsManager>();
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (!isLocalPlayer)
+            return;
         if (Input.GetKeyDown("space"))
         {
             died = true;

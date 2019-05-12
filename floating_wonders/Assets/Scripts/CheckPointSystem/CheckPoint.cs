@@ -6,7 +6,7 @@ public class CheckPoint : MonoBehaviour
 {
     private LayerMask playerMask;
     private bool triggered;
-    [SerializeField] private GameObject gm;
+    [SerializeField] private GameObject levelManager;
     private CheckPointsManager c;
 
 
@@ -16,7 +16,7 @@ public class CheckPoint : MonoBehaviour
         playerMask = LayerMask.NameToLayer("Player");
         triggered = false;
         //gm = GameObject.Find("LevelManager");
-        c = gm.GetComponent<CheckPointsManager>();
+        c = levelManager.GetComponent<CheckPointsManager>();
         c.AddCheckPoint(this);
     }
 
