@@ -23,7 +23,6 @@ public class AnotherCharacterController : NetworkBehaviour
     private float impulseHfriction = 0.5f;
     private const float speedThreshold = 0.001f;
 
-    [SyncVar]
     private Verse verse = Verse.Right;
 
     private new Rigidbody2D rigidbody;
@@ -129,7 +128,6 @@ public class AnotherCharacterController : NetworkBehaviour
     private bool climbUpRequest = false; // se è stata fatta richiesta di arrampicarsi su o giù
     private bool climbDownRequest = false;
 
-    // Start is called before the first frame update
     void Awake()
     {
         collider = GetComponent<CapsuleCollider2D>();
@@ -341,7 +339,7 @@ public class AnotherCharacterController : NetworkBehaviour
         if (!IsClimbing())
         {
             this.verse = verse;
-            transform.localScale = new Vector3((int)verse, 1, 1);
+            Cmd_SetLocalScale(verse);
             if (IsDanglingFromEdge() && targetEdgeVerse != verse)
             {
                 ReleaseEdge();
@@ -359,7 +357,7 @@ public class AnotherCharacterController : NetworkBehaviour
                 if (hit.collider == null)
                 {
                     this.verse = verse;
-                    transform.localScale = new Vector3((int)verse, 1, 1);
+                    Cmd_SetLocalScale(verse);
                     return true;
                 }
                 else
@@ -372,6 +370,16 @@ public class AnotherCharacterController : NetworkBehaviour
                 return true;
             }
         }
+    }
+
+    [Command] private void Cmd_SetLocalScale(Verse verse)
+    {
+        Rpc_SetLocalScale(verse);
+    }
+
+    [ClientRpc] private void Rpc_SetLocalScale(Verse verse)
+    {
+        this.transform.localScale = new Vector3((int)verse, 1, 1);
     }
 
     private void CalculateProximity()
