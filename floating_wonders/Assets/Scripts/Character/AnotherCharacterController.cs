@@ -652,6 +652,7 @@ public class AnotherCharacterController : NetworkBehaviour
         if (Active && PhysicsActive)
         {
             speed = 0;
+            print("Apply impulse: " + direction + " " + strength);
             impulseHSpeed = Util.LengthDirX(strength, direction);
             VerticalImpulse(Util.LengthDirY(strength, direction));
         }

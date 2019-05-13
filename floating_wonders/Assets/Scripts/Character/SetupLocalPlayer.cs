@@ -18,7 +18,7 @@ public class SetupLocalPlayer : NetworkBehaviour
             AnotherCharacterController anotherCaracterController = GetComponent<AnotherCharacterController>();
             if (anotherCaracterController != null)
             {
-                anotherCaracterController.enabled = false;
+                //anotherCaracterController.enabled = false;
             }
         }
         else

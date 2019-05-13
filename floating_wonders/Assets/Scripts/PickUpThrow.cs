@@ -22,7 +22,7 @@ public class PickUpThrow : NetworkBehaviour
             if (collidedObject.GetComponent<AnotherCharacterController>() != null)
             {
                 this.gameObject.GetComponent<AnotherCharacterInput>().enabled = false;
-                pickedUpItem.gameObject.GetComponent<AnotherCharacterInput>().enabled = false;
+                //pickedUpItem.gameObject.GetComponent<AnotherCharacterInput>().enabled = false;
             }
             else
                 Cmd_PickupItem(pickedUpItem);
@@ -99,9 +99,10 @@ public class PickUpThrow : NetworkBehaviour
                 this.gameObject.GetComponent<GrapplingHook>().Throw(shootDirection);
                 break;
             case EnumCollection.ItemType.player:
-                pickedUpItem.GetComponent<AnotherCharacterController>().ApplyImpulse(shootingAngle, 30);
+                print("lancio giocatore");
+                Cmd_ApplyImpulse(pickedUpItem, 45, 30);
                 this.gameObject.GetComponent<AnotherCharacterInput>().enabled = true;
-                pickedUpItem.gameObject.GetComponent<AnotherCharacterInput>().enabled = true;
+                //pickedUpItem.gameObject.GetComponent<AnotherCharacterInput>().enabled = true;
                 pickedUpItem = null;
                 break;
             case EnumCollection.ItemType.extendableArm:
@@ -162,5 +163,15 @@ public class PickUpThrow : NetworkBehaviour
     private void Cmd_Respawn(GameObject item, int respawnTime)
     {
         item.GetComponent<Pickuppable>().Cmd_Respawn(respawnTime);
+    }
+
+    [Command] private void Cmd_ApplyImpulse(GameObject player, float direction, float strength)
+    {
+        Rpc_ApplyImpulse(player, direction, strength);
+    }
+
+    [ClientRpc] private void Rpc_ApplyImpulse(GameObject player, float direction, float strength)
+    {
+        player.gameObject.GetComponent<AnotherCharacterController>().ApplyImpulse(direction, strength);
     }
 }
