@@ -8,7 +8,6 @@ public class PickUpThrow : NetworkBehaviour
     private GameObject collidedObject; //con quale gameobject il giocatore è entrato in contatto
     private GameObject pickedUpItem = null; //quale oggetto è stato raccolto
     private Vector2 shootDirection; //vettore che indica in quale direzione vado a lanciare l'oggetto
-    private float shootingAngle; //angolo che può avere valori negativi
     [SerializeField] private Transform firePoint = null; // da quale punto usa l'oggetto
     [SerializeField] private GameObject bombRBPrefab = null; //bomba con rigid body
 
@@ -23,6 +22,8 @@ public class PickUpThrow : NetworkBehaviour
             {
                 this.gameObject.GetComponent<AnotherCharacterInput>().enabled = false;
                 //pickedUpItem.gameObject.GetComponent<AnotherCharacterInput>().enabled = false;
+                Cmd_CharacterInputEnabled(pickedUpItem, false);
+                //pickedUpItem.gameObject.GetComponent<PickUpThrow>().enabled = false;
             }
             else
                 Cmd_PickupItem(pickedUpItem);
@@ -92,17 +93,16 @@ public class PickUpThrow : NetworkBehaviour
         {
             case EnumCollection.ItemType.bomb:
                 Cmd_ThrowBomb(shootDirection);
-                Cmd_Respawn(pickedUpItem, 3);
                 pickedUpItem = null;
                 break;
             case EnumCollection.ItemType.grapplingHook:
                 this.gameObject.GetComponent<GrapplingHook>().Throw(shootDirection);
                 break;
             case EnumCollection.ItemType.player:
-                print("lancio giocatore");
                 Cmd_ApplyImpulse(pickedUpItem, shootDirection.GetAngle(), 30);
                 this.gameObject.GetComponent<AnotherCharacterInput>().enabled = true;
-                //pickedUpItem.gameObject.GetComponent<AnotherCharacterInput>().enabled = true;
+                Cmd_CharacterInputEnabled(pickedUpItem, true);
+                //pickedUpItem.gameObject.GetComponent<PickUpThrow>().enabled = true;
                 pickedUpItem = null;
                 break;
             case EnumCollection.ItemType.extendableArm:
@@ -125,7 +125,7 @@ public class PickUpThrow : NetworkBehaviour
     //ruota il puntatore a forma di freccia in modo da seguire il cursore del mouse
     private void RotateArrowPointer(Vector2 shootDirection)
     {
-        shootingAngle = 0f;
+        float shootingAngle = 0f;
         //calcolo l'angolo tra l'asse x e il vettore della direzione di tiro
         //se il personaggio è girato verso destra
         if (GetComponent<AnotherCharacterController>().GetVerse() == Verse.Right)
@@ -140,25 +140,6 @@ public class PickUpThrow : NetworkBehaviour
             firePoint.GetComponent<SpriteRenderer>().enabled = false;
         else
             firePoint.GetComponent<SpriteRenderer>().enabled = true;
-    }
-
-    //converte gli angoli signed in angoli tra 0 e 360 in base alla direzione del personaggio
-    private float GetEulerShootingAngle(float angle)
-    {
-        if (this.GetComponent<AnotherCharacterController>().GetVerse() == Verse.Right)
-        {
-            if (angle >= 0)
-                return angle;
-            else
-                return 270 - angle;
-        }
-        else
-        {
-            if (angle >= 0)
-                return 90 - angle;
-            else
-                return 180 + angle;
-        }
     }
 
     //Ad un command non si può passare un gameobject / prefab da spawnare, quindi ho fatto un metodo specifico per la bomba
@@ -179,9 +160,9 @@ public class PickUpThrow : NetworkBehaviour
     }
 
     [Command]
-    private void Cmd_Respawn(GameObject item, int respawnTime)
+    private void Cmd_Respawn(GameObject item)
     {
-        item.GetComponent<Pickuppable>().Cmd_Respawn(respawnTime);
+        item.GetComponent<Pickuppable>().Cmd_Respawn();
     }
 
     [Command] private void Cmd_ApplyImpulse(GameObject player, float direction, float strength)
@@ -192,5 +173,15 @@ public class PickUpThrow : NetworkBehaviour
     [ClientRpc] private void Rpc_ApplyImpulse(GameObject player, float direction, float strength)
     {
         player.gameObject.GetComponent<AnotherCharacterController>().ApplyImpulse(direction, strength);
+    }
+
+    [Command] private void Cmd_CharacterInputEnabled(GameObject player, bool enabled)
+    {
+        Rpc_CharacterInputEnabled(player, enabled);   
+    }
+
+    [ClientRpc] private void Rpc_CharacterInputEnabled(GameObject player, bool enabled)
+    {
+        player.gameObject.GetComponent<AnotherCharacterInput>().enabled = enabled;
     }
 }

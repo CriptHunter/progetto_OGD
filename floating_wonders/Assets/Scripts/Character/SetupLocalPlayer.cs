@@ -13,12 +13,12 @@ public class SetupLocalPlayer : NetworkBehaviour
             AnotherCharacterInput anotherCaracterInput = GetComponent<AnotherCharacterInput>();
             if (anotherCaracterInput != null)
             {
-                anotherCaracterInput.enabled = false;
+                //anotherCaracterInput.enabled = false;
             }
             AnotherCharacterController anotherCaracterController = GetComponent<AnotherCharacterController>();
             if (anotherCaracterController != null)
             {
-                //anotherCaracterController.enabled = false;
+                anotherCaracterController.enabled = false;
             }
         }
         else

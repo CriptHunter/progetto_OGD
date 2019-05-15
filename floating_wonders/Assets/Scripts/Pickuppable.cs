@@ -8,6 +8,8 @@ using UnityEngine.Networking;
 public class Pickuppable : NetworkBehaviour
 {
     [SerializeField] private EnumCollection.ItemType type = EnumCollection.ItemType.nullItem;
+    [SerializeField] private int respawnTime = 5;
+    [SerializeField] private bool canRespawn = true;
     public EnumCollection.ItemType Type { get { return type; }}
 
     public void Pickup()
@@ -16,9 +18,10 @@ public class Pickuppable : NetworkBehaviour
     }
 
     [Command]
-    public void Cmd_Respawn(int time)
+    public void Cmd_Respawn()
     {
-        StartCoroutine(WaitCoroutine(time));
+        if(canRespawn)
+            StartCoroutine(WaitCoroutine(5));
     }
 
     private IEnumerator WaitCoroutine(int secondsToWait)
