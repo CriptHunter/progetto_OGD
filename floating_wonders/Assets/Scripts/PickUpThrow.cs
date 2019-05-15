@@ -8,7 +8,7 @@ public class PickUpThrow : NetworkBehaviour
     private GameObject collidedObject; //con quale gameobject il giocatore è entrato in contatto
     private GameObject pickedUpItem = null; //quale oggetto è stato raccolto
     private Vector2 shootDirection; //vettore che indica in quale direzione vado a lanciare l'oggetto
-    private float shootingAngle;
+    private float shootingAngle; //angolo che può avere valori negativi
     [SerializeField] private Transform firePoint = null; // da quale punto usa l'oggetto
     [SerializeField] private GameObject bombRBPrefab = null; //bomba con rigid body
 
@@ -100,7 +100,7 @@ public class PickUpThrow : NetworkBehaviour
                 break;
             case EnumCollection.ItemType.player:
                 print("lancio giocatore");
-                Cmd_ApplyImpulse(pickedUpItem, 45, 30);
+                Cmd_ApplyImpulse(pickedUpItem, shootDirection.GetAngle(), 30);
                 this.gameObject.GetComponent<AnotherCharacterInput>().enabled = true;
                 //pickedUpItem.gameObject.GetComponent<AnotherCharacterInput>().enabled = true;
                 pickedUpItem = null;
@@ -140,6 +140,25 @@ public class PickUpThrow : NetworkBehaviour
             firePoint.GetComponent<SpriteRenderer>().enabled = false;
         else
             firePoint.GetComponent<SpriteRenderer>().enabled = true;
+    }
+
+    //converte gli angoli signed in angoli tra 0 e 360 in base alla direzione del personaggio
+    private float GetEulerShootingAngle(float angle)
+    {
+        if (this.GetComponent<AnotherCharacterController>().GetVerse() == Verse.Right)
+        {
+            if (angle >= 0)
+                return angle;
+            else
+                return 270 - angle;
+        }
+        else
+        {
+            if (angle >= 0)
+                return 90 - angle;
+            else
+                return 180 + angle;
+        }
     }
 
     //Ad un command non si può passare un gameobject / prefab da spawnare, quindi ho fatto un metodo specifico per la bomba
