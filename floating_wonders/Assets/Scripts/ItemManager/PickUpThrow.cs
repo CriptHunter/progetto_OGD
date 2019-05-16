@@ -17,13 +17,14 @@ public class PickUpThrow : NetworkBehaviour
         if (pickUpAllowed && Input.GetKeyDown(KeyCode.E) && isLocalPlayer)
         {
             pickedUpItem = collidedObject;
-            //se sto raccogliendo un giocatore disattivo l'input di movimento di entrambi
+            //se sto raccogliendo un giocatore disattivo l'input di movimento di entrambi, e l'item manager del giocatore raccolto
             if (collidedObject.GetComponent<AnotherCharacterController>() != null)
             {
                 this.gameObject.GetComponent<AnotherCharacterInput>().enabled = false;
-                //pickedUpItem.gameObject.GetComponent<AnotherCharacterInput>().enabled = false;
                 Cmd_CharacterInputEnabled(pickedUpItem, false);
-                //pickedUpItem.gameObject.GetComponent<PickUpThrow>().enabled = false;
+                Cmd_ItemManagerEnabled(pickedUpItem, false);
+                Cmd_SetRigidBody(pickedUpItem, false);
+                Cmd_SetPosition(pickedUpItem, firePoint.position);
             }
             else
                 Cmd_PickupItem(pickedUpItem);
@@ -100,10 +101,11 @@ public class PickUpThrow : NetworkBehaviour
                 this.gameObject.GetComponent<GrapplingHook>().Throw(shootDirection);
                 break;
             case EnumCollection.ItemType.player:
+                Cmd_SetRigidBody(pickedUpItem, true);
                 Cmd_ApplyImpulse(pickedUpItem, shootDirection.GetAngle(), 30);
-                this.gameObject.GetComponent<AnotherCharacterInput>().enabled = true;
                 Cmd_CharacterInputEnabled(pickedUpItem, true);
-                //pickedUpItem.gameObject.GetComponent<PickUpThrow>().enabled = true;
+                Cmd_ItemManagerEnabled(pickedUpItem, true);
+                this.gameObject.GetComponent<AnotherCharacterInput>().enabled = true;
                 pickedUpItem = null;
                 break;
             case EnumCollection.ItemType.extendableArm:
@@ -185,5 +187,39 @@ public class PickUpThrow : NetworkBehaviour
     [ClientRpc] private void Rpc_CharacterInputEnabled(GameObject player, bool enabled)
     {
         player.gameObject.GetComponent<AnotherCharacterInput>().enabled = enabled;
+    }
+
+    [Command] private void Cmd_ItemManagerEnabled(GameObject player, bool enabled)
+    {
+        Rpc_ItemManagerEnabled(player, enabled);
+    }
+
+    [ClientRpc] private void Rpc_ItemManagerEnabled(GameObject player, bool enabled)
+    {
+        player.gameObject.GetComponent<PickUpThrow>().enabled = enabled;
+    }
+
+    [Command] private void Cmd_SetRigidBody(GameObject player, bool active)
+    {
+        Rpc_SetRigidBody(player, active);
+    }
+
+    [ClientRpc] private void Rpc_SetRigidBody(GameObject player, bool active)
+    {
+        player.gameObject.GetComponent<AnotherCharacterController>().Activate(active);
+        if (!active)
+            player.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Static;
+        else
+            player.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Dynamic;
+    }
+
+    [Command] private void Cmd_SetPosition(GameObject player, Vector2 newPosition)
+    {
+        Rpc_SetPosition(player, newPosition);
+    }
+
+    [ClientRpc] private void Rpc_SetPosition(GameObject player, Vector2 newPosition)
+    {
+        player.transform.position = newPosition;
     }
 }
