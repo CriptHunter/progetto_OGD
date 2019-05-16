@@ -93,6 +93,7 @@ public class PickUpThrow : NetworkBehaviour
         {
             case EnumCollection.ItemType.bomb:
                 Cmd_ThrowBomb(shootDirection);
+                Cmd_Respawn(pickedUpItem);
                 pickedUpItem = null;
                 break;
             case EnumCollection.ItemType.grapplingHook:
@@ -108,6 +109,7 @@ public class PickUpThrow : NetworkBehaviour
             case EnumCollection.ItemType.extendableArm:
                 this.gameObject.GetComponent<ExtendableArm>().Throw(shootDirection);
                 break;
+
         }
     }
 
