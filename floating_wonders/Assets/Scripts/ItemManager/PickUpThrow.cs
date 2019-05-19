@@ -7,8 +7,9 @@ public class PickUpThrow : NetworkBehaviour
     private bool pickUpAllowed; //true quando il giocatore è in contatto con un oggetto che si può raccogliere
     private GameObject collidedObject; //con quale gameobject il giocatore è entrato in contatto
     private GameObject pickedUpItem = null; //quale oggetto è stato raccolto
+    public ItemType uniqueItem = ItemType.nullItem; //oggetto caratteristico del personaggio
     private Vector2 shootDirection; //vettore che indica in quale direzione vado a lanciare l'oggetto
-    [SerializeField] private Transform firePoint = null; // da quale punto usa l'oggetto
+    [SerializeField] private Transform firePoint = null; // da quale punto sono lanciati gli oggetti
     [SerializeField] private GameObject bombRBPrefab = null; //bomba con rigid body
 
     private void Update()
@@ -31,14 +32,14 @@ public class PickUpThrow : NetworkBehaviour
         }
 
         //se ho un oggetto in mano e tengo premuto R --> entra in fase di mira
-        else if (pickedUpItem != null && Input.GetKey(KeyCode.R) && isLocalPlayer)
+        else if (Input.GetKey(KeyCode.R) && isLocalPlayer)
         {
             shootDirection = GetAimDirection();
             RotateArrowPointer(shootDirection);
         }
 
         //quando rilascio R --> usa l'oggetto se l'angolazione è valida
-        else if (pickedUpItem != null && Input.GetKeyUp(KeyCode.R) && isLocalPlayer)
+        else if (Input.GetKeyUp(KeyCode.R) && isLocalPlayer)
         {
             //se lo sprite della freccia per mirare è visibile allora l'angolo è tra -90 e 90
             if (firePoint.GetComponent<SpriteRenderer>().enabled)
@@ -90,28 +91,31 @@ public class PickUpThrow : NetworkBehaviour
     //usa l'oggetto equipaggiato
     private void useItem()
     {
-        switch (pickedUpItem.GetComponent<Pickuppable>().Type)
+        if (pickedUpItem == null)
         {
-            case EnumCollection.ItemType.bomb:
-                Cmd_ThrowBomb(shootDirection);
-                Cmd_Respawn(pickedUpItem);
-                pickedUpItem = null;
-                break;
-            case EnumCollection.ItemType.grapplingHook:
-                this.gameObject.GetComponent<GrapplingHook>().Throw(shootDirection);
-                break;
-            case EnumCollection.ItemType.player:
-                Cmd_SetRigidBody(pickedUpItem, true);
-                Cmd_ApplyImpulse(pickedUpItem, shootDirection.GetAngle(), 30);
-                Cmd_CharacterInputEnabled(pickedUpItem, true);
-                Cmd_ItemManagerEnabled(pickedUpItem, true);
-                this.gameObject.GetComponent<AnotherCharacterInput>().enabled = true;
-                pickedUpItem = null;
-                break;
-            case EnumCollection.ItemType.extendableArm:
+            if (uniqueItem == ItemType.extendableArm)
                 this.gameObject.GetComponent<ExtendableArm>().Throw(shootDirection);
-                break;
-
+            else
+                this.gameObject.GetComponent<GrapplingHook>().Throw(shootDirection);
+        }
+        else
+        {
+            switch (pickedUpItem.GetComponent<Pickuppable>().Type)
+            {
+                case ItemType.bomb:
+                    Cmd_ThrowBomb(shootDirection);
+                    Cmd_Respawn(pickedUpItem);
+                    pickedUpItem = null;
+                    break;
+                case ItemType.player:
+                    Cmd_SetRigidBody(pickedUpItem, true);
+                    Cmd_ApplyImpulse(pickedUpItem, shootDirection.GetAngle(), 30);
+                    Cmd_CharacterInputEnabled(pickedUpItem, true);
+                    Cmd_ItemManagerEnabled(pickedUpItem, true);
+                    this.gameObject.GetComponent<AnotherCharacterInput>().enabled = true;
+                    pickedUpItem = null;
+                    break;
+            }
         }
     }
 

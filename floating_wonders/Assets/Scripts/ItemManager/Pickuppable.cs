@@ -7,10 +7,10 @@ using UnityEngine.Networking;
 //un gameobject con questo componente è un oggetto che si può raccogliere e utilizzare
 public class Pickuppable : NetworkBehaviour
 {
-    [SerializeField] private EnumCollection.ItemType type = EnumCollection.ItemType.nullItem;
+    [SerializeField] private ItemType type = ItemType.nullItem;
     [SerializeField] private int respawnTime = 5;
     [SerializeField] private bool canRespawn = true;
-    public EnumCollection.ItemType Type { get { return type; }}
+    public ItemType Type { get { return type; }}
 
     public void Pickup()
     {

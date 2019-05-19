@@ -236,7 +236,7 @@ DistanceJoint2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4935003469174482398}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 4
   m_EnableCollision: 0
   m_ConnectedRigidBody: {fileID: 0}
@@ -244,9 +244,9 @@ DistanceJoint2D:
   m_BreakTorque: Infinity
   m_AutoConfigureConnectedAnchor: 0
   m_Anchor: {x: 0, y: 0}
-  m_ConnectedAnchor: {x: 3.0761259, y: 0.48459518}
+  m_ConnectedAnchor: {x: 0, y: 0}
   m_AutoConfigureDistance: 1
-  m_Distance: 1.4566407
+  m_Distance: 4.5597725
   m_MaxDistanceOnly: 1
 --- !u!70 &4935003469174482373
 CapsuleCollider2D:
@@ -342,7 +342,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   firePoint: {fileID: 4935003469436019557}
-  maxDistance: 30
+  maxDistance: 20
   grabForce: 30
 --- !u!114 &8749423645054428052
 MonoBehaviour:
@@ -357,6 +357,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 2
+  respawnTime: 5
+  canRespawn: 1
 --- !u!114 &3561763506773750811
 MonoBehaviour:
   m_ObjectHideFlags: 0

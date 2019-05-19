@@ -1,8 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 
-public class ExtendableArm : MonoBehaviour
+public class ExtendableArm : NetworkBehaviour
 {
     [SerializeField] private Transform firePoint = null;
     [SerializeField] private float maxDistance = 30f;  //massima distanza del braccio
@@ -26,15 +27,20 @@ public class ExtendableArm : MonoBehaviour
                 (hit.transform.gameObject.GetComponent<Rigidbody2D>().velocity.magnitude > 0.5 || justGrabbed))
             {
                 justGrabbed = false;
-                Vector2 forceVector = this.gameObject.transform.position - hit.transform.position;
-                hit.transform.gameObject.GetComponent<Rigidbody2D>().AddForce(grabForce * forceVector);
+                Vector2 forceVector = firePoint.transform.position - hit.transform.position;
+                Cmd_AddForce(hit.transform.gameObject, forceVector, grabForce);
             }
             else
-            { 
+            {
                 grabbed = false;
                 this.gameObject.GetComponent<AnotherCharacterInput>().enabled = true;
             }
         }
+    }
+
+    [Command] private void Cmd_AddForce(GameObject obj, Vector2 direction, float force)
+    {
+        obj.GetComponent<Rigidbody2D>().AddForce(force * direction);
     }
 
     public void Throw(Vector2 direction)
