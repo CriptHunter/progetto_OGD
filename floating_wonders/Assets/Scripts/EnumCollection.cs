@@ -5,5 +5,6 @@ public enum ItemType : int
     bomb = 0,
     grapplingHook = 1,
     player = 2,
-    extendableArm = 3
+    extendableArm = 3,
+    key = 4
 }

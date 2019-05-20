@@ -8,13 +8,21 @@ using UnityEngine.Networking;
 public class Pickuppable : NetworkBehaviour
 {
     [SerializeField] private ItemType type = ItemType.nullItem;
-    [SerializeField] private int respawnTime = 5;
-    [SerializeField] private bool canRespawn = true;
+    [SerializeField] private int respawnTime = 5; //tempo in secondi prima del respawn
+    [SerializeField] private bool canRespawn = true; //se può respawnare
+    [SerializeField] public bool collectible; //se è un collezionabile e non un oggetto normale
     public ItemType Type { get { return type; }}
 
     public void Pickup()
     {
         Cmd_setActive(false);
+    }
+
+    private void Start()
+    {
+        //i collezionabili non rinascono
+        if (collectible)
+            canRespawn = false;
     }
 
     [Command]

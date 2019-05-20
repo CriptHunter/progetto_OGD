@@ -6,7 +6,7 @@ public class PickUpThrow : NetworkBehaviour
 {
     private bool pickUpAllowed; //true quando il giocatore è in contatto con un oggetto che si può raccogliere
     private GameObject collidedObject; //con quale gameobject il giocatore è entrato in contatto
-    private GameObject pickedUpItem = null; //quale oggetto è stato raccolto
+    public GameObject pickedUpItem = null; //quale oggetto è stato raccolto
     public ItemType uniqueItem = ItemType.nullItem; //oggetto caratteristico del personaggio
     private Vector2 shootDirection; //vettore che indica in quale direzione vado a lanciare l'oggetto
     [SerializeField] private Transform firePoint = null; // da quale punto sono lanciati gli oggetti
@@ -15,20 +15,9 @@ public class PickUpThrow : NetworkBehaviour
     private void Update()
     {
         //se posso raccogliere qualcosa e premo E --> raccoglie oggetto
-        if (pickUpAllowed && Input.GetKeyDown(KeyCode.E) && isLocalPlayer)
+        if (Input.GetKeyDown(KeyCode.E) && isLocalPlayer && pickUpAllowed)
         {
-            pickedUpItem = collidedObject;
-            //se sto raccogliendo un giocatore disattivo l'input di movimento di entrambi, e l'item manager del giocatore raccolto
-            if (collidedObject.GetComponent<AnotherCharacterController>() != null)
-            {
-                this.gameObject.GetComponent<AnotherCharacterInput>().enabled = false;
-                Cmd_CharacterInputEnabled(pickedUpItem, false);
-                Cmd_ItemManagerEnabled(pickedUpItem, false);
-                Cmd_SetRigidBody(pickedUpItem, false);
-                Cmd_SetPosition(pickedUpItem, firePoint.position);
-            }
-            else
-                Cmd_PickupItem(pickedUpItem);
+            Pickup(collidedObject);
         }
 
         //se ho un oggetto in mano e tengo premuto R --> entra in fase di mira
@@ -45,6 +34,31 @@ public class PickUpThrow : NetworkBehaviour
             if (firePoint.GetComponent<SpriteRenderer>().enabled)
                 useItem();
             firePoint.GetComponent<SpriteRenderer>().enabled = false;
+        }
+    }
+
+    public void Pickup(GameObject collidedObject)
+    {
+        if(pickedUpItem == null)
+        {
+            pickedUpItem = collidedObject;
+            //se sto raccogliendo un giocatore disattivo l'input di movimento di entrambi, e l'item manager del giocatore raccolto
+            if (collidedObject.GetComponent<AnotherCharacterController>() != null)
+            {
+                this.gameObject.GetComponent<AnotherCharacterInput>().enabled = false;
+                Cmd_CharacterInputEnabled(pickedUpItem, false);
+                Cmd_ItemManagerEnabled(pickedUpItem, false);
+                Cmd_SetRigidBody(pickedUpItem, false);
+                Cmd_SetPosition(pickedUpItem, firePoint.position);
+            }
+            //se sto raccogliendo un oggetto o un collezionabile
+            else
+            {
+                Cmd_PickupItem(pickedUpItem);
+                //se ho raccolto un collezionabile metto pickedUpItem a null perché non si può usare
+                if (pickedUpItem.GetComponent<Pickuppable>().collectible)
+                    pickedUpItem = null;
+            }
         }
     }
 

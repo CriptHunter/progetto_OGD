@@ -5,19 +5,18 @@ using UnityEngine.Networking;
 
 public class Health : NetworkBehaviour
 {
-    [SerializeField] [SyncVar(hook = "OnChangeHealth")] private int currentHealth;
+    [SerializeField] [SyncVar(hook = "OnChangeHealth")] private int health;
 
     public void TakeDamage(int damage)
     {
         if (!isServer)
             return;
-        currentHealth = currentHealth - damage;
+        health = health - damage;
     }
 
     //viene chiamato ogni volta che la vita cambia
-
-    void OnChangeHealth(int health)
+    void OnChangeHealth(int newHealth)
     {
-        print("vita corrente: " + health);
+        print("vita corrente: " + newHealth);
     }
 }
