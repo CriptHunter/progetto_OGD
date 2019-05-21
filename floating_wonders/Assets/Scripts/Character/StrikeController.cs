@@ -15,11 +15,11 @@ public class StrikeController : MonoBehaviour
     public bool PerformStrike()
     {
         RaycastHit2D[] hits = Physics2D.CircleCastAll(collider.bounds.center, collider.radius, Vector2.right, 0.0f);
-        print("Striking: " + hits.Length);
+        //print("Striking: " + hits.Length);
 
         for (int i = 0; i < hits.Length; i++)
         {
-            print("hit: " + hits[i].collider.gameObject.name);
+            //print("hit: " + hits[i].collider.gameObject.name);
             Strikeable strikeable = hits[i].collider.gameObject.GetComponent<Strikeable>();
             if (strikeable != null)
             {

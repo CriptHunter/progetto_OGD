@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 
-public class Health : NetworkBehaviour
+public class EnemyHealth : NetworkBehaviour
 {
     [SerializeField] [SyncVar(hook = "OnChangeHealth")] private int health;
 
@@ -17,6 +17,9 @@ public class Health : NetworkBehaviour
     //viene chiamato ogni volta che la vita cambia
     void OnChangeHealth(int newHealth)
     {
-        print("vita corrente: " + newHealth);
+        health = newHealth;
+        print("vita corrente: " + health);
+        if (health <= 0)
+            this.gameObject.SetActive(false);
     }
 }

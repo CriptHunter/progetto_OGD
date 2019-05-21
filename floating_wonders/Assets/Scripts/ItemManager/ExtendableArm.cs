@@ -9,12 +9,6 @@ public class ExtendableArm : NetworkBehaviour
     [SerializeField] private float maxDistance = 30f;  //massima distanza del braccio
     private RaycastHit2D hit; //oggetto da raccogliere
 
-    public void Update()
-    {
-        
-    }
-
-
     public void Throw(Vector2 direction)
     {
         hit = Physics2D.Raycast(firePoint.position, direction, maxDistance);

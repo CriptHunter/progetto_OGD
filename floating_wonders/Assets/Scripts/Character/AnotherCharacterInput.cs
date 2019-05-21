@@ -13,6 +13,7 @@ public class AnotherCharacterInput : NetworkBehaviour
     void Start()
     {
         cc = GetComponent<AnotherCharacterController>();
+        strikeController = GetComponent<StrikeController>();
     }
 
     // Update is called once per frame
@@ -115,7 +116,8 @@ public class AnotherCharacterInput : NetworkBehaviour
                     {
                         if (Input.GetKeyDown(KeyCode.Space))
                         {
-                            strikeController.PerformStrike();
+                            //strikeController.PerformStrike();
+                            Cmd_PerformStrike();
                         }
                     }
                 }
@@ -131,5 +133,10 @@ public class AnotherCharacterInput : NetworkBehaviour
                 }
             }
         }
+    }
+
+    [Command] private void Cmd_PerformStrike()
+    {
+        strikeController.PerformStrike();
     }
 }

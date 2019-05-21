@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: 2203892847214543284}
   - component: {fileID: 4344479917307152794}
   - component: {fileID: 8736691192324229580}
+  - component: {fileID: 8655453005764312187}
   m_Layer: 10
   m_Name: Crate
   m_TagString: Untagged
@@ -116,7 +117,7 @@ Rigidbody2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 739898353318250826}
-  m_BodyType: 1
+  m_BodyType: 0
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
@@ -175,10 +176,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_TransformSyncMode: 2
-  m_SendInterval: 0.033333335
+  m_SendInterval: 0.06666667
   m_SyncRotationAxis: 3
   m_RotationSyncCompression: 0
-  m_SyncSpin: 1
+  m_SyncSpin: 0
   m_MovementTheshold: 0.001
   m_VelocityThreshold: 0.0001
   m_SnapThreshold: 5
@@ -197,3 +198,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   health: 5
+--- !u!114 &8655453005764312187
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 739898353318250826}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f1f201bddd3190a4c9cbbf80351a68a1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
