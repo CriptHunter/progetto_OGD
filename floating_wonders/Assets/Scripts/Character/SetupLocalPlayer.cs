@@ -9,24 +9,55 @@ public class SetupLocalPlayer : NetworkBehaviour
     void Start()
     {
         //Il server ha il braccio steampunk, il client il rampino
+        var gh = GetComponent<GrapplingHook>();
+        var ea = this.GetComponent<ExtendableArm>();
+        var pt = this.GetComponent<PickUpThrow>();
+        var renderer = GetComponent<Renderer>();
+
         if (isServer && isLocalPlayer)
         {
-            this.GetComponent<GrapplingHook>().enabled = false;
-            this.GetComponent<ExtendableArm>().enabled = true;
-            this.GetComponent<PickUpThrow>().uniqueItem = ItemType.extendableArm;
-            GetComponent<Renderer>().material.color = Color.magenta;
+            if (gh != null)
+            {
+                gh.enabled = false;
+            }
+            if (ea != null)
+            {
+                ea.enabled = true;
+            }
+            if (pt != null)
+            {
+                pt.uniqueItem = ItemType.extendableArm;
+            }
+            if (renderer != null)
+            {
+                renderer.material.color = Color.magenta;
+            }
         }
 
         else if (!isServer)
         {
             if (isLocalPlayer)
             {
-                this.GetComponent<GrapplingHook>().enabled = true;
-                this.GetComponent<ExtendableArm>().enabled = false;
-                this.GetComponent<PickUpThrow>().uniqueItem = ItemType.grapplingHook;
+                if (gh != null)
+                {
+                    gh.enabled = true;
+                }
+                if (ea != null)
+                {
+                    ea.enabled = false;
+                }
+                if (pt != null)
+                {
+                    pt.uniqueItem = ItemType.grapplingHook;
+                }
             }
             else
-                GetComponent<Renderer>().material.color = Color.magenta;
+            {
+                if (renderer != null)
+                {
+                    renderer.material.color = Color.magenta;
+                }
+            }
         }
 
         if (!isLocalPlayer)

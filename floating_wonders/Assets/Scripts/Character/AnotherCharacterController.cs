@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Networking;
+using Spine.Unity;
 
 public class AnotherCharacterController : NetworkBehaviour
 {
@@ -15,6 +16,8 @@ public class AnotherCharacterController : NetworkBehaviour
     public float climbSpeed;
     public LayerMask groundLayer;
     public LayerMask climbableLayer;
+
+    private SkeletonAnimation skeletonAnimation;
 
     private CharacterEdgeGrab edgeGrabCollider;
     private float initialGravityScale;
@@ -140,6 +143,21 @@ public class AnotherCharacterController : NetworkBehaviour
 
         speed = 0;
         initialGravityScale = rigidbody.gravityScale;
+    }
+
+    private void Start()
+    {
+        var kid = gameObject.GetChild("Spine GameObject");
+        if (kid != null)
+        {
+            skeletonAnimation = kid.GetComponent<SkeletonAnimation>();
+        }
+
+        if (skeletonAnimation != null)
+        {
+            //print("setting animation to something");
+            skeletonAnimation.AnimationName = "run";
+        }
     }
 
     // Update is called once per frame
