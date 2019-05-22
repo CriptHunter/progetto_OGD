@@ -17,7 +17,7 @@ public class AnotherCharacterController : NetworkBehaviour
     public LayerMask groundLayer;
     public LayerMask climbableLayer;
 
-    private SkeletonAnimation skeletonAnimation;
+    private SpineCharacterAnimator animator;
 
     private CharacterEdgeGrab edgeGrabCollider;
     private float initialGravityScale;
@@ -135,6 +135,12 @@ public class AnotherCharacterController : NetworkBehaviour
     {
         collider = GetComponent<CapsuleCollider2D>();
         rigidbody = GetComponent<Rigidbody2D>();
+        animator = GetComponent<SpineCharacterAnimator>();
+        if (animator != null)
+        {
+            animator.DontReloadSameAnimation = true;
+        }
+
         var egc = gameObject.GetChild("EdgeGrabCollider");
         if (egc != null)
         {
@@ -145,18 +151,46 @@ public class AnotherCharacterController : NetworkBehaviour
         initialGravityScale = rigidbody.gravityScale;
     }
 
-    private void Start()
+    private void Animate()
     {
-        var kid = gameObject.GetChild("Spine GameObject");
-        if (kid != null)
+        if (animator != null)
         {
-            skeletonAnimation = kid.GetComponent<SkeletonAnimation>();
-        }
-
-        if (skeletonAnimation != null)
-        {
-            //print("setting animation to something");
-            skeletonAnimation.AnimationName = "run";
+            if (IsClimbing())
+            {
+                animator.Animation = "climb";
+            }
+            else
+            {
+                if (IsDanglingFromEdge())
+                {
+                    animator.Animation = "hanging_edge";
+                }
+                else
+                {
+                    if (IsTouchingGround())
+                    {
+                        if (IsRunning())
+                        {
+                            animator.Animation = "run";
+                        }
+                        else
+                        {
+                            animator.Animation = "stand";
+                        }
+                    }
+                    else
+                    {
+                        if (IsMovingUpward())
+                        {
+                            animator.Animation = "jump_up";
+                        }
+                        else
+                        {
+                            animator.Animation = "jump_down";
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -183,7 +217,9 @@ public class AnotherCharacterController : NetworkBehaviour
                 if (edg != null && !IsDanglingFromEdge() && dontGrabEdgeDelay < speedThreshold)
                 {
                     if (rigidbody.velocity.y < 0.2f)
+                    {
                         GrabEdge(edg);
+                    }
                 }
 
                 if (IsDanglingFromEdge())
@@ -265,6 +301,8 @@ public class AnotherCharacterController : NetworkBehaviour
         {
             StopRunning();
         }
+
+        Animate();
 
         RaycastHit2D hit = Physics2D.CapsuleCast(collider.bounds.center, collider.bounds.size, collider.direction, 0, verse.Vector(), 0.99f, groundLayer);
         bool spazio = hit.collider == null;
@@ -684,5 +722,19 @@ public class AnotherCharacterController : NetworkBehaviour
     public bool IsTouchingGround()
     {
         return grounded;
+    }
+
+    public bool IsRunning()
+    {
+        return running;
+    }
+
+    public bool IsMovingUpward()
+    {
+        return rigidbody.velocity.y > 0;
+    }
+    public bool IsMovingDownward()
+    {
+        return rigidbody.velocity.y < 0;
     }
 }
