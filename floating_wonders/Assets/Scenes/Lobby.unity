@@ -123,7 +123,6 @@ GameObject:
   - component: {fileID: 714622319}
   - component: {fileID: 714622318}
   - component: {fileID: 714622320}
-  - component: {fileID: 714622317}
   m_Layer: 0
   m_Name: NetworkManager
   m_TagString: Untagged
@@ -131,19 +130,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &714622317
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 714622316}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9440c67adca35de4ab5aea7ba05c2459, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  health: 10
 --- !u!114 &714622318
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -184,6 +170,9 @@ MonoBehaviour:
   - {fileID: 3074465414999549160, guid: 2f417fcb3ea5fb44cb2516101984f02e, type: 3}
   - {fileID: 1656687803150500073, guid: dbc378dc088372d49894d069597abbac, type: 3}
   - {fileID: 5948424414494813101, guid: dbde85deab8e37541ae990119ad18de3, type: 3}
+  - {fileID: 3404043224649161805, guid: 4f9f0b00061061349b834000a80c209a, type: 3}
+  - {fileID: 2626424473549711368, guid: dd4adc01013675a4eb6bf4ed4f10903c, type: 3}
+  - {fileID: 5383548069752303536, guid: f2cd81c60e215f04386b36f444e9b3e6, type: 3}
   m_CustomConfig: 0
   m_MaxConnections: 4
   m_ConnectionConfig:

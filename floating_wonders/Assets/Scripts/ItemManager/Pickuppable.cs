@@ -15,6 +15,9 @@ public class Pickuppable : NetworkBehaviour
 
     public void Pickup()
     {
+        //se è un collezionabile, aggiorno l'HUD
+        if (collectible)
+            GameManager.Instance.GrabCollectible(type);       
         Cmd_setActive(false);
     }
 
