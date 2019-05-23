@@ -1,9 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 using Spine.Unity;
 
-public class SpineCharacterAnimator : MonoBehaviour
+public class SpineCharacterAnimator : NetworkBehaviour
 {
     private SkeletonAnimation skeletonAnimation;
 
@@ -29,11 +30,36 @@ public class SpineCharacterAnimator : MonoBehaviour
         }
     }
 
+    public float AnimationSpeed
+    {
+        get
+        {
+            return skeletonAnimation.AnimationState.TimeScale;
+        }
+        set
+        {
+            skeletonAnimation.AnimationState.TimeScale = value;
+        }
+    }
+
     public void SkeletonAnimationSet(string animation, bool dontReloadSameAnimation=false)
+    {
+        CmdSkeletonAnimationSet(animation, dontReloadSameAnimation);
+    }
+
+
+    [Command]
+    private void CmdSkeletonAnimationSet(string animation, bool dontReloadSameAnimation)
+    {
+        RpcSkeletonAnimationSet(animation, dontReloadSameAnimation);
+    }
+
+    [ClientRpc]
+    private void RpcSkeletonAnimationSet(string animation, bool dontReloadSameAnimation)
     {
         if (skeletonAnimation != null)
         {
-            if (!(animation==Animation && dontReloadSameAnimation))
+            if (!(animation == Animation && dontReloadSameAnimation))
             {
                 skeletonAnimation.AnimationName = animation;
             }

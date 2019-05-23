@@ -7774,5 +7774,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e78ed1be08a27e74b96efd130fc2ba62, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  shakeReductionSpeed: 35
+  shakeReductionSpeed: 1
   shakeAmplification: 0.08

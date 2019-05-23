@@ -10,7 +10,7 @@ public class OrthoCameraBehaviour : MonoBehaviour
     private float initialZ;
 
     [SerializeField]
-    private float shakeReductionSpeed = 35f;
+    private float shakeReductionSpeed = 1;//35f;
     [SerializeField]
     private float shakeAmplification = 0.08f;
 
@@ -131,34 +131,48 @@ public class OrthoCameraBehaviour : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        float dt = Time.deltaTime;
+        //float dt = Time.deltaTime;
         //var height = 2 * Camera.main.orthographicSize;
         //var width = height * Camera.main.aspect;
         //print("smoothdamping x " + x);
         //x = Mathf.SmoothDamp(x, desiredX, ref boh, 1f);
-        ExpDamp(ref x, desiredX, 0.3f, precision);
-        ExpDamp(ref y, desiredY, 0.3f, precision);
-        ExpDamp(ref zoom, desiredZoom, 0.3f, precision);
-
-        if (shake>0)
-        {
-            shake -= shakeReductionSpeed * dt;
-            if (shake < 0)
-                shake = 0;
-        }
+        
     }
 
     private void FixedUpdate()
     {
+        ExpDamp(ref x, desiredX, 10f, precision);
+        ExpDamp(ref y, desiredY, 10f, precision);
+        ExpDamp(ref zoom, desiredZoom, 30f, precision);
+
+        if (shake > 0)
+        {
+            shake -= shakeReductionSpeed;
+            if (shake < 0)
+                shake = 0;
+        }
+
         transform.position = new Vector3(x + Util.RandomRange(-shake * shakeAmplification, shake * shakeAmplification) * zoom, y + Util.RandomRange(-shake * shakeAmplification, shake * shakeAmplification) * zoom, initialZ);
         camera.orthographicSize = initialOrthoCameraSize * zoom;
+    }
+
+    void ExpDampDeltaTime(ref float value, float targetValue, float dampSpeed, float epsilon)
+    {
+        if (Mathf.Abs(value - targetValue) > epsilon)
+        {
+            value -= ((value - targetValue) / (dampSpeed))* Time.deltaTime;
+        }
+        else
+        {
+            value = targetValue;
+        }
     }
 
     void ExpDamp(ref float value, float targetValue, float dampSpeed, float epsilon)
     {
         if (Mathf.Abs(value - targetValue) > epsilon)
         {
-            value -= ((value - targetValue) / (dampSpeed))* Time.deltaTime;
+            value -= ((value - targetValue) / (dampSpeed));
         }
         else
         {

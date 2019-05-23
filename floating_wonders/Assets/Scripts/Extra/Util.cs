@@ -970,4 +970,6 @@ public enum Verse : int
     Left = -1,
     None = 0,
     Right = 1,
+    Up = 1,
+    Down = -1
 }

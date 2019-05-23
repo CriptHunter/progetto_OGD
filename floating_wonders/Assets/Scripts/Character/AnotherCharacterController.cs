@@ -130,6 +130,7 @@ public class AnotherCharacterController : NetworkBehaviour
     private Climbable targetClimbable; // se è attaccato a un climbable gameobject, altrimenti null
     private bool climbUpRequest = false; // se è stata fatta richiesta di arrampicarsi su o giù
     private bool climbDownRequest = false;
+    private Verse climbVerse = Verse.None;
 
     void Awake()
     {
@@ -157,7 +158,21 @@ public class AnotherCharacterController : NetworkBehaviour
         {
             if (IsClimbing())
             {
-                animator.Animation = "climb";
+                if (climbVerse == Verse.Up)
+                {
+                    animator.Animation = "climb_up";
+                }
+                else
+                {
+                    if (climbVerse == Verse.Down)
+                    {
+                        animator.Animation = "climb_down";
+                    }
+                    else
+                    {
+                        animator.Animation = "climb";
+                    }
+                }
             }
             else
             {
@@ -209,6 +224,8 @@ public class AnotherCharacterController : NetworkBehaviour
             groundedDist = float.MaxValue;
         }*/
 
+        climbVerse = Verse.None;
+
         if (Active)
         {
             if (!IsClimbing())
@@ -240,12 +257,14 @@ public class AnotherCharacterController : NetworkBehaviour
                         //rigidbody.position = new Vector2(rigidbody.position.x, rigidbody.position.y + climbSpeed/50f);
                         rigidbody.velocity = Vector2.up * climbSpeed;
                         climbUpRequest = false;
+                        climbVerse = Verse.Up;
                     }
                     if (climbDownRequest)
                     {
                         //rigidbody.position = new Vector2(rigidbody.position.x, rigidbody.position.y - climbSpeed/50f);
                         rigidbody.velocity = Vector2.down * climbSpeed;
                         climbDownRequest = false;
+                        climbVerse = Verse.Down;
                     }
                 }
             }
@@ -561,7 +580,7 @@ public class AnotherCharacterController : NetworkBehaviour
         if (Active)
         {
             BoxCollider2D box = climbable.GetComponent<BoxCollider2D>();
-            rigidbody.position = new Vector2(climbable.transform.position.x - 0.5f * (int)verse, Mathf.Clamp(rigidbody.position.y, box.bounds.center.y - box.bounds.extents.y, box.bounds.center.y + box.bounds.extents.y));
+            rigidbody.position = new Vector2(climbable.transform.position.x - 0.5f * (int)verse, Mathf.Clamp(rigidbody.position.y, box.bounds.center.y - box.bounds.extents.y + 0.9f, box.bounds.center.y + box.bounds.extents.y - 0.9f));
         }
     }
 
@@ -570,7 +589,7 @@ public class AnotherCharacterController : NetworkBehaviour
         if (IsClimbing())
         {
             BoxCollider2D box = targetClimbable.GetComponent<BoxCollider2D>();
-            return (rigidbody.position.y > box.bounds.center.y + box.bounds.extents.y - 0.2f);
+            return (rigidbody.position.y > box.bounds.center.y + box.bounds.extents.y - 0.2f - 0.9f);
         }
         else return false;
     }
@@ -580,7 +599,7 @@ public class AnotherCharacterController : NetworkBehaviour
         if (IsClimbing())
         {
             BoxCollider2D box = targetClimbable.GetComponent<BoxCollider2D>();
-            return (rigidbody.position.y < box.bounds.center.y - box.bounds.extents.y + 0.2f);
+            return (rigidbody.position.y < box.bounds.center.y - box.bounds.extents.y + 0.2f + 0.9f);
         }
         else return false;
     }
