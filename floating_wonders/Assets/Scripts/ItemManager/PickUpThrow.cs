@@ -6,12 +6,17 @@ public class PickUpThrow : NetworkBehaviour
 {
     private bool pickUpAllowed; //true quando il giocatore è in contatto con un oggetto che si può raccogliere
     private GameObject collidedObject; //con quale gameobject il giocatore è entrato in contatto
-    public GameObject pickedUpItem = null; //quale oggetto è stato raccolto
-    public ItemType uniqueItem = ItemType.nullItem; //oggetto caratteristico del personaggio
+    public GameObject pickedUpItem; //quale oggetto è stato raccolto
+    public ItemType uniqueItem; //oggetto caratteristico del personaggio
     private Vector2 shootDirection; //vettore che indica in quale direzione vado a lanciare l'oggetto
     [SerializeField] private Transform firePoint = null; // da quale punto sono lanciati gli oggetti
     [SerializeField] private GameObject bombRBPrefab = null; //bomba con rigid body
 
+    private void Start()
+    {
+        pickedUpItem = null;
+        uniqueItem = ItemType.nullItem;
+    }
     private void Update()
     {
         //se posso raccogliere qualcosa e premo E --> raccoglie oggetto
@@ -48,8 +53,8 @@ public class PickUpThrow : NetworkBehaviour
                 this.gameObject.GetComponent<AnotherCharacterInput>().enabled = false;
                 Cmd_CharacterInputEnabled(pickedUpItem, false);
                 Cmd_ItemManagerEnabled(pickedUpItem, false);
-                Cmd_SetRigidBody(pickedUpItem, false);
-                Cmd_SetPosition(pickedUpItem, firePoint.position);
+                //Cmd_SetRigidBody(pickedUpItem, false);
+                //Cmd_SetPosition(pickedUpItem, firePoint.position);
             }
             //se sto raccogliendo un oggetto o un collezionabile
             else
@@ -122,7 +127,7 @@ public class PickUpThrow : NetworkBehaviour
                     pickedUpItem = null;
                     break;
                 case ItemType.player:
-                    Cmd_SetRigidBody(pickedUpItem, true);
+                    //Cmd_SetRigidBody(pickedUpItem, true);
                     Cmd_ApplyImpulse(pickedUpItem, shootDirection.GetAngle(), 30);
                     Cmd_CharacterInputEnabled(pickedUpItem, true);
                     Cmd_ItemManagerEnabled(pickedUpItem, true);
