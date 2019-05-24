@@ -8,7 +8,6 @@ public class CheckPoint : MonoBehaviour
     private bool triggered;
     [SerializeField] private GameObject levelManager;
     private CheckPointsManager c;
-    private int counterActivation;
     private GameObject firstPlayerOnCheckPoint;
 
     // Start is called before the first frame update
@@ -36,6 +35,10 @@ public class CheckPoint : MonoBehaviour
                     c.SetActiveCheckPoint(this);
                 }
             }
+
+            /*Debug.Log("Collisione CheckPoint " + this.name + " - player");
+            triggered = true;
+            c.SetActiveCheckPoint(this);*/
         }
     }
 

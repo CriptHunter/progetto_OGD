@@ -60,6 +60,10 @@ public class CheckPointsManager : NetworkBehaviour
     public void Respawn()
     {
         GetPlayerEnemyList();
+        foreach (Enemy e in eList.GetEnemyList())
+        {
+            e.gameObject.SetActive(false);
+        }
         foreach (GameObject p in pList.GetPlayerList())
         {
             p.SetActive(false);
@@ -68,7 +72,6 @@ public class CheckPointsManager : NetworkBehaviour
         }
         foreach (Enemy e in eList.GetEnemyList())
         {
-            e.gameObject.SetActive(false);
             e.gameObject.transform.position = e.GetStartingPosition();
             e.gameObject.SetActive(true);
         }
