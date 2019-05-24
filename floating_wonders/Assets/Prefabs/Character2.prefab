@@ -213,7 +213,7 @@ MonoBehaviour:
   runSpeed: 10
   runAcceleration: 60
   runFriction: 50
-  jumpForce: 20
+  jumpForce: 25
   climbSpeed: 10
   groundLayer:
     serializedVersion: 2
@@ -399,7 +399,7 @@ CircleCollider2D:
   m_UsedByComposite: 0
   m_Offset: {x: 0.5, y: 0}
   serializedVersion: 2
-  m_Radius: 0.6
+  m_Radius: 0.8
 --- !u!114 &6024927563904521603
 MonoBehaviour:
   m_ObjectHideFlags: 0

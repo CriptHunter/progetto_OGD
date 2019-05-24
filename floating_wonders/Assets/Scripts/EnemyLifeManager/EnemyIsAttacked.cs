@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class EnemyIsAttacked : Strikeable
 {
+    [SerializeField] public float knockbackForce = 0f;
     public override void Strike()
     {
         EnemyHealth health = GetComponent<EnemyHealth>();

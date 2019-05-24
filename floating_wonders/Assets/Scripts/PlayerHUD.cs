@@ -11,16 +11,16 @@ public class PlayerHUD : MonoBehaviour
 
     public void SetHealthText(int health)
     {
-        healthText.text = "HEALTH = " + health.ToString();
+        healthText.text = health.ToString();
     }
 
     public void setKeysText(int keys)
     {
-        keysText.text = "KEYS = " + keys.ToString();
+        keysText.text = keys.ToString();
     }
 
     public void setGemsText(int gems)
     {
-        gemsText.text = "GEMS = " + gems.ToString();
+        gemsText.text = gems.ToString();
     }
 }
