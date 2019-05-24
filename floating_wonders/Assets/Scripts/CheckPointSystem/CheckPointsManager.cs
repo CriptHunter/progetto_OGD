@@ -1,17 +1,19 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 
-public class CheckPointsManager : MonoBehaviour
+public class CheckPointsManager : NetworkBehaviour
 {
     private List<CheckPoint> checkPointList;
-
+    private PlayerList pList;
+    private EnemyList eList;
     private CheckPoint activeCheck;
 
 
     // Start is called before the first frame update
     void Awake()
-    {
+    { 
         checkPointList = new List<CheckPoint>();
     }
 
@@ -49,9 +51,27 @@ public class CheckPointsManager : MonoBehaviour
         this.activeCheck = c;
     }
 
-    public void Respawn(GameObject g)
+    public void GetPlayerEnemyList()
     {
-        g.transform.position = this.GetCheckPoint().transform.position;
-        g.SetActive(true);
+        pList = GameObject.Find("NetworkManager").GetComponent<PlayerList>();
+        eList = GameObject.Find("NetworkManager").GetComponent<EnemyList>();
+    }
+
+    public void Respawn()
+    {
+        GetPlayerEnemyList();
+        foreach (GameObject p in pList.GetPlayerList())
+        {
+            p.SetActive(false);
+            p.transform.position = this.GetCheckPoint().transform.position;
+            p.SetActive(true);
+        }
+        foreach (Enemy e in eList.GetEnemyList())
+        {
+            e.gameObject.SetActive(false);
+            e.gameObject.transform.position = e.GetStartingPosition();
+            e.gameObject.SetActive(true);
+        }
+
     }
 }

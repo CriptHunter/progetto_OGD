@@ -380,6 +380,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1792dd295648885429223adb0141a195, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  pickedUpItem: {fileID: 0}
+  uniqueItem: 0
   firePoint: {fileID: 8502467504385790274}
   bombRBPrefab: {fileID: 4347175937712634760, guid: 72a39f29716ddeb4e888b4a111780b7a,
     type: 3}
@@ -432,6 +434,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 2
+  respawnTime: 5
+  canRespawn: 1
+  collectible: 0
 --- !u!114 &1362918806948182441
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -475,7 +480,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4165673635756170399}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f8b52d484de170844ba4b727c8249bb7, type: 3}
   m_Name: 
