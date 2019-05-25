@@ -25,24 +25,14 @@ public class GameManager : NetworkBehaviour
         }
     }
 
+    public void Start()
+    {
+        hud = GameObject.Find("HUD").GetComponent<PlayerHUD>();
+    }
+
     public void Update()
     {
-        //find è nell'update perché quando viene creato il gamemanager potrebbe non esistere ancora l'HUD
-        if (hud == null)
-        { 
-            try
-            {
-                hud = GameObject.Find("HUD").GetComponent<PlayerHUD>();
-            }
-            catch (Exception e)
-            {
-                print("HUD is null");
-            }
-        }
-        else
-        {
-            UpdateUI();
-        }
+        UpdateUI();
     }
 
     private void UpdateUI()

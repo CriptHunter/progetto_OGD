@@ -89,7 +89,7 @@ public class PickUpThrow : NetworkBehaviour
     }
 
     //se un giocatore entra in collisione con un altro
-    private void OnCollisionEnter2D(Collision2D collision)
+   /* private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.GetComponent<Pickuppable>() != null && isLocalPlayer)
         {
@@ -105,7 +105,7 @@ public class PickUpThrow : NetworkBehaviour
             pickUpAllowed = false;
             collidedObject = null;
         }
-    }
+    }*/
 
     //usa l'oggetto equipaggiato
     private void useItem()
