@@ -94,6 +94,7 @@
     <None Include="Assets\Spine\Editor\spine-unity\Editor\Resources\SpineAssetDatabaseMarker.txt" />
     <None Include="Assets\Spine\Editor\spine-unity-editor.txt" />
     <Reference Include="Unity.TextMeshPro.Editor">
+<<<<<<< HEAD
       <HintPath>D:/Dati progetti/Unity/Git Workspaces/progetto_OGD/floating_wonders/Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.PackageManagerUI.Editor">
@@ -107,6 +108,21 @@
     </Reference>
     <Reference Include="Unity.Analytics.DataPrivacy">
       <HintPath>D:/Dati progetti/Unity/Git Workspaces/progetto_OGD/floating_wonders/Library/ScriptAssemblies/Unity.Analytics.DataPrivacy.dll</HintPath>
+=======
+      <HintPath>C:/Users/loren/Desktop/progetto_OGD/floating_wonders/Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.PackageManagerUI.Editor">
+      <HintPath>C:/Users/loren/Desktop/progetto_OGD/floating_wonders/Library/ScriptAssemblies/Unity.PackageManagerUI.Editor.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.CollabProxy.Editor">
+      <HintPath>C:/Users/loren/Desktop/progetto_OGD/floating_wonders/Library/ScriptAssemblies/Unity.CollabProxy.Editor.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.TextMeshPro">
+      <HintPath>C:/Users/loren/Desktop/progetto_OGD/floating_wonders/Library/ScriptAssemblies/Unity.TextMeshPro.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.Analytics.DataPrivacy">
+      <HintPath>C:/Users/loren/Desktop/progetto_OGD/floating_wonders/Library/ScriptAssemblies/Unity.Analytics.DataPrivacy.dll</HintPath>
+>>>>>>> 9ae4673a2bc0896b7bb8fe904b3fff06520fd8ab
     </Reference>
     <Reference Include="UnityEngine.AIModule">
       <HintPath>C:/Program Files/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.AIModule.dll</HintPath>
@@ -335,6 +351,7 @@
     </Reference>
     <Reference Include="UnityEditor.Graphs">
       <HintPath>C:/Program Files/Unity/Editor/Data/Managed/UnityEditor.Graphs.dll</HintPath>
+<<<<<<< HEAD
     </Reference>
     <Reference Include="UnityEditor.Android.Extensions">
       <HintPath>C:/Program Files/Unity/Editor/Data/PlaybackEngines/AndroidPlayer/UnityEditor.Android.Extensions.dll</HintPath>
@@ -350,6 +367,8 @@
     </Reference>
     <Reference Include="UnityEditor.LinuxStandalone.Extensions">
       <HintPath>C:/Program Files/Unity/Editor/Data/PlaybackEngines/LinuxStandaloneSupport/UnityEditor.LinuxStandalone.Extensions.dll</HintPath>
+=======
+>>>>>>> 9ae4673a2bc0896b7bb8fe904b3fff06520fd8ab
     </Reference>
     <Reference Include="UnityEditor.WindowsStandalone.Extensions">
       <HintPath>C:/Program Files/Unity/Editor/Data/PlaybackEngines/windowsstandalonesupport/UnityEditor.WindowsStandalone.Extensions.dll</HintPath>
@@ -358,6 +377,7 @@
       <HintPath>C:/Program Files (x86)/Microsoft Visual Studio Tools for Unity/16.0/Editor/SyntaxTree.VisualStudio.Unity.Bridge.dll</HintPath>
     </Reference>
     <Reference Include="UnityEditor.Advertisements">
+<<<<<<< HEAD
       <HintPath>D:/Dati progetti/Unity/Git Workspaces/progetto_OGD/floating_wonders/Library/PackageCache/com.unity.ads@2.0.8/Editor/UnityEditor.Advertisements.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Analytics.Editor">
@@ -377,6 +397,21 @@
     </Reference>
     <Reference Include="UnityEditor.iOS.Extensions.Common">
       <HintPath>C:/Program Files/Unity/Editor/Data/PlaybackEngines/iOSSupport/UnityEditor.iOS.Extensions.Common.dll</HintPath>
+=======
+      <HintPath>C:/Users/loren/Desktop/progetto_OGD/floating_wonders/Library/PackageCache/com.unity.ads@2.0.8/Editor/UnityEditor.Advertisements.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.Analytics.Editor">
+      <HintPath>C:/Users/loren/Desktop/progetto_OGD/floating_wonders/Library/PackageCache/com.unity.analytics@3.2.2/Unity.Analytics.Editor.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.Analytics.StandardEvents">
+      <HintPath>C:/Users/loren/Desktop/progetto_OGD/floating_wonders/Library/PackageCache/com.unity.analytics@3.2.2/Unity.Analytics.StandardEvents.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.Analytics.Tracker">
+      <HintPath>C:/Users/loren/Desktop/progetto_OGD/floating_wonders/Library/PackageCache/com.unity.analytics@3.2.2/Unity.Analytics.Tracker.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEditor.Purchasing">
+      <HintPath>C:/Users/loren/Desktop/progetto_OGD/floating_wonders/Library/PackageCache/com.unity.purchasing@2.0.3/Editor/UnityEditor.Purchasing.dll</HintPath>
+>>>>>>> 9ae4673a2bc0896b7bb8fe904b3fff06520fd8ab
     </Reference>
     <Reference Include="mscorlib">
       <HintPath>C:/Program Files/Unity/Editor/Data/MonoBleedingEdge/lib/mono/4.7.1-api/mscorlib.dll</HintPath>
