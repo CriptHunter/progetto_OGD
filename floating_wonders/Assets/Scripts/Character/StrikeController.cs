@@ -5,6 +5,8 @@ using UnityEngine;
 [RequireComponent(typeof(CircleCollider2D))]
 public class StrikeController : MonoBehaviour
 {
+    public GameObject parent; // the gameobject who is actually responsible for the strikecontroller
+
     private new CircleCollider2D collider;
     // Start is called before the first frame update
     void Start()
@@ -23,7 +25,7 @@ public class StrikeController : MonoBehaviour
             Strikeable strikeable = hits[i].collider.gameObject.GetComponent<Strikeable>();
             if (strikeable != null)
             {
-                strikeable.Strike();
+                strikeable.Strike(parent);
             }
         }
         return false;

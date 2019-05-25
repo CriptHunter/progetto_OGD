@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class StrikeableTest : Strikeable
 {
-    public override void Strike()
+    public override void Strike(GameObject attacker)
     {
         Destroy(gameObject);
     }
