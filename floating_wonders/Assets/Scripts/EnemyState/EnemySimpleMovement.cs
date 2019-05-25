@@ -8,9 +8,8 @@ public class EnemySimpleMovement : NetworkBehaviour
     private float speed;
     [SerializeField]
     private float groundRayDistance;
-    /*[SerializeField]
-    private bool followPlayer;
-    private float sightSee;*/
+    [SerializeField] bool setDistance;
+    [SerializeField] float distance;
 
     private bool movingRight = true;
     private LayerMask playerMask;

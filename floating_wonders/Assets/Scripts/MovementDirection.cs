@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlatformMovement : MonoBehaviour
+public class MovementDirection : MonoBehaviour
 {
     // Start is called before the first frame update
     [SerializeField] private Vector2 directionVector;
@@ -15,15 +15,17 @@ public class PlatformMovement : MonoBehaviour
 
     private void Start()
     {
-        directionVector3 = new Vector3(directionVector.x, directionVector.y, 0);
+        //moveRight = false;
+        
         startingPos = transform.position;
     }
 
     void Update()
     {
-        if (transform.position == directionVector3 * distance)
+        directionVector3 = new Vector3(directionVector.x, directionVector.y, 0);
+        if (transform.position == startingPos + directionVector3 * distance)
             moveRight = false;
-        if (transform.position == -directionVector3 * distance)
+        if (transform.position == startingPos - directionVector3 * distance)
             moveRight = true;
 
         if (moveRight)
