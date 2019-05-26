@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 5494704095372825840}
   - component: {fileID: 2224535575317698913}
   - component: {fileID: 5615913588845393924}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: BombPickuppable
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -179,3 +179,4 @@ MonoBehaviour:
   type: 0
   respawnTime: 5
   canRespawn: 1
+  collectible: 0

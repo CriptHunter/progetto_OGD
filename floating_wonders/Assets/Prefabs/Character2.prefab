@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 2824795588158744980}
   - component: {fileID: 1672716191928984426}
   - component: {fileID: 2879285651681774632}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Spine GameObject
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -137,8 +137,12 @@ GameObject:
   - component: {fileID: 6827212985945314183}
   - component: {fileID: 7829778472770853195}
   - component: {fileID: 6847128711490773573}
+<<<<<<< HEAD
   - component: {fileID: 5372787524267567538}
   m_Layer: 0
+=======
+  m_Layer: 9
+>>>>>>> 3e7dd9f6ba365999ca68318b4dc2707ef73e5a2c
   m_Name: Character2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -428,6 +432,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 983adade765adca4cb978ed5512f82c3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+<<<<<<< HEAD
 --- !u!114 &5372787524267567538
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -442,6 +447,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   levelManager: {fileID: 2678438959574968248, guid: eb438f72efbe7444caaaa10708cd6430,
     type: 3}
+=======
+  parent: {fileID: 0}
+>>>>>>> 3e7dd9f6ba365999ca68318b4dc2707ef73e5a2c
 --- !u!1 &4935003469436019558
 GameObject:
   m_ObjectHideFlags: 0
@@ -452,7 +460,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4935003469436019557}
   - component: {fileID: 5693790997877857159}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: FirePoint
   m_TagString: Untagged
   m_Icon: {fileID: -5487077368411116049, guid: 0000000000000000d000000000000000, type: 0}
@@ -467,7 +475,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4935003469436019558}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.87, y: 0.17, z: 0}
+  m_LocalPosition: {x: 0.53, y: -0.05, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4935003469174482370}
@@ -532,7 +540,7 @@ GameObject:
   - component: {fileID: 4935003469511816100}
   - component: {fileID: 4935003469511816106}
   - component: {fileID: 4935003469511816107}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: EdgeGrabCollider
   m_TagString: Untagged
   m_Icon: {fileID: -5397416234189338067, guid: 0000000000000000d000000000000000, type: 0}
@@ -605,7 +613,7 @@ GameObject:
   - component: {fileID: 4935003469793811217}
   - component: {fileID: 4935003469793811223}
   - component: {fileID: 4935003469793811216}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Text
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -685,7 +693,7 @@ GameObject:
   - component: {fileID: 4935003469813135168}
   - component: {fileID: 4935003469813135169}
   - component: {fileID: 4935003469813135170}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -782,7 +790,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2195702044118871877}
   - component: {fileID: 8100062239604326332}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: HookRope
   m_TagString: Untagged
   m_Icon: {fileID: 0}

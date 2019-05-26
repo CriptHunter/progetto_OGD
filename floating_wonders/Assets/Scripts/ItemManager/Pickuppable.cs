@@ -17,8 +17,10 @@ public class Pickuppable : NetworkBehaviour
     {
         //se è un collezionabile, aggiorno l'HUD
         if (collectible)
-            GameManager.Instance.GrabCollectible(type);       
-        Cmd_setActive(false);
+            GameManager.Instance.GrabCollectible(type);
+        if (canRespawn)
+            Cmd_Respawn();
+        Rpc_setActive(false);
     }
 
     private void Start()
@@ -38,15 +40,9 @@ public class Pickuppable : NetworkBehaviour
     private IEnumerator WaitCoroutine(int secondsToWait)
     {
         yield return new WaitForSeconds(secondsToWait);
-        Cmd_setActive(true);
+        Rpc_setActive(true);
     }
 
-    //chiede al server di nascondere l'oggetto
-    [Command]
-    void Cmd_setActive(bool active)
-    {
-        Rpc_setActive(active);
-    }
     //tutti i client nascondono effettivamente l'oggetto
     [ClientRpc]
     void Rpc_setActive(bool active)

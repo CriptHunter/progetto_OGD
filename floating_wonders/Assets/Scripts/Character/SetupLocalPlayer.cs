@@ -11,54 +11,22 @@ public class SetupLocalPlayer : NetworkBehaviour
         //Il server ha il braccio steampunk, il client il rampino
         var gh = GetComponent<GrapplingHook>();
         var ea = this.GetComponent<ExtendableArm>();
-        var pt = this.GetComponent<PickUpThrow>();
+        var itemManager = this.GetComponent<ItemManager>();
         var renderer = GetComponent<Renderer>();
 
         if (isServer && isLocalPlayer)
         {
-            if (gh != null)
-            {
-                gh.enabled = false;
-            }
-            if (ea != null)
-            {
-                ea.enabled = true;
-            }
-            if (pt != null)
-            {
-                pt.uniqueItem = ItemType.extendableArm;
-            }
-            if (renderer != null)
-            {
-                renderer.material.color = Color.magenta;
-            }
+            gh.enabled = false;
+            ea.enabled = true;
+            itemManager.uniqueItem = ItemType.extendableArm;
+        }
+        else if (!isServer && isLocalPlayer )
+        {
+            gh.enabled = true;
+            ea.enabled = false;
+            itemManager.uniqueItem = ItemType.grapplingHook;
         }
 
-        else if (!isServer)
-        {
-            if (isLocalPlayer)
-            {
-                if (gh != null)
-                {
-                    gh.enabled = true;
-                }
-                if (ea != null)
-                {
-                    ea.enabled = false;
-                }
-                if (pt != null)
-                {
-                    pt.uniqueItem = ItemType.grapplingHook;
-                }
-            }
-            else
-            {
-                if (renderer != null)
-                {
-                    renderer.material.color = Color.magenta;
-                }
-            }
-        }
 
         if (!isLocalPlayer)
         {

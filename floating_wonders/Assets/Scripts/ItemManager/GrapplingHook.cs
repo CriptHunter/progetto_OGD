@@ -13,6 +13,7 @@ public class GrapplingHook : NetworkBehaviour
     private DistanceJoint2D joint; //linea che collega il giocatore con il punto di attacco
     private RaycastHit2D hit;
     private bool anchored; //true se il personaggio è attaccato con il rampino
+    private LayerMask ignoredLayer = ~((1 << 2) | (1 << 9) | (1 << 13));
 
     private void Start()
     {
@@ -42,7 +43,7 @@ public class GrapplingHook : NetworkBehaviour
     //se colpisce un punto con tag "hookpoint" si aggrappa
     public void Throw(Vector2 direction)
     {
-        hit = Physics2D.Raycast(firePoint.position, direction, maxDistance);
+        hit = Physics2D.Raycast(firePoint.position, direction, maxDistance, ignoredLayer);
         if (hit.collider != null && hit.transform.gameObject.tag == "HookPoint")
         {
             anchored = true;

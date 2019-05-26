@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.Networking;
 
-public class PickUpThrow : NetworkBehaviour
+public class ItemManager : NetworkBehaviour
 {
     private bool pickUpAllowed; //true quando il giocatore è in contatto con un oggetto che si può raccogliere
     private GameObject collidedObject; //con quale gameobject il giocatore è entrato in contatto
@@ -44,8 +44,13 @@ public class PickUpThrow : NetworkBehaviour
 
     public void Pickup(GameObject collidedObject)
     {
-        if(pickedUpItem == null)
+        //se sto raccogliendo un collezionabile
+        if (collidedObject.GetComponent<Pickuppable>().collectible)
+            Cmd_PickupItem(collidedObject);
+        //se sto raccogliendo un giocatore o un oggetto
+        else if (pickedUpItem == null)
         {
+            //salvo quale oggetto ho raccolto, serve per quando viene usato
             pickedUpItem = collidedObject;
             //se sto raccogliendo un giocatore disattivo l'input di movimento di entrambi, e l'item manager del giocatore raccolto
             if (collidedObject.GetComponent<AnotherCharacterController>() != null)
@@ -54,24 +59,21 @@ public class PickUpThrow : NetworkBehaviour
                 Cmd_CharacterInputEnabled(pickedUpItem, false);
                 Cmd_ItemManagerEnabled(pickedUpItem, false);
                 //Cmd_SetRigidBody(pickedUpItem, false);
-                //Cmd_SetPosition(pickedUpItem, firePoint.position);
+                Cmd_SetPosition(pickedUpItem, firePoint.position);
             }
-            //se sto raccogliendo un oggetto o un collezionabile
+            //se sto raccogliendo un oggetto
             else
-            {
                 Cmd_PickupItem(pickedUpItem);
-                //se ho raccolto un collezionabile metto pickedUpItem a null perché non si può usare
-                if (pickedUpItem.GetComponent<Pickuppable>().collectible)
-                    pickedUpItem = null;
-            }
         }
+
+
     }
 
     //quando il giocatore collide con un oggetto
     private void OnTriggerEnter2D(Collider2D collision)
     {
         //se collido con un oggetto che si può raccogliere, sono il local player e non ho oggetti in mano ---> posso raccogliere
-        if (collision.gameObject.GetComponent<Pickuppable>() != null && isLocalPlayer && pickedUpItem == null)
+        if (collision.gameObject.GetComponent<Pickuppable>() != null && isLocalPlayer)
         {
             pickUpAllowed = true;
             collidedObject = collision.gameObject;
@@ -123,18 +125,16 @@ public class PickUpThrow : NetworkBehaviour
             {
                 case ItemType.bomb:
                     Cmd_ThrowBomb(shootDirection);
-                    Cmd_Respawn(pickedUpItem);
-                    pickedUpItem = null;
                     break;
                 case ItemType.player:
                     //Cmd_SetRigidBody(pickedUpItem, true);
                     Cmd_ApplyImpulse(pickedUpItem, shootDirection.GetAngle(), 30);
                     Cmd_CharacterInputEnabled(pickedUpItem, true);
                     Cmd_ItemManagerEnabled(pickedUpItem, true);
-                    this.gameObject.GetComponent<AnotherCharacterInput>().enabled = true;
-                    pickedUpItem = null;
+                    this.gameObject.GetComponent<AnotherCharacterInput>().enabled = true;                  
                     break;
             }
+            pickedUpItem = null;
         }
     }
 
@@ -186,12 +186,6 @@ public class PickUpThrow : NetworkBehaviour
         item.GetComponent<Pickuppable>().Pickup();
     }
 
-    [Command]
-    private void Cmd_Respawn(GameObject item)
-    {
-        item.GetComponent<Pickuppable>().Cmd_Respawn();
-    }
-
     [Command] private void Cmd_ApplyImpulse(GameObject player, float direction, float strength)
     {
         Rpc_ApplyImpulse(player, direction, strength);
@@ -219,7 +213,7 @@ public class PickUpThrow : NetworkBehaviour
 
     [ClientRpc] private void Rpc_ItemManagerEnabled(GameObject player, bool enabled)
     {
-        player.gameObject.GetComponent<PickUpThrow>().enabled = enabled;
+        player.gameObject.GetComponent<ItemManager>().enabled = enabled;
     }
 
     [Command] private void Cmd_SetRigidBody(GameObject player, bool active)
