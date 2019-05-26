@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.Networking;
 
-public class PickUpThrow : NetworkBehaviour
+public class ItemManager : NetworkBehaviour
 {
     private bool pickUpAllowed; //true quando il giocatore è in contatto con un oggetto che si può raccogliere
     private GameObject collidedObject; //con quale gameobject il giocatore è entrato in contatto
@@ -213,7 +213,7 @@ public class PickUpThrow : NetworkBehaviour
 
     [ClientRpc] private void Rpc_ItemManagerEnabled(GameObject player, bool enabled)
     {
-        player.gameObject.GetComponent<PickUpThrow>().enabled = enabled;
+        player.gameObject.GetComponent<ItemManager>().enabled = enabled;
     }
 
     [Command] private void Cmd_SetRigidBody(GameObject player, bool active)

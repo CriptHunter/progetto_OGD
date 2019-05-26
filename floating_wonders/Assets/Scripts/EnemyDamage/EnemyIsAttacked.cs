@@ -11,6 +11,14 @@ public class EnemyIsAttacked : Strikeable
         if (health != null)
         {
             health.TakeDamage(1);
+            print(attacker);
+           /* var direction = transform.InverseTransformPoint(attacker.transform.position);
+            //destra
+            if (direction.x > 0f)
+                print("destra");
+            //sinistra
+            else if (direction.x < 0f)
+                print("sinistra");*/
         }
     }
 }
