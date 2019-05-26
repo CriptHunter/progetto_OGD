@@ -8,8 +8,8 @@ public class EnemySimpleMovement : NetworkBehaviour
     private float speed;
     [SerializeField]
     private float groundRayDistance;
-    [SerializeField] bool setDistance;
-    [SerializeField] float distance;
+    [SerializeField] bool flyingEnemy;
+
 
     private bool movingRight = true;
     private LayerMask playerMask;
@@ -30,18 +30,16 @@ public class EnemySimpleMovement : NetworkBehaviour
 
     void Update()
     {
-        transform.Translate(Vector2.right * speed * Time.deltaTime);
-        //This will return true only if the ray hit an object of the Ground layer. 
-        RaycastHit2D groundInfo = Physics2D.Raycast(groundDetection.position, Vector2.down, groundRayDistance, groundMask);
-        if (!groundInfo)
-        {
-            Debug.Log("FloorEnded");
-            ChangeDirection();
-        }
-        else
-            Debug.Log("Nope");
-        /*if (followPlayer)
-            FollowP();*/
+            transform.Translate(Vector2.right * speed * Time.deltaTime);
+            //This will return true only if the ray hit an object of the Ground layer. 
+            RaycastHit2D groundInfo = Physics2D.Raycast(groundDetection.position, Vector2.down, groundRayDistance, groundMask);
+            if (!groundInfo)
+            {
+                Debug.Log("FloorEnded");
+                ChangeDirection();
+            }
+            else
+                Debug.Log("Nope");
     }
 
     private void ChangeDirection()
@@ -58,34 +56,6 @@ public class EnemySimpleMovement : NetworkBehaviour
         }
     }
 
-    /*private void FollowP()
-    {
-        RaycastHit2D verticalRay;
-        RaycastHit2D horizzontalRay;
-
-        verticalRay = Physics2D.Raycast(transform.position, Vector2.up, sightSee, playerMask);
-        if (movingRight)
-        {
-            horizzontalRay = Physics2D.Raycast(transform.position, Vector2.right, sightSee, playerMask);
-
-            Debug.DrawRay(transform.position, Vector2.right * sightSee, Color.green);
-        }
-        else
-        {
-            horizzontalRay = Physics2D.Raycast(transform.position, Vector2.left, sightSee, playerMask);
-            Debug.DrawRay(transform.position, Vector2.left * sightSee, Color.green);
-        }
-
-        if (horizzontalRay.collider)
-            playerRight = true;
-        else
-            playerRight = false;
-        if (verticalRay.collider)
-        {
-            playerRight = !playerRight;
-            Debug.DrawRay(transform.position, Vector2.up * sightSee, Color.green);
-        }
-    }*/
 
     // Sent when another object enters a trigger collider attached to this object
     void OnCollisionEnter2D(Collision2D collision)

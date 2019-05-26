@@ -22,14 +22,14 @@ public class PlayerDie : NetworkBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (!isLocalPlayer)
+       if (!isLocalPlayer)
             return;
         
         if (Input.GetKeyDown("space"))
         {
             if (cm.GetCheckPoint() == null)
                 return;
-
+            print(cm.GetCheckPoint());
             died = true;
 
             if (isServer)
