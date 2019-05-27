@@ -9,16 +9,21 @@ public class ItemManager : NetworkBehaviour
     public GameObject pickedUpItem; //quale oggetto è stato raccolto
     public ItemType uniqueItem; //oggetto caratteristico del personaggio
     private Vector2 shootDirection; //vettore che indica in quale direzione vado a lanciare l'oggetto
+    private new CircleCollider2D collider; //collider usato da raycast per vedere se di fronte c'è un altro player
     [SerializeField] private Transform firePoint = null; // da quale punto sono lanciati gli oggetti
     [SerializeField] private GameObject bombRBPrefab = null; //bomba con rigid body
+
 
     private void Start()
     {
         pickedUpItem = null;
         uniqueItem = ItemType.nullItem;
+        collider = GetComponent<CircleCollider2D>();
     }
+
     private void Update()
     {
+        OnRaycastEnter();
         //se posso raccogliere qualcosa e premo E --> raccoglie oggetto
         if (Input.GetKeyDown(KeyCode.E) && isLocalPlayer && pickUpAllowed)
         {
@@ -65,8 +70,6 @@ public class ItemManager : NetworkBehaviour
             else
                 Cmd_PickupItem(pickedUpItem);
         }
-
-
     }
 
     //quando il giocatore collide con un oggetto
@@ -88,6 +91,24 @@ public class ItemManager : NetworkBehaviour
             pickUpAllowed = false;
             collidedObject = null;
         }
+    }
+
+    private void OnRaycastEnter()
+    {
+        if (isLocalPlayer)
+        {
+            RaycastHit2D[] hits = Physics2D.CircleCastAll(collider.bounds.center, collider.radius, Vector2.right, 0.0f);
+            foreach (RaycastHit2D h in hits)
+            {
+                if (h.collider.gameObject != this.gameObject && h.collider.GetComponent<AnotherCharacterController>())
+                    print("colpito dal raycast a cerchio");
+            }
+        }
+    }
+
+    private void OnRaycastExit()
+    {
+
     }
 
     //se un giocatore entra in collisione con un altro
