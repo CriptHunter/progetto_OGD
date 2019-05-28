@@ -14,17 +14,20 @@ public class SetupLocalPlayer : NetworkBehaviour
         var itemManager = this.GetComponent<ItemManager>();
         var renderer = GetComponent<Renderer>();
 
-        if (isServer && isLocalPlayer)
+        if (gh != null && ea != null)
         {
-            gh.enabled = false;
-            ea.enabled = true;
-            itemManager.uniqueItem = ItemType.extendableArm;
-        }
-        else if (!isServer && isLocalPlayer )
-        {
-            gh.enabled = true;
-            ea.enabled = false;
-            itemManager.uniqueItem = ItemType.grapplingHook;
+            if (isServer && isLocalPlayer)
+            {
+                gh.enabled = false;
+                ea.enabled = true;
+                itemManager.uniqueItem = ItemType.extendableArm;
+            }
+            else if (!isServer && isLocalPlayer)
+            {
+                gh.enabled = true;
+                ea.enabled = false;
+                itemManager.uniqueItem = ItemType.grapplingHook;
+            }
         }
 
 

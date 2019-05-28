@@ -10,6 +10,7 @@ public class ItemManager : NetworkBehaviour
     public ItemType uniqueItem; //oggetto caratteristico del personaggio
     private Vector2 shootDirection; //vettore che indica in quale direzione vado a lanciare l'oggetto
     private new CircleCollider2D collider; //collider usato da raycast per vedere se di fronte c'è un altro player
+    private LayerMask raycastPlayerOnlyMask = (1 << 9);
     [SerializeField] private Transform firePoint = null; // da quale punto sono lanciati gli oggetti
     [SerializeField] private GameObject bombRBPrefab = null; //bomba con rigid body
 
@@ -23,9 +24,9 @@ public class ItemManager : NetworkBehaviour
 
     private void Update()
     {
-        OnRaycastEnter();
+        checkForPlayer();
         //se posso raccogliere qualcosa e premo E --> raccoglie oggetto
-        if (Input.GetKeyDown(KeyCode.E) && isLocalPlayer && pickUpAllowed)
+        if (Input.GetKeyDown(KeyCode.E) && isLocalPlayer && (pickUpAllowed || checkForPlayer()))
         {
             Pickup(collidedObject);
         }
@@ -64,7 +65,9 @@ public class ItemManager : NetworkBehaviour
                 Cmd_CharacterInputEnabled(pickedUpItem, false);
                 Cmd_ItemManagerEnabled(pickedUpItem, false);
                 //Cmd_SetRigidBody(pickedUpItem, false);
-                Cmd_SetPosition(pickedUpItem, firePoint.position);
+                //Cmd_SetPosition(pickedUpItem, firePoint.position);
+                pickedUpItem.transform.position = firePoint.position;
+                Cmd_MoveTo(pickedUpItem, firePoint.position);
             }
             //se sto raccogliendo un oggetto
             else
@@ -93,42 +96,26 @@ public class ItemManager : NetworkBehaviour
         }
     }
 
-    private void OnRaycastEnter()
+    //raycast per vedere se di fronte c'è un giocatore, 
+    private bool checkForPlayer()
     {
         if (isLocalPlayer)
         {
-            RaycastHit2D[] hits = Physics2D.CircleCastAll(collider.bounds.center, collider.radius, Vector2.right, 0.0f);
+            RaycastHit2D[] hits = Physics2D.CircleCastAll(collider.bounds.center, collider.radius, Vector2.right, 0.0f, raycastPlayerOnlyMask);
             foreach (RaycastHit2D h in hits)
             {
-                if (h.collider.gameObject != this.gameObject && h.collider.GetComponent<AnotherCharacterController>())
-                    print("colpito dal raycast a cerchio");
+                if (h.collider.gameObject != this.gameObject)
+                {
+                    collidedObject = h.collider.gameObject;
+                    print("playerhit");
+                    return true;
+                }
             }
+            return false;
         }
+        return false;
     }
 
-    private void OnRaycastExit()
-    {
-
-    }
-
-    //se un giocatore entra in collisione con un altro
-   /* private void OnCollisionEnter2D(Collision2D collision)
-    {
-        if (collision.gameObject.GetComponent<Pickuppable>() != null && isLocalPlayer)
-        {
-            pickUpAllowed = true;
-            collidedObject = collision.gameObject;
-        }
-    }
-
-    private void OnCollisionExit2D(Collision2D collision)
-    {
-        if (collision.gameObject.GetComponent<Pickuppable>() != null && isLocalPlayer)
-        {
-            pickUpAllowed = false;
-            collidedObject = null;
-        }
-    }*/
 
     //usa l'oggetto equipaggiato
     private void useItem()
@@ -251,12 +238,14 @@ public class ItemManager : NetworkBehaviour
             player.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Dynamic;
     }
 
-    [Command] private void Cmd_SetPosition(GameObject player, Vector2 newPosition)
+    [Command]
+    public void Cmd_MoveTo(GameObject player, Vector2 newPosition)
     {
-        Rpc_SetPosition(player, newPosition);
+        player.transform.position = newPosition;
+        Rpc_MoveTo(player, newPosition);
     }
-
-    [ClientRpc] private void Rpc_SetPosition(GameObject player, Vector2 newPosition)
+    [ClientRpc]
+    void Rpc_MoveTo(GameObject player, Vector2 newPosition)
     {
         player.transform.position = newPosition;
     }
