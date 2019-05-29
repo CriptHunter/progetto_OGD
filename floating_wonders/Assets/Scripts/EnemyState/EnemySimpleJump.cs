@@ -5,16 +5,18 @@ using UnityEngine.Networking;
 
 public class EnemySimpleJump : NetworkBehaviour
 {
-    public float speed;
-    public float distance;
+    //public float speed;
 
     private bool movingRight = true;
     private LayerMask groundMask;
+    private LayerMask ignoredLayer = ~((1 << 9) | (1 << 10) | (1 << 13));
     private Rigidbody2D rigidbody;
     public Transform groundDetection;
     [SerializeField] private float jumpForce;
     [SerializeField] private float horizontalMovement;
     [SerializeField] private float jumpWaitingTime;
+    [SerializeField] float distance;
+
     private float timer;
     private bool grounded;
 
@@ -28,13 +30,12 @@ public class EnemySimpleJump : NetworkBehaviour
     {
         if (grounded)
         {
-            RaycastHit2D groundInfo = Physics2D.Raycast(groundDetection.position + new Vector3(horizontalMovement, 0, 0), Vector2.down, 1);
-            Debug.DrawLine(groundDetection.position, Vector2.down);
-            if (groundInfo.collider == false)
-            {
-                Debug.Log("FloorEnded");
+            RaycastHit2D downwardHit = Physics2D.Raycast(groundDetection.position + new Vector3(horizontalMovement, 0, 0), Vector2.down);
+            RaycastHit2D forwardHit = Physics2D.Raycast(transform.position, transform.right, horizontalMovement, ignoredLayer);
+            if (forwardHit.collider != null)
                 ChangeDirection();
-            }
+            else if (downwardHit.collider == null)
+                ChangeDirection();
 
             timer += Time.deltaTime;
             if (timer > jumpWaitingTime)
@@ -47,14 +48,8 @@ public class EnemySimpleJump : NetworkBehaviour
 
     private void Jump()
     {
-        RaycastHit2D groundInfo = Physics2D.Raycast(groundDetection.position + new Vector3(horizontalMovement,0,0), Vector2.down, distance + jumpForce, (1 << 8));
-        if (groundInfo.collider != null)
-        {
-            rigidbody.AddForce(new Vector2(horizontalMovement, jumpForce), ForceMode2D.Impulse);
-            grounded = false;
-        }
-        else
-            ChangeDirection();
+        rigidbody.AddForce(new Vector2(horizontalMovement, jumpForce), ForceMode2D.Impulse);
+        grounded = false;
     }
 
     private void ChangeDirection()
@@ -73,7 +68,6 @@ public class EnemySimpleJump : NetworkBehaviour
         }
     }
 
-    // Sent when another object enters a trigger collider attached to this object
     void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.transform.gameObject.layer == groundMask)

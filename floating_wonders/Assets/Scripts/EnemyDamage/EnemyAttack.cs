@@ -19,10 +19,10 @@ public class EnemyAttack : NetworkBehaviour
                 //controllo solo destra o sinistra, se l'impatto arriva dall'alto considero sempre se è più a destra o più a sinistra
                 var direction = transform.InverseTransformPoint(collision.transform.position);
                 //destra
-                if (direction.x > 0f)
+                if (collision.transform.position.x > transform.position.x)
                     Rpc_ApplyImpulse(collision.gameObject, 45, 25);
                 //sinistra
-                else if (direction.x < 0f)
+                else 
                     Rpc_ApplyImpulse(collision.gameObject, 135, 25);
             }
         }
