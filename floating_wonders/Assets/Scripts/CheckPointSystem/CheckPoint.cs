@@ -16,8 +16,7 @@ public class CheckPoint : MonoBehaviour
         playerMask = LayerMask.NameToLayer("Player");
         triggered = false;
         //gm = GameObject.Find("LevelManager");
-        c = levelManager.GetComponent<CheckPointsManager>();
-        c.AddCheckPoint(this);
+        CheckPointsManager.Instance.AddCheckPoint(this);
     }
 
     void OnTriggerEnter2D(Collider2D collision)
@@ -32,7 +31,7 @@ public class CheckPoint : MonoBehaviour
                 if (firstPlayerOnCheckPoint != collision.gameObject)
                 {
                     triggered = true;
-                    c.SetActiveCheckPoint(this);
+                    CheckPointsManager.Instance.SetActiveCheckPoint(this);
                 }
             }
 

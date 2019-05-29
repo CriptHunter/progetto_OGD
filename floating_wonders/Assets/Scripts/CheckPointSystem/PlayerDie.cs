@@ -5,7 +5,7 @@ using UnityEngine.Networking;
 
 public class PlayerDie : NetworkBehaviour
 {
-    [SerializeField] private GameObject levelManager;
+   /* [SerializeField] private GameObject levelManager;
     private CheckPointsManager cm;
     private bool died;
     private PlayerList pList;
@@ -54,5 +54,5 @@ public class PlayerDie : NetworkBehaviour
     public void Rpc_Respawn()
     {
         //cm.Respawn();
-    }
+    }*/
 }

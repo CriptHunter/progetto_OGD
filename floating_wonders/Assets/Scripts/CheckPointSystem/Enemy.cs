@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
-    private EnemyList eList;
     private Vector3 startingPos;
 
     // Start is called before the first frame update

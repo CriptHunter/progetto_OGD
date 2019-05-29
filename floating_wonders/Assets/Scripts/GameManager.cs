@@ -51,7 +51,10 @@ public class GameManager : NetworkBehaviour
     {
         this.health = health;
         if (health <= 0)
+        {
             print("morti");
+            CheckPointsManager.Instance.Respawn();
+        }
     }
 
     public void SetKeys(int keys)
