@@ -8,6 +8,7 @@ public class OrthoCameraBehaviour : MonoBehaviour
     private new Camera camera;
     private float initialOrthoCameraSize;
     private float initialZ;
+    private bool isOrtho;
 
     [SerializeField]
     private float shakeReductionSpeed = 1;//35f;
@@ -119,6 +120,7 @@ public class OrthoCameraBehaviour : MonoBehaviour
         camera = GetComponent<Camera>();
         initialOrthoCameraSize = camera.orthographicSize;
         initialZ = transform.position.z;
+        isOrtho = camera.orthographic;
 
         x = 0;
         desiredX = 0;
@@ -152,8 +154,15 @@ public class OrthoCameraBehaviour : MonoBehaviour
                 shake = 0;
         }
 
-        transform.position = new Vector3(x + Util.RandomRange(-shake * shakeAmplification, shake * shakeAmplification) * zoom, y + Util.RandomRange(-shake * shakeAmplification, shake * shakeAmplification) * zoom, initialZ);
-        camera.orthographicSize = initialOrthoCameraSize * zoom;
+        if (isOrtho)
+        {
+            transform.position = new Vector3(x + Util.RandomRange(-shake * shakeAmplification, shake * shakeAmplification) * zoom, y + Util.RandomRange(-shake * shakeAmplification, shake * shakeAmplification) * zoom, initialZ);
+            camera.orthographicSize = initialOrthoCameraSize * zoom;
+        }
+        else
+        {
+            transform.position = new Vector3(x + Util.RandomRange(-shake * shakeAmplification, shake * shakeAmplification) * zoom, y + Util.RandomRange(-shake * shakeAmplification, shake * shakeAmplification) * zoom, initialZ * zoom);
+        }
     }
 
     void ExpDampDeltaTime(ref float value, float targetValue, float dampSpeed, float epsilon)
