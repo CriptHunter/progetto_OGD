@@ -53,6 +53,6 @@ public class PlayerDie : NetworkBehaviour
     [ClientRpc]
     public void Rpc_Respawn()
     {
-        cm.Respawn();
+        //cm.Respawn();
     }
 }

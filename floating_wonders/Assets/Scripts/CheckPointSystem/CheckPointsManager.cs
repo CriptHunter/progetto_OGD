@@ -6,34 +6,28 @@ using UnityEngine.Networking;
 public class CheckPointsManager : NetworkBehaviour
 {
     private List<CheckPoint> checkPointList;
-    private PlayerList pList;
-    private EnemyList eList;
+    private List<Enemy> enemyList;
+    private List<GameObject> playerList;
     private CheckPoint activeCheck;
+    private static CheckPointsManager instance;
+    public static CheckPointsManager Instance { get { return instance; } }
 
 
-    // Start is called before the first frame update
     void Awake()
-    { 
+    {
+        if (instance != null && instance != this)
+            Destroy(this.gameObject);
+        else
+            instance = this;
+
         checkPointList = new List<CheckPoint>();
+        enemyList = new List<Enemy>();
+        playerList = new List<GameObject>();   
     }
 
-    // Update is called once per frame
     void Update()
     {
-       /* for (int i = 0; i < checkPointList.Count; i++)
-        {
-            if (checkPointList[i].GetTriggered())
-            {
-                activeCheck = checkPointList[i];
-            }
-            else 
-                activeCheck = null;
-            checkPointList[i].SetStatus(false);
-        }*/
-
-       /* if (activeCheck != null)
-            print("ActiveCheckPoint: " + GetCheckPoint());*/
-
+        
     }
 
     public CheckPoint GetCheckPoint()
@@ -51,7 +45,18 @@ public class CheckPointsManager : NetworkBehaviour
         this.activeCheck = c;
     }
 
-    public void GetPlayerEnemyList()
+    public void AddEnemy(Enemy e)
+    {
+        enemyList.Add(e);
+        print("dimensione lista " + enemyList.Count);
+    }
+
+    public List<Enemy> GetEnemyList()
+    {
+        return enemyList;
+    }
+
+    /*public void GetPlayerEnemyList()
     {
         pList = GameObject.Find("NetworkManager").GetComponent<PlayerList>();
         eList = GameObject.Find("NetworkManager").GetComponent<EnemyList>();
@@ -76,5 +81,5 @@ public class CheckPointsManager : NetworkBehaviour
             e.gameObject.SetActive(true);
         }
 
-    }
+    }*/
 }

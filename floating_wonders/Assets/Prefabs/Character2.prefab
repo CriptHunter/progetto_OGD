@@ -197,11 +197,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   debug: {fileID: 4935003469793811216}
-  runSpeed: 10
+  runSpeed: 9
   runAcceleration: 60
   runFriction: 50
-  jumpForce: 25
-  climbSpeed: 10
+  jumpForce: 19
+  climbSpeed: 4
   groundLayer:
     serializedVersion: 2
     m_Bits: 256

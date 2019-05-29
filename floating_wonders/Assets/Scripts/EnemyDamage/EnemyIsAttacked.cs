@@ -4,7 +4,14 @@ using UnityEngine;
 
 public class EnemyIsAttacked : Strikeable
 {
-    [SerializeField] public float knockbackForce = 0f;
+    private Rigidbody2D rb;
+    [SerializeField] public float knockbackForce = 20f;
+
+    public void Start()
+    {
+        rb = GetComponent<Rigidbody2D>();
+    }
+
     public override void Strike(GameObject attacker)
     {
         EnemyHealth health = GetComponent<EnemyHealth>();
@@ -12,13 +19,11 @@ public class EnemyIsAttacked : Strikeable
         {
             health.TakeDamage(1);
             print(attacker);
-           /* var direction = transform.InverseTransformPoint(attacker.transform.position);
-            //destra
+            var direction = transform.InverseTransformPoint(attacker.transform.position);
             if (direction.x > 0f)
-                print("destra");
-            //sinistra
+                rb.velocity = Vector2.left * knockbackForce;
             else if (direction.x < 0f)
-                print("sinistra");*/
+                rb.velocity = Vector2.right * knockbackForce;
         }
     }
 }

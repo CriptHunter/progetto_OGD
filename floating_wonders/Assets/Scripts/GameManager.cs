@@ -43,7 +43,7 @@ public class GameManager : NetworkBehaviour
     }
 
     public void TakeDamage(int damage)
-    { 
+    {
         SetHealth(health - damage);
     }
 

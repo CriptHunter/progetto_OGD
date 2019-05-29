@@ -24,12 +24,16 @@ public class ItemManager : NetworkBehaviour
 
     private void Update()
     {
-        checkForPlayer();
         //se posso raccogliere qualcosa e premo E --> raccoglie oggetto
-        if (Input.GetKeyDown(KeyCode.E) && isLocalPlayer && (pickUpAllowed || checkForPlayer()))
+        if (Input.GetKeyDown(KeyCode.E) && isLocalPlayer)
         {
-            Pickup(collidedObject);
+            if(pickUpAllowed)
+                Pickup(collidedObject);
+            else if (checkForPlayer())
+                Pickup(collidedObject);
         }
+
+  
 
         //se ho un oggetto in mano e tengo premuto R --> entra in fase di mira
         else if (Input.GetKey(KeyCode.R) && isLocalPlayer)
@@ -107,7 +111,7 @@ public class ItemManager : NetworkBehaviour
                 if (h.collider.gameObject != this.gameObject)
                 {
                     collidedObject = h.collider.gameObject;
-                    print("playerhit");
+                    print("player colpito da circle raycast");
                     return true;
                 }
             }

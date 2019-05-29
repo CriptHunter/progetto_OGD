@@ -10,8 +10,7 @@ public class Enemy : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        eList = GameObject.Find("NetworkManager").GetComponent<EnemyList>();
-        eList.AddEnemy(this);
+        CheckPointsManager.Instance.AddEnemy(this);
         startingPos = gameObject.transform.position;
     }
 

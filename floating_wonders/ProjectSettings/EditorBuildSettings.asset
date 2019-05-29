@@ -5,16 +5,16 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/MoLobby.unity
     guid: a08709c6b274b1b4f8fde702a43089d5
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/MoScene.unity
     guid: ca37e4f544b02ba43910677cbc6764fd
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/MatteoLobby.unity
     guid: 70d589f64f1dd9b43afc849854a26937
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/MatteoScene.unity
     guid: 2dc51acec9822cd4d948d757df16c60e
   - enabled: 1
