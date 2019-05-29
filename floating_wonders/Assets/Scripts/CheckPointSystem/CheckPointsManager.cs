@@ -56,30 +56,44 @@ public class CheckPointsManager : NetworkBehaviour
         return enemyList;
     }
 
-    /*public void GetPlayerEnemyList()
+    public void AddPlayer(GameObject g)
     {
-        pList = GameObject.Find("NetworkManager").GetComponent<PlayerList>();
-        eList = GameObject.Find("NetworkManager").GetComponent<EnemyList>();
+        playerList.Add(g);
+    }
+
+    public List<GameObject> GetPlayerList()
+    {
+        return playerList;
+    }
+
+    public void GetPlayerEnemyList()
+    {
+        playerList = GetPlayerList();
+        enemyList = GetEnemyList();
     }
 
     public void Respawn()
     {
-        GetPlayerEnemyList();
-        foreach (Enemy e in eList.GetEnemyList())
+        if (GetCheckPoint() == null)
+            print("Game Over");
+        else
         {
-            e.gameObject.SetActive(false);
+            GetPlayerEnemyList();
+            foreach (Enemy e in enemyList)
+            {
+                e.gameObject.SetActive(false);
+            }
+            foreach (GameObject p in playerList)
+            {
+                p.SetActive(false);
+                p.transform.position = this.GetCheckPoint().transform.position;
+                p.SetActive(true);
+            }
+            foreach (Enemy e in enemyList)
+            {
+                e.gameObject.transform.position = e.GetStartingPosition();
+                e.gameObject.SetActive(true);
+            }
         }
-        foreach (GameObject p in pList.GetPlayerList())
-        {
-            p.SetActive(false);
-            p.transform.position = this.GetCheckPoint().transform.position;
-            p.SetActive(true);
-        }
-        foreach (Enemy e in eList.GetEnemyList())
-        {
-            e.gameObject.transform.position = e.GetStartingPosition();
-            e.gameObject.SetActive(true);
-        }
-
-    }*/
+    }
 }

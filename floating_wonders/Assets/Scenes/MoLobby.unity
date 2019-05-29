@@ -169,14 +169,14 @@ MonoBehaviour:
   m_ScriptCRCCheck: 1
   m_MaxDelay: 0.01
   m_LogLevel: 2
-  m_PlayerPrefab: {fileID: 4165673635756170399, guid: e64e0f8a99746fe4da76a05edcf5fe04,
+  m_PlayerPrefab: {fileID: 4935003469174482398, guid: 6306a75706c2233439027a90fb039c92,
     type: 3}
   m_AutoCreatePlayer: 1
   m_PlayerSpawnMethod: 1
   m_OfflineScene: MoLobby
   m_OnlineScene: MoScene
   m_SpawnPrefabs:
-  - {fileID: 4165673635756170399, guid: e64e0f8a99746fe4da76a05edcf5fe04, type: 3}
+  - {fileID: 4935003469174482398, guid: 6306a75706c2233439027a90fb039c92, type: 3}
   - {fileID: 4412591285801483979, guid: 604ee1eab0fe1f547a4137e9c071f853, type: 3}
   - {fileID: 6491948067176224257, guid: bc0e2e2c34b165f4f876e2f000fcec5d, type: 3}
   - {fileID: 1656687803150500073, guid: dbc378dc088372d49894d069597abbac, type: 3}

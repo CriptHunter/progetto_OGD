@@ -14,7 +14,6 @@ GameObject:
   - component: {fileID: 8948154793326630305}
   - component: {fileID: 6185726992605625285}
   - component: {fileID: 5746679424429035110}
-  - component: {fileID: 5940720622443559874}
   - component: {fileID: 3230620152604920807}
   m_Layer: 8
   m_Name: Platform
@@ -164,21 +163,6 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1.0000001}
   m_EdgeRadius: 0
---- !u!114 &5940720622443559874
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 228350113564818972}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: da7632e16ff8bd340aa0af2d917ac00a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  directionVector: {x: 2, y: 0}
-  distance: 2
-  speed: 2
 --- !u!50 &3230620152604920807
 Rigidbody2D:
   serializedVersion: 4
@@ -228,8 +212,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6546259248370244419}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.118, y: 0.3, z: 0}
-  m_LocalScale: {x: 0.7533667, y: 1, z: 1}
+  m_LocalPosition: {x: 0.107, y: 0.3, z: 0}
+  m_LocalScale: {x: 0.6968642, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 2961912791949850987}
   m_RootOrder: 0
