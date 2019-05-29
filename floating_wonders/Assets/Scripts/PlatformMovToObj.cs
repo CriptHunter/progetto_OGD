@@ -5,7 +5,7 @@ using UnityEngine.Networking;
 
 public class PlatformMovToObj : NetworkBehaviour
 {
-    private struct ObjOnPlatform {
+    /*private struct ObjOnPlatform {
         private GameObject target;
         private Vector3 offset;
 
@@ -85,6 +85,28 @@ public class PlatformMovToObj : NetworkBehaviour
         {
             objList[i].GetTarget().transform.position = transform.position + objList[i].GetOffset();
         }
+    }*/
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        //collision.transform.parent = gameObject.transform.parent.parent;
+        
+        Cmd_SetParent(collision.gameObject);
+    }
+
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        collision.transform.parent = null;
+    }
+
+    [Command] private void Cmd_SetParent(GameObject g)
+    {
+        Rpc_SetParent(g);
+    }
+
+    [ClientRpc] private void Rpc_SetParent(GameObject g)
+    {
+        g.transform.parent = gameObject.transform.parent.parent;
     }
 
 }

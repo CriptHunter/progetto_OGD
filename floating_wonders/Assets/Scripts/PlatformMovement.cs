@@ -10,7 +10,6 @@ public class PlatformMovement : NetworkBehaviour
     [SerializeField] private float distance;
     [SerializeField] private float speed;
 
-    private GameObject emptyContainer;
     private Vector3 startingPos;
     bool moveDirection;
     private Vector3 directionVector3;
@@ -18,7 +17,6 @@ public class PlatformMovement : NetworkBehaviour
     private void Start()
     {
         startingPos = transform.position;
-        emptyContainer = new GameObject();
     }
 
     void Update()
