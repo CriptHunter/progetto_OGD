@@ -54,6 +54,7 @@ public class GameManager : NetworkBehaviour
         {
             print("morti");
             CheckPointsManager.Instance.Respawn();
+            hud.showBlackScreen();
         }
     }
 

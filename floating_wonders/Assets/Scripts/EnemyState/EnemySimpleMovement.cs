@@ -6,7 +6,7 @@ public class EnemySimpleMovement : NetworkBehaviour
 {
     [SerializeField] private float speed;
     [SerializeField] private float groundRayDistance;
-    [SerializeField] private bool flyingEnemy;
+    [SerializeField] private bool flying;
 
     private bool movingRight = true;
     private LayerMask groundMask;
@@ -18,12 +18,15 @@ public class EnemySimpleMovement : NetworkBehaviour
         groundMask = 1 << LayerMask.NameToLayer("Ground");
     }
 
-    void Update()
+    void FixedUpdate()
     {
-            transform.Translate(Vector2.right * speed * Time.deltaTime);
+        transform.Translate(Vector2.right * speed * Time.deltaTime);
+        if (!flying)
+        {
             RaycastHit2D hit = Physics2D.Raycast(groundDetection.position, Vector2.down, groundRayDistance, groundMask);
             if (!hit)
                 ChangeDirection();
+        }
     }
 
     private void ChangeDirection()

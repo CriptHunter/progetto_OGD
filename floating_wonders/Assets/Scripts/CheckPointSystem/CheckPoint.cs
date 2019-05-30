@@ -15,7 +15,6 @@ public class CheckPoint : MonoBehaviour
     {
         playerMask = LayerMask.NameToLayer("Player");
         triggered = false;
-        //gm = GameObject.Find("LevelManager");
         CheckPointsManager.Instance.AddCheckPoint(this);
     }
 

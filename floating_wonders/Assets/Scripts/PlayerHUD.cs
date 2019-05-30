@@ -23,4 +23,12 @@ public class PlayerHUD : MonoBehaviour
     {
         gemsText.text = gems.ToString();
     }
+
+    public void showBlackScreen()
+    {
+        Image image = GetComponent<Image>();
+        var tempColor = image.color;
+        tempColor.a = 1f;
+        image.color = tempColor;
+    }
 }
