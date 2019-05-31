@@ -49,7 +49,6 @@ public class CheckPointsManager : NetworkBehaviour
     public void AddEnemy(Enemy e)
     {
         enemyList.Add(e);
-        print("dimensione lista " + enemyList.Count);
     }
 
     public List<Enemy> GetEnemyList()

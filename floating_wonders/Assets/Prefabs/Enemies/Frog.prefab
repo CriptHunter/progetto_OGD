@@ -255,7 +255,7 @@ MonoBehaviour:
   groundDetection: {fileID: 8213921475705301719}
   jumpForce: 20
   horizontalMovement: 5
-  jumpWaitingTime: 0.5
+  jumpWaitingTime: 30
   distance: 5
 --- !u!1 &3490547585957216218
 GameObject:

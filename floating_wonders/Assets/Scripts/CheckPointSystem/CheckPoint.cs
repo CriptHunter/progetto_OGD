@@ -1,8 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 
-public class CheckPoint : MonoBehaviour
+public class CheckPoint : NetworkBehaviour
 {
     private LayerMask playerMask;
     private int status;
@@ -10,24 +11,30 @@ public class CheckPoint : MonoBehaviour
     void Start()
     {
         status = 0;
-        playerMask = LayerMask.NameToLayer("Player");
-        CheckPointsManager.Instance.AddCheckPoint(this);
+        playerMask = 1 << 9;
+        CheckPointsManager.Instance.AddCheckPoint(this); 
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
+    private void Update()
     {
-        if (collision.transform.gameObject.layer == playerMask)
+        //coloro i checkpoint in base al loro stato
+        if(status == 0)
+            gameObject.GetComponent<Renderer>().material.color = Color.yellow;
+        if (status == 1)
+            gameObject.GetComponent<Renderer>().material.color = Color.red;
+        if (status == 2)
         {
-            status++;
-            if (status == 2)
-                CheckPointsManager.Instance.SetActiveCheckPoint(this);
+            gameObject.GetComponent<Renderer>().material.color = Color.magenta;
+            CheckPointsManager.Instance.SetActiveCheckPoint(this);
         }
-        print("ontriggerenter " + status);
-    }
-
-    private void OnTriggerExit2D(Collider2D collision)
-    {
-        status--;
-        print("onTriggerexit " + status);
+        //faccio un raycast circolare intorno al checkpoint
+        RaycastHit2D[] hit = Physics2D.CircleCastAll(transform.position, 1, Vector2.zero, 0, playerMask);
+        status = 0;
+        //conto il numero di giocatori in torno al checkpoint, faccio così perché la lunghezza dell'array hit comprende anche i child object
+        foreach(RaycastHit2D h in hit)
+        {
+            if (h.collider.GetComponent<AnotherCharacterController>() != null)
+                status++;
+        }
     }
 }

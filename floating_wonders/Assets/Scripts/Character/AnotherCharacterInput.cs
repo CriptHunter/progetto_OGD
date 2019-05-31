@@ -13,7 +13,7 @@ public class AnotherCharacterInput : NetworkBehaviour
     void Start()
     {
         cc = GetComponent<AnotherCharacterController>();
-        strikeController = GetComponent<StrikeController>();
+        strikeController = transform.GetChild(0).GetComponent<StrikeController>();
     }
 
     // Update is called once per frame
@@ -137,6 +137,7 @@ public class AnotherCharacterInput : NetworkBehaviour
 
     [Command] private void Cmd_PerformStrike()
     {
+        print("ready to strike");
         strikeController.PerformStrike();
     }
 }
