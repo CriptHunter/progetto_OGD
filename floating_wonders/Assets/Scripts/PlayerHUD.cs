@@ -24,11 +24,14 @@ public class PlayerHUD : MonoBehaviour
         gemsText.text = gems.ToString();
     }
 
-    public void showBlackScreen()
+    public void showBlackScreen(bool visible)
     {
         Image image = GetComponent<Image>();
         var tempColor = image.color;
-        tempColor.a = 1f;
+        if (visible)
+            tempColor.a = 1f;
+        else
+            tempColor.a = 0f;
         image.color = tempColor;
     }
 }

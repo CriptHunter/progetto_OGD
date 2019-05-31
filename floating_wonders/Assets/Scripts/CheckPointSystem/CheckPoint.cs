@@ -5,48 +5,29 @@ using UnityEngine;
 public class CheckPoint : MonoBehaviour
 {
     private LayerMask playerMask;
-    private bool triggered;
-    [SerializeField] private GameObject levelManager;
-    private CheckPointsManager c;
-    private GameObject firstPlayerOnCheckPoint;
+    private int status;
 
-    // Start is called before the first frame update
     void Start()
     {
+        status = 0;
         playerMask = LayerMask.NameToLayer("Player");
-        triggered = false;
         CheckPointsManager.Instance.AddCheckPoint(this);
     }
 
-    void OnTriggerEnter2D(Collider2D collision)
+    private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.transform.gameObject.layer == playerMask)
         {
-            Debug.Log("Collisione CheckPoint " + this.name + " - player");
-            if (firstPlayerOnCheckPoint == null)
-                firstPlayerOnCheckPoint = collision.gameObject;
-            else
-            {
-                if (firstPlayerOnCheckPoint != collision.gameObject)
-                {
-                    triggered = true;
-                    CheckPointsManager.Instance.SetActiveCheckPoint(this);
-                }
-            }
-
-            /*Debug.Log("Collisione CheckPoint " + this.name + " - player");
-            triggered = true;
-            c.SetActiveCheckPoint(this);*/
+            status++;
+            if (status == 2)
+                CheckPointsManager.Instance.SetActiveCheckPoint(this);
         }
+        print("ontriggerenter " + status);
     }
 
-    public bool GetTriggered()
+    private void OnTriggerExit2D(Collider2D collision)
     {
-        return triggered;
-    }
-
-    public void SetStatus(bool status)
-    {
-        triggered = status;
+        status--;
+        print("onTriggerexit " + status);
     }
 }

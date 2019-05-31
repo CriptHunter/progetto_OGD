@@ -9,6 +9,7 @@ public class CheckPointsManager : NetworkBehaviour
     private List<Enemy> enemyList;
     private List<GameObject> playerList;
     private CheckPoint activeCheck;
+    private PlayerHUD hud;
     private static CheckPointsManager instance;
     public static CheckPointsManager Instance { get { return instance; } }
 
@@ -25,9 +26,9 @@ public class CheckPointsManager : NetworkBehaviour
         playerList = new List<GameObject>();   
     }
 
-    void Update()
+    public void Start()
     {
-        
+        hud = GameObject.Find("HUD").GetComponent<PlayerHUD>();
     }
 
     public CheckPoint GetCheckPoint()
@@ -74,6 +75,7 @@ public class CheckPointsManager : NetworkBehaviour
 
     public void Respawn()
     {
+        StartCoroutine("blackScreen");
         if (GetCheckPoint() == null)
             print("Game Over");
         else
@@ -95,6 +97,14 @@ public class CheckPointsManager : NetworkBehaviour
                 e.gameObject.SetActive(true);
             }
         }
+    }
+
+
+    private IEnumerator blackScreen()
+    {
+        hud.showBlackScreen(true);
+        yield return new WaitForSeconds(2f);
+        hud.showBlackScreen(false);
     }
 
 
