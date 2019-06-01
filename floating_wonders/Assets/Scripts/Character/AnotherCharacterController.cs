@@ -40,6 +40,8 @@ public class AnotherCharacterController : NetworkBehaviour
     private float groundedDelay = 0;
     private float dontStickDelay = 0;
 
+    private AnotherCharacterController heldCharacter = null;
+
     private bool active = true;
     /// <summary>
     /// Activates or deactivates the character controller. When deactivated, the movement of this gameobject will be driven by normal physics or
@@ -182,26 +184,32 @@ public class AnotherCharacterController : NetworkBehaviour
                 }
                 else
                 {
+                    string suffix = "";
+                    if (IsHoldingCharacter())
+                    {
+                        suffix = "_holdingcharacter";
+                    }
+
                     if (IsTouchingGround())
                     {
                         if (IsRunning())
                         {
-                            animator.Animation = "run";
+                            animator.Animation = "run"+suffix;
                         }
                         else
                         {
-                            animator.Animation = "stand";
+                            animator.Animation = "stand"+suffix;
                         }
                     }
                     else
                     {
                         if (IsMovingUpward())
                         {
-                            animator.Animation = "jump_up";
+                            animator.Animation = "jump_up"+suffix;
                         }
                         else
                         {
-                            animator.Animation = "jump_down";
+                            animator.Animation = "jump_down"+suffix;
                         }
                     }
                 }
@@ -384,7 +392,14 @@ public class AnotherCharacterController : NetworkBehaviour
                 {
                     if (grounded)
                     {
-                        VerticalImpulse(jumpForce);
+                        if (IsHoldingCharacter())
+                        {
+                            VerticalImpulse(jumpForce*0.75f);
+                        }
+                        else
+                        {
+                            VerticalImpulse(jumpForce);
+                        }
                     }
                 }
             }
@@ -510,6 +525,7 @@ public class AnotherCharacterController : NetworkBehaviour
                     PhysicsActive = false;
                     //StickToEdge(edge);
                     rigidbody.velocity = Vector2.zero;
+                    ReleaseCharacter();
                 }
             }
         }
@@ -541,6 +557,7 @@ public class AnotherCharacterController : NetworkBehaviour
             if (potentialClimbable != null && !grounded)
             {
                 ReleaseEdge();
+                ReleaseCharacter();
                 PhysicsActive = false;
                 targetClimbable = potentialClimbable;
                 if (rigidbody.position.x > targetClimbable.gameObject.transform.position.x)
@@ -707,7 +724,6 @@ public class AnotherCharacterController : NetworkBehaviour
         RaycastHit2D hit = Physics2D.CapsuleCast(collider.bounds.center, collider.bounds.size, collider.direction, 0, dir, maxDist, groundLayer);
         if (hit.collider != null)
         {
-            //transform.position = hit.centroid;
             rigidbody.position = hit.centroid;
             return true;
         }
@@ -715,6 +731,29 @@ public class AnotherCharacterController : NetworkBehaviour
         {
             return false;
         }
+    }
+
+    public bool GrabCharacter()
+    {
+        if (!IsDanglingFromEdge() && !IsClimbing() && !IsHoldingCharacter())
+        {
+            heldCharacter = this;
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    public bool IsHoldingCharacter()
+    {
+        return heldCharacter != null;
+    }
+
+    public void ReleaseCharacter()
+    {
+        heldCharacter = null;
     }
 
     /// <summary>
@@ -730,6 +769,17 @@ public class AnotherCharacterController : NetworkBehaviour
             print("Apply impulse: " + direction + " " + strength);
             impulseHSpeed = Util.LengthDirX(strength, direction);
             VerticalImpulse(Util.LengthDirY(strength, direction));
+        }
+    }
+
+    public void Attack()
+    {
+        if (!IsDanglingFromEdge() && !IsClimbing() && !IsHoldingCharacter())
+        {
+            if (animator != null)
+            {
+                animator.SkeletonAnimationOverlay("attack0", true);
+            }
         }
     }
 

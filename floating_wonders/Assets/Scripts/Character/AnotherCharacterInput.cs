@@ -13,7 +13,14 @@ public class AnotherCharacterInput : NetworkBehaviour
     void Start()
     {
         cc = GetComponent<AnotherCharacterController>();
-        strikeController = transform.GetChild(0).GetComponent<StrikeController>();
+        if (strikeController == null)
+        {
+            strikeController = transform.GetChild(0).GetComponent<StrikeController>();
+        }
+        if (strikeController == null)
+        {
+            strikeController = gameObject.GetChild("StrikeCollider").GetComponent<StrikeController>();
+        }
     }
 
     // Update is called once per frame
@@ -118,8 +125,14 @@ public class AnotherCharacterInput : NetworkBehaviour
                         {
                             //strikeController.PerformStrike();
                             Cmd_PerformStrike();
+                            cc.Attack();
                         }
                     }
+                }
+
+                if (Input.GetKeyDown(KeyCode.Q))
+                {
+                    cc.GrabCharacter();
                 }
             }
 
