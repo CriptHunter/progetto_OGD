@@ -40,7 +40,18 @@ public class AnotherCharacterController : NetworkBehaviour
     private float groundedDelay = 0;
     private float dontStickDelay = 0;
 
+    private CapsuleCollider2D normalCollider; // collider di quando non hai niente
+    public CapsuleCollider2D characterHoldingCollider; // collider di quando hai un compagno sopra di te
+    public CircleCollider2D characterGrabCollider; // collider usato per raccogliere i persobnaggi
+    private AnotherCharacterController potentialCharacter; // potenziale character che può raccogliere
     private AnotherCharacterController heldCharacter = null;
+    private AnotherCharacterController isHeldBy = null;
+    private Transform characterHoldingPoint;
+
+    public Transform GetCharacterHoldingPoint()
+    {
+        return characterHoldingPoint;
+    }
 
     private bool active = true;
     /// <summary>
@@ -73,7 +84,7 @@ public class AnotherCharacterController : NetworkBehaviour
 
     public void Activate(bool keepMomentum)
     {
-        float len=0, dir=0;
+        float len = 0, dir = 0;
         if (keepMomentum)
         {
             dir = rigidbody.velocity.GetAngle();
@@ -125,7 +136,7 @@ public class AnotherCharacterController : NetworkBehaviour
         }
     }
     private GameObject targetEdge; // se è attaccato a un edge gameobject, altrimenti null
-    private Verse targetEdgeVerse= Verse.None; // verso dal quale stai aggrappato
+    private Verse targetEdgeVerse = Verse.None; // verso dal quale stai aggrappato
     private float dontGrabEdgeDelay = 0; // ritardo entro il quale non può richiappare un edge
 
     private Climbable potentialClimbable; // se sei vicino a un climbable, reference del climbable altrimenti null
@@ -136,7 +147,8 @@ public class AnotherCharacterController : NetworkBehaviour
 
     void Awake()
     {
-        collider = GetComponent<CapsuleCollider2D>();
+        collider = GetComponents<CapsuleCollider2D>()[0]; // the first collider is the good one
+        normalCollider = collider;
         rigidbody = GetComponent<Rigidbody2D>();
         animator = GetComponent<SpineCharacterAnimator>();
         if (animator != null)
@@ -150,66 +162,75 @@ public class AnotherCharacterController : NetworkBehaviour
             edgeGrabCollider = egc.GetComponent<CharacterEdgeGrab>();
         }
 
+        characterHoldingPoint = gameObject.GetChild("CharacterHoldingPoint").transform;
+
         speed = 0;
         initialGravityScale = rigidbody.gravityScale;
     }
 
-    private void Animate()
+    public void Animate()
     {
         if (animator != null)
         {
-            if (IsClimbing())
+            if (IsBeihgHeldByCharacter())
             {
-                if (climbVerse == Verse.Up)
-                {
-                    animator.Animation = "climb_up";
-                }
-                else
-                {
-                    if (climbVerse == Verse.Down)
-                    {
-                        animator.Animation = "climb_down";
-                    }
-                    else
-                    {
-                        animator.Animation = "climb";
-                    }
-                }
+                animator.Animation = "grabbed";
             }
             else
             {
-                if (IsDanglingFromEdge())
+                if (IsClimbing())
                 {
-                    animator.Animation = "hanging_edge";
-                }
-                else
-                {
-                    string suffix = "";
-                    if (IsHoldingCharacter())
+                    if (climbVerse == Verse.Up)
                     {
-                        suffix = "_holdingcharacter";
-                    }
-
-                    if (IsTouchingGround())
-                    {
-                        if (IsRunning())
-                        {
-                            animator.Animation = "run"+suffix;
-                        }
-                        else
-                        {
-                            animator.Animation = "stand"+suffix;
-                        }
+                        animator.Animation = "climb_up";
                     }
                     else
                     {
-                        if (IsMovingUpward())
+                        if (climbVerse == Verse.Down)
                         {
-                            animator.Animation = "jump_up"+suffix;
+                            animator.Animation = "climb_down";
                         }
                         else
                         {
-                            animator.Animation = "jump_down"+suffix;
+                            animator.Animation = "climb";
+                        }
+                    }
+                }
+                else
+                {
+                    if (IsDanglingFromEdge())
+                    {
+                        animator.Animation = "hanging_edge";
+                    }
+                    else
+                    {
+                        string suffix = "";
+                        if (IsHoldingCharacter())
+                        {
+                            suffix = "_holdingcharacter";
+                        }
+
+                        if (IsTouchingGround())
+                        {
+                            if (IsRunning())
+                            {
+                                animator.Animation = "run" + suffix;
+                            }
+                            else
+                            {
+                                animator.Animation = "stand" + suffix;
+                            }
+                        }
+                        else
+                        {
+                            if (IsMovingUpward())
+                            {
+                                animator.Animation = "jump_up" + suffix;
+                            }
+                            else
+                            {
+                                animator.Animation = "jump_down" + suffix;
+                            }
                         }
                     }
                 }
@@ -277,7 +298,7 @@ public class AnotherCharacterController : NetworkBehaviour
                 }
             }
         }
-        
+
         CalculateProximity();
 
         if (IsClimbing())
@@ -304,7 +325,7 @@ public class AnotherCharacterController : NetworkBehaviour
         }
         dontStickDelay = Mathf.Max(0, dontStickDelay - delta);
         dontGrabEdgeDelay = Mathf.Max(0, dontGrabEdgeDelay - delta);
-        if (Active)
+        if (Active && !IsHoldingCharacter())
         {
             StickToGround();
         }
@@ -339,10 +360,32 @@ public class AnotherCharacterController : NetworkBehaviour
                     "dont stick: " + dontStickDelay + "\n" +
                     "wall left: " + nearWallLeft + "\n" +
                     "wall right: " + nearWallRight + "\n" +
-                    "running: " + running + "\n" +
-                    "speed: " + speed + "\n" +
-                    "climbing: " + targetClimbable + "\n" +
-                    "dangling: " + IsDanglingFromEdge() + "\n";
+                    "potential character: " + potentialCharacter + "\n" +
+                    "TEST: " + (potentialCharacter==this) + "\n";
+        /*"running: " + running + "\n" +
+        "speed: " + speed + "\n" +
+        "climbing: " + targetClimbable + "\n" +
+        "dangling: " + IsDanglingFromEdge() + "\n";*/
+    }
+
+
+
+    private void LateUpdate()
+    {
+        if (IsHoldingCharacter())
+        {
+            heldCharacter.rigidbody.position = characterHoldingPoint.position;
+            heldCharacter.Turn(verse);
+            if (!heldCharacter.Active)
+            {
+                Animate();
+            }
+        }
+        if (IsBeihgHeldByCharacter())
+        {
+            rigidbody.position = isHeldBy.GetCharacterHoldingPoint().position;
+            Turn(verse);
+        }
     }
 
     /// <summary>
@@ -376,9 +419,9 @@ public class AnotherCharacterController : NetworkBehaviour
                 Turn(verse.Opposite());
                 //VerticalImpulse(jumpForce*10);
                 if (verse == Verse.Left)
-                    ApplyImpulse(90+25f, 17f);
+                    ApplyImpulse(90 + 25f, 17f);
                 else
-                    ApplyImpulse(90-25f, 17f);
+                    ApplyImpulse(90 - 25f, 17f);
                 //ApplyImpulse(verse.Angle(), 10f);
             }
             else
@@ -394,7 +437,7 @@ public class AnotherCharacterController : NetworkBehaviour
                     {
                         if (IsHoldingCharacter())
                         {
-                            VerticalImpulse(jumpForce*0.75f);
+                            VerticalImpulse(jumpForce * 0.85f);
                         }
                         else
                         {
@@ -462,47 +505,61 @@ public class AnotherCharacterController : NetworkBehaviour
         }
     }
 
-    [Command] private void Cmd_SetLocalScale(Verse verse)
+    [Command]
+    private void Cmd_SetLocalScale(Verse verse)
     {
         Rpc_SetLocalScale(verse);
     }
 
-    [ClientRpc] private void Rpc_SetLocalScale(Verse verse)
+    [ClientRpc]
+    private void Rpc_SetLocalScale(Verse verse)
     {
         this.transform.localScale = new Vector3((int)verse, 1, 1);
     }
 
     private void CalculateProximity()
     {
-        RaycastHit2D hit = Physics2D.CapsuleCast(collider.bounds.center, collider.bounds.size, collider.direction, 0, Vector2.down, 0.1f, groundLayer);
+        RaycastHit2D hit;
+
+        hit = Physics2D.CapsuleCast((Vector2)collider.bounds.center, collider.bounds.size, collider.direction, 0, Vector2.down, 0.1f, groundLayer);
         if (hit.collider != null)
             grounded = true;
         else
             grounded = false;
 
-        hit = Physics2D.CapsuleCast(collider.bounds.center, collider.bounds.size, collider.direction, 0, Vector2.up, 0.1f, groundLayer);
+        hit = Physics2D.CapsuleCast((Vector2)collider.bounds.center, collider.bounds.size, collider.direction, 0, Vector2.up, 0.1f, groundLayer);
         if (hit.collider != null)
             nearCeiling = true;
         else
             nearCeiling = false;
 
-        hit = Physics2D.CapsuleCast(collider.bounds.center, collider.bounds.size - new Vector3(0, 0.1f, 0), collider.direction, 0, new Vector2(1, 2), 0.05f, groundLayer);
+        hit = Physics2D.CapsuleCast((Vector2)collider.bounds.center, collider.bounds.size - new Vector3(0, 0.1f, 0), collider.direction, 0, new Vector2(1, 2), 0.05f, groundLayer);
         if (hit.collider != null)
             nearWallRight = true;
         else
             nearWallRight = false;
 
-        hit = Physics2D.CapsuleCast(collider.bounds.center, collider.bounds.size - new Vector3(0, 0.1f, 0), collider.direction, 0, new Vector2(-1, 2), 0.05f, groundLayer);
+        hit = Physics2D.CapsuleCast((Vector2)collider.bounds.center, collider.bounds.size - new Vector3(0, 0.1f, 0), collider.direction, 0, new Vector2(-1, 2), 0.05f, groundLayer);
         if (hit.collider != null)
             nearWallLeft = true;
         else
             nearWallLeft = false;
 
-        hit = Physics2D.CapsuleCast(collider.bounds.center, collider.bounds.size - new Vector3(0, 0.1f, 0), collider.direction, 0, Vector2.one, 0.0f, climbableLayer);
+        hit = Physics2D.CapsuleCast((Vector2)collider.bounds.center, collider.bounds.size - new Vector3(0, 0.1f, 0), collider.direction, 0, Vector2.one, 0.0f, climbableLayer);
         if (hit.collider != null)
             potentialClimbable = hit.collider.gameObject.GetComponent<Climbable>();
         else
             potentialClimbable = null;
+
+        RaycastHit2D[] hits = Physics2D.CircleCastAll(characterGrabCollider.bounds.center, characterGrabCollider.radius, Vector2.right, 0.0f);
+        for (int i = 0; i < hits.Length; i++)
+        {
+            AnotherCharacterController other = hits[i].collider.gameObject.GetComponent<AnotherCharacterController>();
+            if (other != null && other != this)
+            {
+                potentialCharacter = other;
+            }
+        }
     }
 
     public bool IsDanglingFromEdge()
@@ -514,7 +571,7 @@ public class AnotherCharacterController : NetworkBehaviour
     {
         if (Active)
         {
-            if (!IsClimbing())
+            if (!IsClimbing() && !IsHoldingCharacter())
             {
                 if (!IsDanglingFromEdge())
                 {
@@ -554,7 +611,7 @@ public class AnotherCharacterController : NetworkBehaviour
     {
         if (Active)
         {
-            if (potentialClimbable != null && !grounded)
+            if (potentialClimbable != null && !IsTouchingGround() && !IsHoldingCharacter())
             {
                 ReleaseEdge();
                 ReleaseCharacter();
@@ -710,7 +767,7 @@ public class AnotherCharacterController : NetworkBehaviour
     {
         if (/*groundedDelay > speedThreshold &&*/ dontStickDelay < speedThreshold)
         {
-            //if (!(speed>-speedThreshold && speed<speedThreshold))
+            if (!(speed > -speedThreshold && speed < speedThreshold))
             {
                 //rigidbody.velocity = new Vector2(rigidbody.velocity.x, 0);
                 MoveToSolid(270, 0.5f);
@@ -721,7 +778,7 @@ public class AnotherCharacterController : NetworkBehaviour
     private bool MoveToSolid(float direction, float maxDist)
     {
         var dir = Util.DegreeToVector2(direction);
-        RaycastHit2D hit = Physics2D.CapsuleCast(collider.bounds.center, collider.bounds.size, collider.direction, 0, dir, maxDist, groundLayer);
+        RaycastHit2D hit = Physics2D.CapsuleCast((Vector2)collider.bounds.center - collider.offset, collider.bounds.size, collider.direction, 0, dir, maxDist, groundLayer); ;
         if (hit.collider != null)
         {
             rigidbody.position = hit.centroid;
@@ -733,12 +790,54 @@ public class AnotherCharacterController : NetworkBehaviour
         }
     }
 
+    public bool CanGrabCharacter()
+    {
+        var collider = characterHoldingCollider;
+        if (collider != null)
+        {
+            RaycastHit2D hit = Physics2D.CapsuleCast((Vector2)collider.bounds.center, collider.bounds.size, collider.direction, 0, Vector2.up, 0.1f, groundLayer);
+            if (hit.collider != null)
+                return false;
+            else
+            {
+                if (potentialCharacter == null)
+                    return false;
+                else
+                    return true;
+            }
+        }
+        else
+        {
+            return false;
+        }
+    }
+
     public bool GrabCharacter()
     {
-        if (!IsDanglingFromEdge() && !IsClimbing() && !IsHoldingCharacter())
+        if (CanGrabCharacter())
         {
-            heldCharacter = this;
-            return true;
+            if (!IsDanglingFromEdge() && !IsClimbing() && !IsHoldingCharacter())
+            {
+                heldCharacter = potentialCharacter;
+                heldCharacter.isHeldBy = this;
+                //heldCharacter.gameObject.transform.parent = characterHoldingPoint;
+                //heldCharacter.gameObject.transform.localPosition = Vector3.zero;
+                heldCharacter.Active = false;
+                heldCharacter.DisableColliders();
+                //normalCollider.enabled = false;
+                //characterHoldingCollider.enabled = true;
+                normalCollider.isTrigger = true;
+                characterHoldingCollider.isTrigger = false;
+                collider = characterHoldingCollider;
+
+                //dontStickDelay = 0.1f+Time.deltaTime;
+                CmdPropagateGrabbedCharacter(gameObject, heldCharacter.gameObject);
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
         else
         {
@@ -753,9 +852,46 @@ public class AnotherCharacterController : NetworkBehaviour
 
     public void ReleaseCharacter()
     {
-        heldCharacter = null;
+        if (IsHoldingCharacter())
+        {
+            //heldCharacter.gameObject.transform.parent = null;
+            //heldCharacter.gameObject.transform.localPosition = Vector3.zero;
+            CmdPropagateGrabbedCharacter(null, heldCharacter.gameObject);
+            heldCharacter.Active = true;
+            heldCharacter.EnableColliders();
+            heldCharacter = null;
+            //normalCollider.enabled = true;
+            //characterHoldingCollider.enabled = false;
+            normalCollider.isTrigger = false;
+            characterHoldingCollider.isTrigger = true;
+            collider = normalCollider;
+            //dontStickDelay = 0.1f + Time.deltaTime;
+        }
     }
 
+    [Command]
+    private void CmdPropagateGrabbedCharacter(GameObject characterHoldingTheOther, GameObject other)
+    {
+        RpcPropagateGrabbedCharacter(characterHoldingTheOther,other);
+    }
+
+    [ClientRpc]
+    private void RpcPropagateGrabbedCharacter(GameObject characterHoldingTheOther, GameObject other)
+    {
+        if (characterHoldingTheOther != null)
+        {
+            other.GetComponent<AnotherCharacterController>().isHeldBy = characterHoldingTheOther.GetComponent<AnotherCharacterController>();
+        }
+        else
+        {
+            other.GetComponent<AnotherCharacterController>().isHeldBy = null;
+        }
+    }
+
+    public bool IsBeihgHeldByCharacter()
+    {
+        return isHeldBy != null;
+    }
     /// <summary>
     /// Applies an impulse to the character. Useful for a knockback.
     /// </summary>
@@ -770,6 +906,17 @@ public class AnotherCharacterController : NetworkBehaviour
             impulseHSpeed = Util.LengthDirX(strength, direction);
             VerticalImpulse(Util.LengthDirY(strength, direction));
         }
+    }
+
+    public void DisableColliders()
+    {
+        normalCollider.enabled = false;
+        characterHoldingCollider.enabled = false;
+    }
+    public void EnableColliders()
+    {
+        normalCollider.enabled = true;
+        characterHoldingCollider.enabled = true;
     }
 
     public void Attack()

@@ -132,7 +132,14 @@ public class AnotherCharacterInput : NetworkBehaviour
 
                 if (Input.GetKeyDown(KeyCode.Q))
                 {
-                    cc.GrabCharacter();
+                    if (cc.IsHoldingCharacter())
+                    {
+                        cc.ReleaseCharacter();
+                    }
+                    else
+                    {
+                        cc.GrabCharacter();
+                    }
                 }
             }
 

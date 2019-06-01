@@ -28,6 +28,6 @@ public class StrikeController : MonoBehaviour
                 strikeable.Strike(parent);
             }
         }
-        return false;
+        return hits.Length>0;
     }
 }
