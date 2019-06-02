@@ -8,7 +8,7 @@ public class CheckPointsManager : NetworkBehaviour
     private List<CheckPoint> checkPointList;
     private List<Enemy> enemyList;
     private List<GameObject> playerList;
-    private CheckPoint activeCheck;
+    private CheckPoint activeCheckPoint;
     private PlayerHUD hud;
     private static CheckPointsManager instance;
     public static CheckPointsManager Instance { get { return instance; } }
@@ -33,7 +33,12 @@ public class CheckPointsManager : NetworkBehaviour
 
     public CheckPoint GetCheckPoint()
     {
-        return activeCheck;
+        return activeCheckPoint;
+    }
+
+    public void SetActiveCheckPoint(CheckPoint c)
+    {
+        this.activeCheckPoint = c;
     }
 
     public void AddCheckPoint(CheckPoint c)
@@ -41,19 +46,9 @@ public class CheckPointsManager : NetworkBehaviour
         checkPointList.Add(c);
     }
 
-    public void SetActiveCheckPoint(CheckPoint c)
-    {
-        this.activeCheck = c;
-    }
-
     public void AddEnemy(Enemy e)
     {
         enemyList.Add(e);
-    }
-
-    public List<Enemy> GetEnemyList()
-    {
-        return enemyList;
     }
 
     public void AddPlayer(GameObject g)
@@ -61,43 +56,38 @@ public class CheckPointsManager : NetworkBehaviour
         playerList.Add(g);
     }
 
-    public List<GameObject> GetPlayerList()
-    {
-        return playerList;
-    }
-
-    public void GetPlayerEnemyList()
-    {
-        playerList = GetPlayerList();
-        enemyList = GetEnemyList();
-    }
-
     public void Respawn()
     {
-        StartCoroutine("blackScreen");
+        if (!isServer)
+            return;
         if (GetCheckPoint() == null)
-            print("Game Over");
+            print("Non ci sono checkpoint attivi");
         else
         {
-            GetPlayerEnemyList();
-            foreach (Enemy e in enemyList)
-            {
-                e.gameObject.SetActive(false);
-            }
+            Rpc_ShowBlackScreen();
             foreach (GameObject p in playerList)
-            {
-                p.SetActive(false);
-                p.transform.position = this.GetCheckPoint().transform.position;
-                p.SetActive(true);
-            }
+                Rpc_SetPlayerRespawnPosition(p, activeCheckPoint.gameObject);
             foreach (Enemy e in enemyList)
-            {
-                e.gameObject.transform.position = e.GetStartingPosition();
-                e.gameObject.SetActive(true);
-            }
+                Rpc_SetEnemyRespawnPosition(e.gameObject);
         }
     }
 
+    [ClientRpc] private void Rpc_ShowBlackScreen()
+    {
+        StartCoroutine("blackScreen");
+    }
+
+    [ClientRpc] private void Rpc_SetEnemyRespawnPosition(GameObject enemy)
+    {
+        enemy.transform.position = enemy.GetComponent<Enemy>().GetStartingPosition();
+        enemy.SetActive(true);
+    }
+
+    [ClientRpc] private void Rpc_SetPlayerRespawnPosition(GameObject player, GameObject checkpoint)
+    {
+        print("sono " + player + " e mi sposto al checkpoint in posizione " + checkpoint.transform.position);
+        player.transform.position = checkpoint.transform.position;
+    }
 
     private IEnumerator blackScreen()
     {
@@ -105,6 +95,4 @@ public class CheckPointsManager : NetworkBehaviour
         yield return new WaitForSeconds(2f);
         hud.showBlackScreen(false);
     }
-
-
 }

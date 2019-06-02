@@ -1,27 +1,40 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 using UnityEngine.UI;
 
-public class PlayerHUD : MonoBehaviour
+public class PlayerHUD : NetworkBehaviour
 {
-    [SerializeField] private Text healthText;
-    [SerializeField] private Text keysText;
-    [SerializeField] private Text gemsText;
+    [SerializeField] public Text healthText;
+    [SerializeField] public Text keysText;
+    [SerializeField] public Text gemsText;
 
-    public void SetHealthText(int health)
+    [SyncVar(hook = "SetHealthText")] public string health;
+    [SyncVar(hook = "SetKeysText")] public string keys;
+    [SyncVar(hook = "SetGemsText")] public string gems;
+
+
+    public void Start()
     {
-        healthText.text = health.ToString();
+        SetHealthText(this.health);
+        SetKeysText(this.keys);
+        SetGemsText(this.gems);
     }
 
-    public void setKeysText(int keys)
+    public void SetHealthText(string health)
     {
-        keysText.text = keys.ToString();
+        healthText.text = health;
     }
 
-    public void setGemsText(int gems)
+    public void SetKeysText(string keys)
     {
-        gemsText.text = gems.ToString();
+        keysText.text = keys;
+    }
+
+    public void SetGemsText(string gems)
+    {
+        gemsText.text = gems;
     }
 
     public void showBlackScreen(bool visible)

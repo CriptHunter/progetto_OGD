@@ -113,6 +113,36 @@ MonoBehaviour:
   _animationName: 
   loop: 1
   timeScale: 1
+--- !u!1 &1669625098102586570
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4197692586787536782}
+  m_Layer: 9
+  m_Name: CharacterHoldingPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 4162164826716764455, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4197692586787536782
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1669625098102586570}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -0.01, y: 0.94, z: -0.019064063}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4935003469174482370}
+  m_RootOrder: 6
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &4935003469174482398
 GameObject:
   m_ObjectHideFlags: 0
@@ -160,6 +190,7 @@ Transform:
   - {fileID: 4935003469436019557}
   - {fileID: 2195702044118871877}
   - {fileID: 5140147274824706884}
+  - {fileID: 4197692586787536782}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -208,6 +239,8 @@ MonoBehaviour:
   climbableLayer:
     serializedVersion: 2
     m_Bits: 4096
+  characterHoldingCollider: {fileID: 7357235733210517154}
+  characterGrabCollider: {fileID: 454471400031012183}
 --- !u!114 &4935003469174482397
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -399,6 +432,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b80c7bc0a1a312f4696ac63817fc33bc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  OnAttack:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  OnFootstep:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
 --- !u!114 &58695673501553045
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -516,7 +559,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4935003469511816101}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.55, y: 1.05, z: 0.2093467}
+  m_LocalPosition: {x: 0.43, y: 1.08, z: 0.2093467}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4935003469174482370}

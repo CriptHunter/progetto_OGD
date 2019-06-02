@@ -20,12 +20,15 @@ public class EnemySimpleMovement : NetworkBehaviour
 
     void FixedUpdate()
     {
-        transform.Translate(Vector2.right * speed * Time.deltaTime);
-        if (!flying)
+        if (isServer)
         {
-            RaycastHit2D hit = Physics2D.Raycast(groundDetection.position, Vector2.down, groundRayDistance, groundMask);
-            if (!hit)
-                ChangeDirection();
+            transform.Translate(Vector2.right * speed * Time.deltaTime);
+            if (!flying)
+            {
+                RaycastHit2D hit = Physics2D.Raycast(groundDetection.position, Vector2.down, groundRayDistance, groundMask);
+                if (!hit)
+                    ChangeDirection();
+            }
         }
     }
 

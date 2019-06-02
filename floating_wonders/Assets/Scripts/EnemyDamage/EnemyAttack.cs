@@ -14,16 +14,15 @@ public class EnemyAttack : NetworkBehaviour
             //controllo solo sul server la collisione con il nemico perchè il player del client è presente anche sul server
             if (isServer)
             {
-                GameManager.Instance.TakeDamage(damage);
+                GameManager.Instance.TakeDamage(collision.gameObject, damage);
                 //calcolo in che direzione sono stato colpito dal nemico per spingere via il player dopo l'impatto
                 //controllo solo destra o sinistra, se l'impatto arriva dall'alto considero sempre se è più a destra o più a sinistra
-                var direction = transform.InverseTransformPoint(collision.transform.position);
                 //destra
                 if (collision.transform.position.x > transform.position.x)
-                    Rpc_ApplyImpulse(collision.gameObject, 45, 25);
+                    Rpc_ApplyImpulse(collision.gameObject, 45, 15);
                 //sinistra
                 else 
-                    Rpc_ApplyImpulse(collision.gameObject, 135, 25);
+                    Rpc_ApplyImpulse(collision.gameObject, 135, 15);
             }
         }
     }

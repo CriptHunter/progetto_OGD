@@ -1,12 +1,19 @@
-﻿using System;
+﻿using Spine.Unity;
+using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.Networking;
 
 public class GameManager : NetworkBehaviour
 {
-    [SerializeField] [SyncVar(hook = "SetHealth")] private int health;
-    [SerializeField] [SyncVar(hook = "SetKeys")] private int keys;
-    [SerializeField] [SyncVar(hook = "SetGems")] private int gems;
+    [SerializeField]  private int health;
+    [SerializeField]  private int keys;
+    [SerializeField] private int gems;
+
+    [SerializeField] private int maxHealth;
+    [SerializeField] private int maxKeys;
+    [SerializeField] private int maxGems;
+
     private PlayerHUD hud;
     //singleton
     private static GameManager instance;
@@ -37,13 +44,14 @@ public class GameManager : NetworkBehaviour
 
     private void UpdateUI()
     {
-        hud.SetHealthText(this.health);
-        hud.setKeysText(this.keys);
-        hud.setGemsText(this.gems);
+        hud.health = this.health + "/" + this.maxHealth;
+        hud.keys = this.keys + "/" + this.maxKeys;
+        hud.gems = this.gems + "/" + this.maxGems;
     }
 
-    public void TakeDamage(int damage)
+    public void TakeDamage(GameObject damagedPlayer,int damage)
     {
+        StartCoroutine(Stun(damagedPlayer));
         SetHealth(health - damage);
     }
 
@@ -52,7 +60,7 @@ public class GameManager : NetworkBehaviour
         this.health = health;
         if (health <= 0)
         {
-            print("morti");
+            SetHealth(maxHealth);
             CheckPointsManager.Instance.Respawn();
         }
     }
@@ -85,4 +93,18 @@ public class GameManager : NetworkBehaviour
                 break;
         }
     }
+
+    private IEnumerator Stun(GameObject player)
+    {
+        Rpc_SetSpineColor(player, Color.red);
+        yield return new WaitForSeconds(.3f);
+        Rpc_SetSpineColor(player, Color.white);
+    }
+
+    [ClientRpc] private void Rpc_SetSpineColor(GameObject player, Color color)
+    {
+        player.GetComponentInChildren<SkeletonAnimation>().skeleton.SetColor(color);
+    }
+
+
 }

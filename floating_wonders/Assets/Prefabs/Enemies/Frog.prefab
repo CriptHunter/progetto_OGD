@@ -227,7 +227,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30b505485e4ce244eb8fd757b4077853, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damage: 1
+  damage: 2
 --- !u!114 &216399552503476839
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -255,7 +255,7 @@ MonoBehaviour:
   groundDetection: {fileID: 8213921475705301719}
   jumpForce: 20
   horizontalMovement: 5
-  jumpWaitingTime: 30
+  jumpWaitingTime: 0.3
   distance: 5
 --- !u!1 &3490547585957216218
 GameObject:

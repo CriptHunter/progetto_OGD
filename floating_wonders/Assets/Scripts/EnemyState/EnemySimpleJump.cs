@@ -9,7 +9,8 @@ public class EnemySimpleJump : NetworkBehaviour
 
     private bool movingRight = true;
     private LayerMask groundMask;
-    private LayerMask ignoredLayer = ~((1 << 9) | (1 << 10) | (1 << 13));
+    private LayerMask playerMask;
+    private LayerMask ignoredLayer = ~((1 << 2) |(1 << 9) | (1 << 10) | (1 << 13));
     private Rigidbody2D rigidbody;
     public Transform groundDetection;
     [SerializeField] private float jumpForce;
@@ -22,15 +23,16 @@ public class EnemySimpleJump : NetworkBehaviour
 
     private void Start()
     {
+        playerMask = LayerMask.NameToLayer("Player");
         groundMask = LayerMask.NameToLayer("Ground");
         rigidbody = GetComponent<Rigidbody2D>();
     }
 
     void Update()
     {
-        if (grounded)
+        if (isServer && grounded)
         {
-            RaycastHit2D downwardHit = Physics2D.Raycast(groundDetection.position + new Vector3(horizontalMovement, 0, 0), Vector2.down);
+            RaycastHit2D downwardHit = Physics2D.Raycast(groundDetection.position + new Vector3(horizontalMovement, 0, 0), Vector2.down, jumpForce, 1<<8);
             RaycastHit2D forwardHit = Physics2D.Raycast(transform.position, transform.right, horizontalMovement, ignoredLayer);
             if (forwardHit.collider != null)
                 ChangeDirection();
@@ -68,11 +70,11 @@ public class EnemySimpleJump : NetworkBehaviour
         }
     }
 
-    void OnCollisionEnter2D(Collision2D collision)
+    private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.transform.gameObject.layer == groundMask)
             grounded = true;
-        else if (collision.gameObject.GetComponent<Pickuppable>().Type == ItemType.player)
+        else if (collision.gameObject.layer == playerMask)
             ChangeDirection();
     }
 }

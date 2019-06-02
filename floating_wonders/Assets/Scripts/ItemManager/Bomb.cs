@@ -4,12 +4,18 @@ using UnityEngine.Networking;
 
 public class Bomb : NetworkBehaviour
 {
-    [SerializeField] private float speed = 0;
-    [SerializeField] private int explosionCountdown = 0;
+    [SerializeField] private float speed;
+    [SerializeField] private int explosionCountdown;
+    [SerializeField] private int radius;
     private Rigidbody2D rb = null;
+    private CircleCollider2D collider;
+    private StrikeController strikeController;
 
     void Start()
     {
+        collider = transform.GetChild(0).GetComponent<CircleCollider2D>();
+        collider.radius = this.radius;
+        strikeController = transform.GetChild(0).GetComponent<StrikeController>();
         StartCoroutine(ExplosionCountdown(explosionCountdown));
     }
 
@@ -20,9 +26,10 @@ public class Bomb : NetworkBehaviour
     }
 
     //aspetta n secondi, poi la bomba esplode
-    private IEnumerator ExplosionCountdown(int secondsToWait)
+    private IEnumerator ExplosionCountdown(int seconds)
     {
-        yield return new WaitForSeconds(secondsToWait);
+        yield return new WaitForSeconds(seconds);
+        strikeController.PerformStrike();
         NetworkServer.Destroy(this.gameObject);
     }
 }

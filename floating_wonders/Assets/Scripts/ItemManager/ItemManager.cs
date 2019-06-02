@@ -19,7 +19,7 @@ public class ItemManager : NetworkBehaviour
     {
         pickedUpItem = null;
         uniqueItem = ItemType.nullItem;
-        collider = GetComponent<CircleCollider2D>();
+        collider = transform.GetChild(0).GetComponent<CircleCollider2D>();
     }
 
     private void Update()
@@ -108,7 +108,7 @@ public class ItemManager : NetworkBehaviour
             RaycastHit2D[] hits = Physics2D.CircleCastAll(collider.bounds.center, collider.radius, Vector2.right, 0.0f, raycastPlayerOnlyMask);
             foreach (RaycastHit2D h in hits)
             {
-                if (h.collider.gameObject != this.gameObject)
+                if (h.collider.gameObject != this.gameObject && h.collider.tag != "StrikeCollider")
                 {
                     collidedObject = h.collider.gameObject;
                     print("player colpito da circle raycast");

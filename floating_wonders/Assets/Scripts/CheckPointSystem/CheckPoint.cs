@@ -25,12 +25,13 @@ public class CheckPoint : NetworkBehaviour
         if (status == 2)
         {
             gameObject.GetComponent<Renderer>().material.color = Color.magenta;
-            CheckPointsManager.Instance.SetActiveCheckPoint(this);
+            if(isServer)
+                CheckPointsManager.Instance.SetActiveCheckPoint(this);
         }
         //faccio un raycast circolare intorno al checkpoint
         RaycastHit2D[] hit = Physics2D.CircleCastAll(transform.position, 1, Vector2.zero, 0, playerMask);
         status = 0;
-        //conto il numero di giocatori in torno al checkpoint, faccio così perché la lunghezza dell'array hit comprende anche i child object
+        //conto il numero di giocatori intorno al checkpoint, faccio così perché la lunghezza dell'array hit comprende anche i child object
         foreach(RaycastHit2D h in hit)
         {
             if (h.collider.GetComponent<AnotherCharacterController>() != null)

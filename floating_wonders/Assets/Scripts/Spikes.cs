@@ -22,13 +22,15 @@ public class Spikes : NetworkBehaviour
     }
 
     void Update()
-    {
-        timer = timer + Time.deltaTime;
-        if (timer > hiddenTime)
+    {   if (canHide)
         {
-            timer = 0;
-            if (isServer)
-                isVisible = !isVisible;
+            timer = timer + Time.deltaTime;
+            if (timer > hiddenTime)
+            {
+                timer = 0;
+                if (isServer)
+                    isVisible = !isVisible;
+            }
         }
     }
 

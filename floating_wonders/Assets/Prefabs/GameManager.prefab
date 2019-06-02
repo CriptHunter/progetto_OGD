@@ -81,6 +81,9 @@ MonoBehaviour:
   health: 10
   keys: 0
   gems: 0
+  maxHealth: 10
+  maxKeys: 5
+  maxGems: 8
 --- !u!114 &4429089233943288633
 MonoBehaviour:
   m_ObjectHideFlags: 0
