@@ -172,7 +172,7 @@ public class AnotherCharacterController : NetworkBehaviour
     {
         if (animator != null)
         {
-            if (IsBeihgHeldByCharacter())
+            if (IsBeingHeldByCharacter())
             {
                 animator.Animation = "grabbed";
             }
@@ -325,7 +325,7 @@ public class AnotherCharacterController : NetworkBehaviour
         }
         dontStickDelay = Mathf.Max(0, dontStickDelay - delta);
         dontGrabEdgeDelay = Mathf.Max(0, dontGrabEdgeDelay - delta);
-        if (Active && !IsHoldingCharacter())
+        if (Active)
         {
             StickToGround();
         }
@@ -375,16 +375,16 @@ public class AnotherCharacterController : NetworkBehaviour
         if (IsHoldingCharacter())
         {
             heldCharacter.rigidbody.position = characterHoldingPoint.position;
-            heldCharacter.Turn(verse);
+            heldCharacter.TurnInternal(verse,false);
             if (!heldCharacter.Active)
             {
                 Animate();
             }
         }
-        if (IsBeihgHeldByCharacter())
+        if (IsBeingHeldByCharacter())
         {
             rigidbody.position = isHeldBy.GetCharacterHoldingPoint().position;
-            Turn(verse);
+            TurnInternal(isHeldBy.transform.localScale.x>0?Verse.Right:Verse.Left,false); // per qualche motivo leggere isHeldBy.verse torna sempre Up?
         }
     }
 
@@ -394,7 +394,7 @@ public class AnotherCharacterController : NetworkBehaviour
     /// </summary>
     public void Run()
     {
-        if (Active && !IsDanglingFromEdge() && !IsClimbing())
+        if (Active && !IsDanglingFromEdge() && !IsClimbing() && !IsBeingHeldByCharacter())
         {
             running = true;
             runDelay = 0.05f;
@@ -437,11 +437,12 @@ public class AnotherCharacterController : NetworkBehaviour
                     {
                         if (IsHoldingCharacter())
                         {
-                            VerticalImpulse(jumpForce * 0.85f);
+                            VerticalImpulse(jumpForce);// * 0.85f);
                         }
                         else
                         {
-                            VerticalImpulse(jumpForce);
+                            if (!IsBeingHeldByCharacter())
+                                VerticalImpulse(jumpForce);
                         }
                     }
                 }
@@ -451,7 +452,7 @@ public class AnotherCharacterController : NetworkBehaviour
 
     private void VerticalImpulse(float strength)
     {
-        if (Active && PhysicsActive)
+        if (Active && PhysicsActive && !IsBeingHeldByCharacter())
         {
             if (strength > 0)
             {
@@ -469,10 +470,25 @@ public class AnotherCharacterController : NetworkBehaviour
     /// <returns>false if for some reason you couldn't turn, true otherwise</returns>
     public bool Turn(Verse verse)
     {
+        if (!IsBeingHeldByCharacter())
+        {
+            return TurnInternal(verse);
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    private bool TurnInternal(Verse verse, bool alsoBroadcastCommand=true)
+    {
         if (!IsClimbing())
         {
             this.verse = verse;
-            Cmd_SetLocalScale(verse);
+            if (alsoBroadcastCommand)
+                Cmd_SetLocalScale(verse);
+            else
+                transform.localScale = new Vector3((int)verse, 1, 1);
             if (IsDanglingFromEdge() && targetEdgeVerse != verse)
             {
                 ReleaseEdge();
@@ -490,7 +506,10 @@ public class AnotherCharacterController : NetworkBehaviour
                 if (hit.collider == null)
                 {
                     this.verse = verse;
-                    Cmd_SetLocalScale(verse);
+                    if (alsoBroadcastCommand)
+                        Cmd_SetLocalScale(verse);
+                    else
+                        transform.localScale = new Vector3((int)verse, 1, 1);
                     return true;
                 }
                 else
@@ -571,7 +590,7 @@ public class AnotherCharacterController : NetworkBehaviour
     {
         if (Active)
         {
-            if (!IsClimbing() && !IsHoldingCharacter())
+            if (!IsClimbing() && !IsHoldingCharacter() && !IsBeingHeldByCharacter())
             {
                 if (!IsDanglingFromEdge())
                 {
@@ -611,7 +630,7 @@ public class AnotherCharacterController : NetworkBehaviour
     {
         if (Active)
         {
-            if (potentialClimbable != null && !IsTouchingGround() && !IsHoldingCharacter())
+            if (potentialClimbable != null && !IsTouchingGround() && !IsHoldingCharacter() && !IsBeingHeldByCharacter())
             {
                 ReleaseEdge();
                 ReleaseCharacter();
@@ -790,7 +809,7 @@ public class AnotherCharacterController : NetworkBehaviour
         }
     }
 
-    public bool CanGrabCharacter()
+    public bool CanGrabCharacter(bool checkForCharacter=true)
     {
         var collider = characterHoldingCollider;
         if (collider != null)
@@ -800,10 +819,17 @@ public class AnotherCharacterController : NetworkBehaviour
                 return false;
             else
             {
-                if (potentialCharacter == null)
-                    return false;
+                if (checkForCharacter)
+                {
+                    if (potentialCharacter == null)
+                        return false;
+                    else
+                        return true;
+                }
                 else
+                {
                     return true;
+                }
             }
         }
         else
@@ -812,36 +838,14 @@ public class AnotherCharacterController : NetworkBehaviour
         }
     }
 
-    public bool GrabCharacter()
+    public void GrabCharacter()
     {
-        if (CanGrabCharacter())
+        if (!IsDanglingFromEdge() && !IsClimbing() && !IsHoldingCharacter() && !IsBeingHeldByCharacter())
         {
-            if (!IsDanglingFromEdge() && !IsClimbing() && !IsHoldingCharacter())
+            if (potentialCharacter != null)
             {
-                heldCharacter = potentialCharacter;
-                heldCharacter.isHeldBy = this;
-                //heldCharacter.gameObject.transform.parent = characterHoldingPoint;
-                //heldCharacter.gameObject.transform.localPosition = Vector3.zero;
-                heldCharacter.Active = false;
-                heldCharacter.DisableColliders();
-                //normalCollider.enabled = false;
-                //characterHoldingCollider.enabled = true;
-                normalCollider.isTrigger = true;
-                characterHoldingCollider.isTrigger = false;
-                collider = characterHoldingCollider;
-
-                //dontStickDelay = 0.1f+Time.deltaTime;
-                CmdPropagateGrabbedCharacter(gameObject, heldCharacter.gameObject);
-                return true;
+                CmdActionGrab(gameObject, potentialCharacter.gameObject);
             }
-            else
-            {
-                return false;
-            }
-        }
-        else
-        {
-            return false;
         }
     }
 
@@ -852,43 +856,84 @@ public class AnotherCharacterController : NetworkBehaviour
 
     public void ReleaseCharacter()
     {
-        if (IsHoldingCharacter())
+        CmdActionUngrab(gameObject);
+    }
+
+    [Command]
+    private void CmdActionGrab(GameObject grabber, GameObject grabbed)
+    {
+        RpcActionGrab(grabber, grabbed);
+    }
+    [ClientRpc]
+    private void RpcActionGrab(GameObject grabber, GameObject grabbed)
+    {
+        AnotherCharacterController actor, acted;
+        actor = grabber.GetComponent<AnotherCharacterController>();
+        acted = grabbed.GetComponent<AnotherCharacterController>();
+
+        if (actor!=null && acted!=null)
         {
-            //heldCharacter.gameObject.transform.parent = null;
-            //heldCharacter.gameObject.transform.localPosition = Vector3.zero;
-            CmdPropagateGrabbedCharacter(null, heldCharacter.gameObject);
-            heldCharacter.Active = true;
-            heldCharacter.EnableColliders();
-            heldCharacter = null;
-            //normalCollider.enabled = true;
-            //characterHoldingCollider.enabled = false;
-            normalCollider.isTrigger = false;
-            characterHoldingCollider.isTrigger = true;
-            collider = normalCollider;
-            //dontStickDelay = 0.1f + Time.deltaTime;
+            if (actor.CanGrabCharacter(false))
+            {
+                if (!actor.IsDanglingFromEdge() && !actor.IsClimbing() && !actor.IsHoldingCharacter())
+                {
+                    acted.ReleaseCharacter();
+                    acted.ReleaseClimbable();
+                    acted.ReleaseEdge();
+                    acted.isHeldBy = actor;
+                    acted.Active = false;
+                    acted.DisableColliders();
+                    acted.GetComponent<NetworkTransform>().enabled = false;
+                    //acted.gameObject.transform.parent = actor.GetCharacterHoldingPoint();
+                    //acted.gameObject.transform.localPosition = Vector3.zero;
+
+                    actor.heldCharacter = acted;
+                    actor.normalCollider.isTrigger = true;
+                    actor.characterHoldingCollider.isTrigger = false;
+                    actor.collider = actor.characterHoldingCollider;
+
+                    acted.gameObject.GetComponentInChildren<MeshRenderer>().sortingOrder = 2;
+                    actor.gameObject.GetComponentInChildren<MeshRenderer>().sortingOrder = 1;
+                }
+            }
         }
     }
 
     [Command]
-    private void CmdPropagateGrabbedCharacter(GameObject characterHoldingTheOther, GameObject other)
+    private void CmdActionUngrab(GameObject grabber)
     {
-        RpcPropagateGrabbedCharacter(characterHoldingTheOther,other);
+        RpcActionUngrab(grabber);
     }
-
     [ClientRpc]
-    private void RpcPropagateGrabbedCharacter(GameObject characterHoldingTheOther, GameObject other)
+    private void RpcActionUngrab(GameObject grabber)
     {
-        if (characterHoldingTheOther != null)
+        AnotherCharacterController actor, acted;
+        actor = grabber.GetComponent<AnotherCharacterController>();
+
+        if (actor != null)
         {
-            other.GetComponent<AnotherCharacterController>().isHeldBy = characterHoldingTheOther.GetComponent<AnotherCharacterController>();
-        }
-        else
-        {
-            other.GetComponent<AnotherCharacterController>().isHeldBy = null;
+            if (actor.IsHoldingCharacter())
+            {
+                acted = actor.heldCharacter;
+                acted.isHeldBy = null;
+                acted.Active = true;
+                acted.EnableColliders();
+                acted.GetComponent<NetworkTransform>().enabled = true;
+                //acted.gameObject.transform.parent = null;
+
+                actor.heldCharacter = null;
+                actor.normalCollider.isTrigger = false;
+                actor.characterHoldingCollider.isTrigger = true;
+                actor.collider = actor.normalCollider;
+
+
+                acted.gameObject.GetComponentInChildren<MeshRenderer>().sortingOrder = 1;
+                actor.gameObject.GetComponentInChildren<MeshRenderer>().sortingOrder = 1;
+            }
         }
     }
 
-    public bool IsBeihgHeldByCharacter()
+    public bool IsBeingHeldByCharacter()
     {
         return isHeldBy != null;
     }
@@ -921,7 +966,7 @@ public class AnotherCharacterController : NetworkBehaviour
 
     public void Attack()
     {
-        if (!IsDanglingFromEdge() && !IsClimbing() && !IsHoldingCharacter())
+        if (!IsDanglingFromEdge() && !IsClimbing() && !IsHoldingCharacter() && !IsBeingHeldByCharacter())
         {
             if (animator != null)
             {
