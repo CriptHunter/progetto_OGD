@@ -73,6 +73,11 @@ public class GameManager : NetworkBehaviour
             keys = 0;
     }
 
+    public int GetKeys()
+    {
+        return keys;
+    }
+
     public void SetGems(int gems)
     {
         if (gems >= 0)
