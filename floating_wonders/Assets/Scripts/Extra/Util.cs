@@ -23,6 +23,19 @@ public static class Util
         }
     }
 
+    public static T ChooseFrom<T>(IList<T> args)
+    {
+        if (args.Count > 0)
+        {
+            int choice = UnityEngine.Random.Range(0, args.Count);
+            return args[choice];
+        }
+        else
+        {
+            return default(T);
+        }
+    }
+
     public static int Mean(params int[] numbers)
     {
         if (numbers == null)
@@ -169,7 +182,7 @@ public static class Util
             angle += 360;
         }
         return 360 - angle;*/
-        float ang=Vector2.SignedAngle(Vector2.right, new Vector2(x2-x1, y2-y1));
+        float ang = Vector2.SignedAngle(Vector2.right, new Vector2(x2 - x1, y2 - y1));
         if (ang < 0)
         {
             return 360 + ang;
@@ -330,6 +343,36 @@ public static class Util
         return Random(range) + x1;
     }
 
+    public static int Irandom(float num)
+    {
+        return Mathf.FloorToInt(Random(Mathf.Floor(num)));
+    }
+
+    public static int IrandomRange(float num1, float num2)
+    {
+        return Mathf.FloorToInt(RandomRange(Mathf.Floor(num1), Mathf.Floor(num2)));
+    }
+
+    public static Vector2 Random(Vector2 v1)
+    {
+        return new Vector2(Random(v1.x), Random(v1.y));
+    }
+
+    public static Vector2 RandomRange(Vector2 v1, Vector2 v2)
+    {
+        return new Vector2(RandomRange(v1.x, v2.x), RandomRange(v1.y, v2.y));
+    }
+
+    public static Vector3 Random(Vector3 v1)
+    {
+        return new Vector3(Random(v1.x), Random(v1.y), Random(v1.z));
+    }
+
+    public static Vector3 RandomRange(Vector3 v1, Vector3 v2)
+    {
+        return new Vector3(RandomRange(v1.x, v2.x), RandomRange(v1.y, v2.y), RandomRange(v1.z, v2.z));
+    }
+
     public static float WrapToModulus(float value, int modulus)
     {
         if (modulus == 0)
@@ -483,7 +526,7 @@ public static class Util
     /// <param name="lat">latitude (angular distance from the Equator, in the range -90 - 90)</param>
     /// <param name="radius">radius of the sphere</param>
     /// <returns>a Vector 3 describing the position of the latitude and longitude on the surface of the sphere</returns>
-    public static Vector3 lonLatToVector3(float lng, float lat, float radius)
+    public static Vector3 LonLatToVector3(float lng, float lat, float radius)
     {
         lat = Mathf.Deg2Rad * lat;
         lng = Mathf.Deg2Rad * lng;
@@ -498,6 +541,8 @@ public static class Util
         );
 
     }
+
+
 
     /// <summary>
     /// Gets the specified component searching in all childs with a certain tag.
