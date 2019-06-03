@@ -123,8 +123,6 @@ GameObject:
   - component: {fileID: 719479261}
   - component: {fileID: 719479260}
   - component: {fileID: 719479259}
-  - component: {fileID: 719479262}
-  - component: {fileID: 719479263}
   m_Layer: 0
   m_Name: NetworkManager
   m_TagString: Untagged
@@ -182,7 +180,10 @@ MonoBehaviour:
   - {fileID: 1656687803150500073, guid: dbc378dc088372d49894d069597abbac, type: 3}
   - {fileID: 3074465414999549160, guid: 2f417fcb3ea5fb44cb2516101984f02e, type: 3}
   - {fileID: 2678438959574968248, guid: eb438f72efbe7444caaaa10708cd6430, type: 3}
-  - {fileID: 0}
+  - {fileID: 3404043224649161805, guid: 4f9f0b00061061349b834000a80c209a, type: 3}
+  - {fileID: 2626424473549711368, guid: dd4adc01013675a4eb6bf4ed4f10903c, type: 3}
+  - {fileID: 8979276892575868746, guid: e18b3fa761ebd2f4e85fd81909edb4df, type: 3}
+  - {fileID: 6562752223969535086, guid: 2698b915cf925b04799a54cf3b5a775c, type: 3}
   m_CustomConfig: 0
   m_MaxConnections: 4
   m_ConnectionConfig:
@@ -252,30 +253,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &719479262
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 719479258}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 934763034269b3f46b30ebc32ecbaa88, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &719479263
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 719479258}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1edaa9a9deeee2745a6da8901d1f7958, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1720967075
 GameObject:
   m_ObjectHideFlags: 0
