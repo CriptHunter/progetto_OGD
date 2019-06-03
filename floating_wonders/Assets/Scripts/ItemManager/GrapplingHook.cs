@@ -12,11 +12,20 @@ public class GrapplingHook : NetworkBehaviour
     [SerializeField] private float step = 0.2f; //di quanto si accorcia la corda ogni volta
     private DistanceJoint2D joint; //linea che collega il giocatore con il punto di attacco
     private RaycastHit2D hit;
-    private bool anchored; //true se il personaggio è attaccato con il rampino
+    private Vector3 missedPoint; //punto in cui ha missato il rampino
+    private State state; //true se il personaggio è attaccato con il rampino
     private LayerMask ignoredLayer = ~((1 << 2) | (1 << 9) | (1 << 13));
+
+    private enum State : int
+    {
+        none = 0,
+        anchored = 1,
+        missed = 2,
+    }
 
     private void Start()
     {
+        state = State.none;
         joint = GetComponent<DistanceJoint2D>();
         joint.enabled = false;
         line.enabled = false;
@@ -24,7 +33,7 @@ public class GrapplingHook : NetworkBehaviour
 
     public void Update()
     {
-        if (anchored)
+        if (state == State.anchored)
         {
             Cmd_DrawLine(true, firePoint.position, hit.point);
             if (joint.distance > breakDistance)
@@ -34,7 +43,7 @@ public class GrapplingHook : NetworkBehaviour
                 Cmd_DrawLine(false, firePoint.position, hit.point);
                 this.gameObject.GetComponent<AnotherCharacterController>().Activate(true);
                 joint.enabled = false;
-                anchored = false;
+                state = State.none;
             }
         }
     }
@@ -44,14 +53,20 @@ public class GrapplingHook : NetworkBehaviour
     public void Throw(Vector2 direction)
     {
         hit = Physics2D.Raycast(firePoint.position, direction, maxDistance, ignoredLayer);
-        if (hit.collider != null && hit.transform.gameObject.tag == "HookPoint")
+        if (hit.collider != null && hit.transform.gameObject.tag == "HookPoint" && state != State.missed)
         {
-            anchored = true;
+            state = State.anchored;
             joint.enabled = true;
             joint.connectedBody = hit.collider.gameObject.GetComponent<Rigidbody2D>();
             joint.distance = Vector2.Distance(firePoint.position, hit.point);
             this.gameObject.GetComponent<AnotherCharacterController>().Deactivate(true);
             Cmd_DrawLine(true, firePoint.position, hit.point);
+        }
+        else
+        {
+            state = State.missed;
+            print("missed");
+            state = State.none;
         }
     }
 
