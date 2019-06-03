@@ -353,7 +353,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   firePoint: {fileID: 4935003469436019557}
-  maxDistance: 20
+  line: {fileID: 8100062239604326332}
+  maxDistance: 30
+  grabSpeed: 30
 --- !u!114 &8749423645054428052
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -915,7 +917,7 @@ LineRenderer:
   m_SortingOrder: 0
   m_Positions:
   - {x: 0, y: 0, z: 0}
-  - {x: 3, y: 0, z: 0}
+  - {x: 2, y: 0, z: 0}
   m_Parameters:
     serializedVersion: 3
     widthMultiplier: 0.3
