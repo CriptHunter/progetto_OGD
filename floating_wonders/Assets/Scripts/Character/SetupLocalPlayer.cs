@@ -12,7 +12,6 @@ public class SetupLocalPlayer : NetworkBehaviour
         var gh = GetComponent<GrapplingHook>();
         var ea = this.GetComponent<ExtendableArm>();
         var itemManager = this.GetComponent<ItemManager>();
-        var renderer = GetComponent<Renderer>();
 
         if (gh != null && ea != null)
         {
@@ -20,16 +19,15 @@ public class SetupLocalPlayer : NetworkBehaviour
             {
                 gh.enabled = false;
                 ea.enabled = true;
-                itemManager.uniqueItem = ItemType.extendableArm;
+                itemManager.SetUniqueItem(ItemType.extendableArm);
             }
             else if (!isServer && isLocalPlayer)
             {
                 gh.enabled = true;
                 ea.enabled = false;
-                itemManager.uniqueItem = ItemType.grapplingHook;
+                itemManager.SetUniqueItem(ItemType.grapplingHook);
             }
         }
-
 
         if (!isLocalPlayer)
         {
