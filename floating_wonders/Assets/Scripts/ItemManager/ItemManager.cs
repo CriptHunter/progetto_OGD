@@ -21,7 +21,6 @@ public class ItemManager : NetworkBehaviour
 
     private void Update()
     {
-        print(pickedUpItem);
         //se posso raccogliere qualcosa e premo E --> raccoglie oggetto
         if (Input.GetKeyDown(KeyCode.E) && isLocalPlayer && pickupAllowed)
         {
@@ -30,8 +29,8 @@ public class ItemManager : NetworkBehaviour
         //tenendo premuto R si mira
         else if (Input.GetKey(KeyCode.R) && isLocalPlayer)
         {
-                shootDirection = GetAimDirection();
-                MoveArrowPointer(GetShootingAngle(shootDirection));
+            shootDirection = GetAimDirection();
+            MoveArrowPointer(GetShootingAngle(shootDirection));
         }
         //quando rilascio R --> usa l'oggetto se l'angolazione è valida
         else if (Input.GetKeyUp(KeyCode.R) && isLocalPlayer)

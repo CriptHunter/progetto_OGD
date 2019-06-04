@@ -102,8 +102,10 @@ public class GameManager : NetworkBehaviour
     private IEnumerator Stun(GameObject player)
     {
         Rpc_SetSpineColor(player, Color.red);
+        player.GetComponent<AnotherCharacterInput>().enabled = false;
         yield return new WaitForSeconds(.3f);
         Rpc_SetSpineColor(player, Color.white);
+        player.GetComponent<AnotherCharacterInput>().enabled = true;
     }
 
     [ClientRpc] private void Rpc_SetSpineColor(GameObject player, Color color)

@@ -7,6 +7,7 @@ public class CheckPoint : NetworkBehaviour
 {
     private LayerMask playerMask;
     private int status;
+    private int lastStatus;
 
     void Start()
     {
@@ -25,9 +26,10 @@ public class CheckPoint : NetworkBehaviour
         if (status == 2)
         {
             gameObject.GetComponent<Renderer>().material.color = Color.magenta;
-            if(isServer)
+            if(isServer && lastStatus != 2)
                 CheckPointsManager.Instance.SetActiveCheckPoint(this);
         }
+        lastStatus = status;
         //faccio un raycast circolare intorno al checkpoint
         RaycastHit2D[] hit = Physics2D.CircleCastAll(transform.position, 1, Vector2.zero, 0, playerMask);
         status = 0;

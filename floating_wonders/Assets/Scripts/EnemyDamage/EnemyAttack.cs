@@ -9,13 +9,13 @@ public class EnemyAttack : NetworkBehaviour
     //se un giocatore entra in collisione con un altro
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.GetComponent<AnotherCharacterController>() != null)
+        if (collision.gameObject.GetComponent<SetupLocalPlayer>() != null)
         {
             //controllo solo sul server la collisione con il nemico perchè il player del client è presente anche sul server
             if (isServer)
             {
                 GameManager.Instance.TakeDamage(collision.gameObject, damage);
-                //calcolo in che direzione sono stato colpito dal nemico per spingere via il player dopo l'impatto
+                //calcolo in che direzione ha attaccato il nemico per spingere via il player dopo l'impatto
                 //controllo solo destra o sinistra, se l'impatto arriva dall'alto considero sempre se è più a destra o più a sinistra
                 //destra
                 if (collision.transform.position.x > transform.position.x)
@@ -26,7 +26,7 @@ public class EnemyAttack : NetworkBehaviour
             }
         }
     }
-    
+
     [ClientRpc] private void Rpc_ApplyImpulse(GameObject player, float direction, float strength)
     {
         player.GetComponent<AnotherCharacterController>().ApplyImpulse(direction, strength);

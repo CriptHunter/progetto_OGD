@@ -14,8 +14,7 @@ public class Bomb : NetworkBehaviour
     void Start()
     {
         collider = transform.GetChild(0).GetComponent<CircleCollider2D>();
-        collider.radius = this.radius;
-        strikeController = transform.GetChild(0).GetComponent<StrikeController>();
+        strikeController = transform.GetComponentInChildren<StrikeController>();
         StartCoroutine(ExplosionCountdown(explosionCountdown));
     }
 
@@ -29,6 +28,7 @@ public class Bomb : NetworkBehaviour
     private IEnumerator ExplosionCountdown(int seconds)
     {
         yield return new WaitForSeconds(seconds);
+        collider.radius = this.radius;
         strikeController.PerformStrike();
         NetworkServer.Destroy(this.gameObject);
     }
