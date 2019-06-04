@@ -21,14 +21,11 @@ public class FallingPlatform : NetworkBehaviour
 
     void FixedUpdate()
     {
-        if (isServer)
-        {
-            if (platformMovingBack)
-                transform.position = Vector2.MoveTowards(transform.position, startingPosition, 20f * Time.deltaTime);
+        if (platformMovingBack)
+            transform.position = Vector2.MoveTowards(transform.position, startingPosition, 20f * Time.deltaTime);
 
-            if (transform.position.y == startingPosition.y)
-                platformMovingBack = false;
-        }
+        if (transform.position.y == startingPosition.y)
+            platformMovingBack = false;
     }
 
     void OnCollisionEnter2D(Collision2D collision)
@@ -42,8 +39,6 @@ public class FallingPlatform : NetworkBehaviour
     void DropPlatform()
     {
         rigidBody.isKinematic = false;
-        //rigidBody.AddForce(Vector2.down * 100f);
-        GetComponent<Collider2D>().isTrigger = true;
         Invoke("GetPlatformBack", 2f);
     }
 
@@ -51,7 +46,6 @@ public class FallingPlatform : NetworkBehaviour
     {
         rigidBody.velocity = Vector2.zero;
         rigidBody.isKinematic = true;
-        GetComponent<Collider2D>().isTrigger = false;
         platformMovingBack = true;
     }
 

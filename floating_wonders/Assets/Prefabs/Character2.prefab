@@ -235,7 +235,7 @@ MonoBehaviour:
   climbSpeed: 4
   groundLayer:
     serializedVersion: 2
-    m_Bits: 256
+    m_Bits: 16640
   climbableLayer:
     serializedVersion: 2
     m_Bits: 4096
@@ -335,8 +335,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1792dd295648885429223adb0141a195, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pickedUpItem: {fileID: 0}
-  uniqueItem: -1
   firePoint: {fileID: 4935003469436019557}
   bombRBPrefab: {fileID: 4347175937712634760, guid: 72a39f29716ddeb4e888b4a111780b7a,
     type: 3}
