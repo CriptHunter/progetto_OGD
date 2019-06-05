@@ -14,21 +14,8 @@ public class BackgroundInitializer : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        /*var backcolor = Camera.main.backgroundColor;
-        for (int i = 0; i < bottomLayerCount; i++)
-        {
-            var go = Instantiate(bottomlayer);
-            float progress= (float)i / Mathf.Max(bottomLayerCount - 1, 1);
-            go.transform.position = new Vector3(0, 0, Mathf.Lerp(10000,100,progress));
-            go.transform.localScale = Vector3.one * Mathf.Lerp(1000, 10, progress);
-            var renderer = go.GetComponent<SpriteRenderer>();
-            renderer.color = Util.FlatColor(Color.Lerp(backcolor, Color.white, progress));
-            renderer.sortingOrder = -(int)go.transform.position.z;
-
-        }*/
-
         var backcolor = Camera.main.backgroundColor;
-        var minz = 6;
+        var minz = 10;
         var maxz = 1000;
 
         foreach (Tilemap tm in gameObject.GetComponentsInChildren<Tilemap>())
@@ -81,7 +68,39 @@ public class BackgroundInitializer : MonoBehaviour
             renderer.sortingOrder = -(int)go.transform.position.z;
         }
 
-        
+        for (int i = 1; i < bottomLayerCount; i++)
+        {
+            var go = Instantiate(bottomlayer);
+            float progress = (float)i / Mathf.Max(bottomLayerCount, 1);
+            go.transform.position = new Vector3(Util.Mean(p8.x,p7.x), Mathf.Lerp(Mathf.Lerp(p8.y, p8d.y, 0.2f), Mathf.Lerp(p8.y,p8d.y,0.7f),progress), Mathf.Lerp(Mathf.Lerp(minz,maxz,0.05f), maxz, progress));
+            go.transform.localScale = Vector3.one * Mathf.Lerp(20, 150, progress);
+            var renderer = go.GetComponent<SpriteRenderer>();
+            renderer.color = Util.FlatColor(Color.Lerp(Color.white, backcolor, progress));
+            renderer.sortingOrder = -(int)go.transform.position.z;
+
+            var go1= Instantiate(bottomlayer);
+            go1.transform.position = go.transform.position + new Vector3(renderer.bounds.extents.x * 2, 0, 0);
+            go1.transform.localScale = go.transform.localScale;
+            var renderer1 = go1.GetComponent<SpriteRenderer>();
+            renderer1.color = renderer.color;
+            renderer1.sortingOrder = renderer.sortingOrder;
+
+            var go2 = Instantiate(bottomlayer);
+            go2.transform.position = go.transform.position - new Vector3(renderer.bounds.extents.x * 2, 0, 0);
+            go2.transform.localScale = go.transform.localScale;
+            var renderer2 = go2.GetComponent<SpriteRenderer>();
+            renderer2.color = renderer.color;
+            renderer2.sortingOrder = renderer.sortingOrder;
+
+            float xshift = Util.RandomRange(-renderer.bounds.extents.x, renderer.bounds.extents.x);
+            print("shifting by "+xshift);
+            go.transform.position += Vector3.right * xshift;
+            go1.transform.position += Vector3.right * xshift;
+            go2.transform.position += Vector3.right * xshift;
+
+        }
+
+        /*
         GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
         sphere.transform.position = p1;
 
@@ -105,6 +124,6 @@ public class BackgroundInitializer : MonoBehaviour
 
         sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
         sphere.transform.position = p8;
-        
+        */
     }
 }
