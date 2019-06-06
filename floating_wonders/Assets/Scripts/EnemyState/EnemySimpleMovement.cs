@@ -2,19 +2,19 @@
 using UnityEngine.Events;
 using UnityEngine.Networking;
 
-public class EnemySimpleMovement : NetworkBehaviour
+public class EnemySimpleMovement : EnemyBehaviour
 {
     [SerializeField] private float speed;
     [SerializeField] private float groundRayDistance;
     [SerializeField] private bool flying;
 
-    private bool movingRight = true;
     private LayerMask groundMask;
     private LayerMask groundCheckMask;
     public Transform groundDetection;
 
     private void Start()
     {
+        ChangeDirection(movingRight);
         groundMask = 1 << LayerMask.NameToLayer("Ground");
     }
 
@@ -27,27 +27,27 @@ public class EnemySimpleMovement : NetworkBehaviour
             {
                 RaycastHit2D hit = Physics2D.Raycast(groundDetection.position, Vector2.down, groundRayDistance, groundMask);
                 if (!hit)
-                    ChangeDirection();
+                    this.movingRight = !movingRight;
             }
         }
     }
 
-    private void ChangeDirection()
+    public override void ChangeDirection(bool movingRight)
     {
         if (movingRight)
         {
             transform.eulerAngles = new Vector3(0, -180, 0);
-            movingRight = false;
+            this.movingRight = movingRight;
         }
         else
         {
             transform.eulerAngles = new Vector3(0, 0, 0);
-            movingRight = true;
+            this.movingRight = movingRight;
         }
     }
 
     void OnCollisionEnter2D(Collision2D collision)
     {
-        ChangeDirection();
+        this.movingRight = !movingRight;
     }
 }
