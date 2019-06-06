@@ -1,6 +1,8 @@
-﻿using System.Collections;
+﻿using Spine.Unity;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 
 public class EnemyIsAttacked : Strikeable
 {
@@ -17,11 +19,12 @@ public class EnemyIsAttacked : Strikeable
         EnemyHealth health = GetComponent<EnemyHealth>();
         if (health != null)
         {
-            health.TakeDamage(1);
-            /*if (attacker.transform.position.x > transform.position.x)
-                rb.MovePosition((Vector2)transform.position + Vector2.left * 5);
+            if (attacker.transform.position.x > transform.position.x)
+                rb.velocity = new Vector2(-1, 1) * 10;
             else
-                rb.MovePosition((Vector2)transform.position + Vector2.right * 5);*/
+                rb.velocity = new Vector2(1, 1) * 10;
+            health.TakeDamage(1);
         }
     }
+
 }

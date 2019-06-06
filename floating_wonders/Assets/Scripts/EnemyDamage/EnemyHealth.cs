@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using Spine.Unity;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -21,5 +22,22 @@ public class EnemyHealth : NetworkBehaviour
         print("vita corrente: " + health);
         if (health <= 0)
             this.gameObject.SetActive(false);
+        else
+            StartCoroutine(Stun(this.gameObject));
+    }
+
+    public IEnumerator Stun(GameObject enemy)
+    {
+        print("inizio coroutine");
+        Rpc_SetSpineColor(enemy, Color.red);
+        yield return new WaitForSeconds(.3f);
+        Rpc_SetSpineColor(enemy, Color.white);
+    }
+
+    [ClientRpc]
+    public void Rpc_SetSpineColor(GameObject enemy, Color color)
+    {
+        print("client rpc");
+        enemy.GetComponentInChildren<SkeletonAnimation>().skeleton.SetColor(color);
     }
 }
