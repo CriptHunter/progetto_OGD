@@ -7,10 +7,11 @@ public class EnemySimpleMovement : EnemyBehaviour
     [SerializeField] private float speed;
     [SerializeField] private float groundRayDistance;
     [SerializeField] private bool flying;
+    [SerializeField] private Transform groundDetection;
+    [SerializeField] private Transform forwardDetection;
 
     private LayerMask groundMask;
-    private LayerMask groundCheckMask;
-    public Transform groundDetection;
+    private LayerMask ignoredLayer = ~((1 << 2) | (1 << 9) | (1 << 10) | (1 << 13));
 
     private void Start()
     {
@@ -20,16 +21,20 @@ public class EnemySimpleMovement : EnemyBehaviour
 
     void FixedUpdate()
     {
-        if (isServer)
-        {
-            transform.Translate(Vector2.right * speed * Time.deltaTime);
-            if (!flying)
-            {
-                RaycastHit2D hit = Physics2D.Raycast(groundDetection.position, Vector2.down, groundRayDistance, groundMask);
-                if (!hit)
-                    this.movingRight = !movingRight;
-            }
-        }
+        if (!isServer)
+            return;
+
+        transform.Translate(Vector2.right * speed * Time.deltaTime);
+        RaycastHit2D forwardHit;
+        if (movingRight)
+            forwardHit = Physics2D.Raycast(forwardDetection.position, transform.right, 1, ignoredLayer);
+        else
+            forwardHit = Physics2D.Raycast(forwardDetection.position, -transform.right, 1, ignoredLayer);
+        RaycastHit2D downwardHit = Physics2D.Raycast(groundDetection.position, Vector2.down, groundRayDistance, groundMask);
+        if (forwardHit.collider != null)
+            this.movingRight = !movingRight;
+        else if (!downwardHit && !flying)
+            this.movingRight = !movingRight;
     }
 
     public override void ChangeDirection(bool movingRight)
@@ -46,8 +51,4 @@ public class EnemySimpleMovement : EnemyBehaviour
         }
     }
 
-    void OnCollisionEnter2D(Collision2D collision)
-    {
-        this.movingRight = !movingRight;
-    }
 }

@@ -10,8 +10,9 @@ public class EnemySimpleJump : EnemyBehaviour
     private LayerMask playerMask;
     private LayerMask ignoredLayer = ~((1 << 2) |(1 << 9) | (1 << 10) | (1 << 13));
     private Rigidbody2D rigidbody;
-    public Transform groundDetection;
     private SkeletonAnimation skeletonAnimation;
+    [SerializeField] private Transform groundDetection;
+    [SerializeField] private Transform forwardDetection;
     [SerializeField] private float jumpForce;
     [SerializeField] private float horizontalMovement;
     [SerializeField] private float jumpWaitingTime;
@@ -31,17 +32,18 @@ public class EnemySimpleJump : EnemyBehaviour
 
     void FixedUpdate()
     {
-        if(rigidbody.velocity.y > 0)
-            skeletonAnimation.AnimationName = "jump_up";
-        else if (rigidbody.velocity.y < 0)
-            skeletonAnimation.AnimationName = "jump_down";
-        else if (rigidbody.velocity.y == 0)
-            skeletonAnimation.AnimationName = "stand";
-
-        if (isServer && grounded)
+        if (!isServer)
+            return;
+        Rpc_ChangeAnimation(rigidbody.velocity.y);
+        if (grounded)
         {
+            RaycastHit2D forwardHit;
             RaycastHit2D downwardHit = Physics2D.Raycast(groundDetection.position + new Vector3(horizontalMovement, 0, 0), Vector2.down, jumpForce, 1<<8);
-            RaycastHit2D forwardHit = Physics2D.Raycast(transform.position, transform.right, horizontalMovement, ignoredLayer);
+            if (movingRight)
+                forwardHit = Physics2D.Raycast(forwardDetection.position, -transform.right, horizontalMovement, ignoredLayer);
+            else
+                forwardHit = Physics2D.Raycast(forwardDetection.position, transform.right, horizontalMovement, ignoredLayer);
+
             if (forwardHit.collider != null)
                 this.movingRight = !movingRight;
             else if (downwardHit.collider == null)
@@ -54,6 +56,17 @@ public class EnemySimpleJump : EnemyBehaviour
                 timer = 0;
             }
         }
+    }
+
+    [ClientRpc]
+    private void Rpc_ChangeAnimation(float yVelocity)
+    {
+        if (yVelocity > 0)
+            skeletonAnimation.AnimationName = "jump_up";
+        else if (yVelocity < 0)
+            skeletonAnimation.AnimationName = "jump_down";
+        else
+            skeletonAnimation.AnimationName = "stand";
     }
 
     private void Jump()
@@ -82,7 +95,7 @@ public class EnemySimpleJump : EnemyBehaviour
     {
         if (collision.transform.gameObject.layer == groundMask)
             grounded = true;
-        else if (collision.gameObject.layer != groundMask)
+        else if (collision.transform.gameObject.layer == playerMask)
             this.movingRight = !movingRight;
     }
 }

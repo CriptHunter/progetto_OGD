@@ -19,11 +19,11 @@ public class EnemyIsAttacked : Strikeable
         EnemyHealth health = GetComponent<EnemyHealth>();
         if (health != null)
         {
-            health.TakeDamage(1);
             if (attacker.transform.position.x > transform.position.x)
                 rb.velocity = new Vector2(-1, 1) * 10;
             else
                 rb.velocity = new Vector2(1, 1) * 10;
+            health.TakeDamage(1);
         }
     }
 
