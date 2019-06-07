@@ -21,12 +21,12 @@ public class CheckPoint : NetworkBehaviour
         //coloro i checkpoint in base al loro stato
         if(status == 0)
             gameObject.GetComponent<Renderer>().material.color = Color.yellow;
-        if (status == 1)
-            gameObject.GetComponent<Renderer>().material.color = Color.red;
         if (status == 2)
+            gameObject.GetComponent<Renderer>().material.color = Color.red;
+        if (status == 4)
         {
             gameObject.GetComponent<Renderer>().material.color = Color.magenta;
-            if(isServer && lastStatus != 2)
+            if(isServer && lastStatus != 4)
                 CheckPointsManager.Instance.SetActiveCheckPoint(this);
         }
         lastStatus = status;

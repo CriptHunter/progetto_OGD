@@ -6,10 +6,16 @@ using UnityEngine.Networking;
 public class EnemyAttack : NetworkBehaviour
 {
     [SerializeField] private int damage = 1;
+    private float timer = 0;
     //se un giocatore entra in collisione con un altro
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.GetComponent<SetupLocalPlayer>() != null)
+
+    }
+
+    private void OnCollisionStay2D(Collision2D collision)
+    {
+        if (collision.gameObject.GetComponent<SetupLocalPlayer>() != null && (timer == 0 || timer > 0.5f))
         {
             //controllo solo sul server la collisione con il nemico perchè il player del client è presente anche sul server
             if (isServer)
@@ -21,10 +27,12 @@ public class EnemyAttack : NetworkBehaviour
                 if (collision.transform.position.x > transform.position.x)
                     Rpc_ApplyImpulse(collision.gameObject, 45, 15);
                 //sinistra
-                else 
+                else
                     Rpc_ApplyImpulse(collision.gameObject, 135, 15);
+                timer = 0;
             }
         }
+        timer = timer + Time.deltaTime;
     }
 
     [ClientRpc] private void Rpc_ApplyImpulse(GameObject player, float direction, float strength)

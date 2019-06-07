@@ -21,10 +21,8 @@ public class PadController : MonoBehaviour
         int cont = 0;
         while (i < padsList.Count)
         {
-            Debug.Log(padsList[i].GetPadPressed());
             if (padsList[i].GetPadPressed())
             {
-                Debug.Log("Pressed: " + padsList[i].name);
                 cont++;
             }
             i++;

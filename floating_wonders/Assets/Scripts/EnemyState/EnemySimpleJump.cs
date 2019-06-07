@@ -7,8 +7,8 @@ using UnityEngine.Networking;
 public class EnemySimpleJump : EnemyBehaviour
 {
     private LayerMask groundMask;
+    private LayerMask groundRayCastMask;
     private LayerMask playerMask;
-    private LayerMask ignoredLayer = ~((1 << 2) |(1 << 9) | (1 << 10) | (1 << 13));
     private Rigidbody2D rigidbody;
     private SkeletonAnimation skeletonAnimation;
     [SerializeField] private Transform groundDetection;
@@ -25,6 +25,7 @@ public class EnemySimpleJump : EnemyBehaviour
     {
         playerMask = LayerMask.NameToLayer("Player");
         groundMask = LayerMask.NameToLayer("Ground");
+        groundRayCastMask = 1 << LayerMask.NameToLayer("Ground");
         rigidbody = GetComponent<Rigidbody2D>();
         skeletonAnimation = GetComponentInChildren<SkeletonAnimation>();
         ChangeDirection(movingRight);
@@ -34,27 +35,37 @@ public class EnemySimpleJump : EnemyBehaviour
     {
         if (!isServer)
             return;
+
+        //se sta cadendo
+        if (GetComponent<Rigidbody2D>().velocity.y < 0)
+            return;
+
         Rpc_ChangeAnimation(rigidbody.velocity.y);
-        if (grounded)
+        if (!grounded)
+            return;
+
+        timer += Time.deltaTime;
+        if (timer > jumpWaitingTime)
         {
             RaycastHit2D forwardHit;
             RaycastHit2D downwardHit = Physics2D.Raycast(groundDetection.position + new Vector3(horizontalMovement, 0, 0), Vector2.down, jumpForce, 1<<8);
             if (movingRight)
-                forwardHit = Physics2D.Raycast(forwardDetection.position, -transform.right, horizontalMovement, ignoredLayer);
+                forwardHit = Physics2D.Raycast(forwardDetection.position, -transform.right, horizontalMovement, groundRayCastMask);
             else
-                forwardHit = Physics2D.Raycast(forwardDetection.position, transform.right, horizontalMovement, ignoredLayer);
+                forwardHit = Physics2D.Raycast(forwardDetection.position, transform.right, horizontalMovement, groundRayCastMask);
 
             if (forwardHit.collider != null)
-                this.movingRight = !movingRight;
-            else if (downwardHit.collider == null)
-                this.movingRight = !movingRight;
-
-            timer += Time.deltaTime;
-            if (timer > jumpWaitingTime)
             {
-                Jump();
-                timer = 0;
+                this.movingRight = !movingRight;
+                print("forward hit not null " + forwardHit.collider.name);
             }
+            else if (downwardHit.collider == null)
+            {
+                this.movingRight = !movingRight;
+                print("non c'è terreno sotto ");
+            }
+            Jump();
+            timer = 0;
         }
     }
 

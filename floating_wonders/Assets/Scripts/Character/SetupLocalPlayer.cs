@@ -8,6 +8,9 @@ public class SetupLocalPlayer : NetworkBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        //per il respawn ai checkpoint
+        CheckPointsManager.Instance.AddPlayer(this.gameObject);
+
         //Il server ha il braccio steampunk, il client il rampino
         var gh = GetComponent<GrapplingHook>();
         var ea = this.GetComponent<ExtendableArm>();
