@@ -145,7 +145,7 @@ public class OrthoCameraBehaviour : MonoBehaviour
     {
         ExpDamp(ref x, desiredX, 10f, precision);
         ExpDamp(ref y, desiredY, 10f, precision);
-        ExpDamp(ref zoom, desiredZoom, 30f, precision);
+        ExpDamp(ref zoom, desiredZoom, 50f, precision);
 
         if (shake > 0)
         {

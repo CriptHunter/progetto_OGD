@@ -907,6 +907,11 @@ public class AnotherCharacterController : NetworkBehaviour
     [ClientRpc]
     private void RpcActionUngrab(GameObject grabber)
     {
+        Ungrab(grabber);
+    }
+
+    private void Ungrab(GameObject grabber)
+    {
         AnotherCharacterController actor, acted;
         actor = grabber.GetComponent<AnotherCharacterController>();
 
@@ -950,6 +955,31 @@ public class AnotherCharacterController : NetworkBehaviour
             print("Apply impulse: " + direction + " " + strength);
             impulseHSpeed = Util.LengthDirX(strength, direction);
             VerticalImpulse(Util.LengthDirY(strength, direction));
+        }
+    }
+
+    public void LaunchCharacter(float force, float direction)
+    {
+        if (IsHoldingCharacter())
+        {
+            CmdActionLaunchCharacter(gameObject, heldCharacter.gameObject,  force, direction);
+        }
+    }
+
+    [Command]
+    private void CmdActionLaunchCharacter(GameObject launcher, GameObject launched, float force, float direction)
+    {
+        RpcActionLaunchCharacter(launcher, launched, force, direction);
+    }
+    [ClientRpc]
+    private void RpcActionLaunchCharacter(GameObject launcher, GameObject launched, float force, float direction)
+    {
+        AnotherCharacterController actor = launcher.GetComponent<AnotherCharacterController>();
+        AnotherCharacterController acted = launched.GetComponent<AnotherCharacterController>();
+        if (actor.IsHoldingCharacter())
+        {
+            actor.Ungrab(launcher);
+            acted.ApplyImpulse(direction, force);
         }
     }
 

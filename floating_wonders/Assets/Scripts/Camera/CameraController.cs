@@ -10,7 +10,7 @@ public class CameraController : MonoBehaviour
     private bool notSureIfDoesntHaveAcc=true;
 
     private float zoomProgress = 0;
-    private float zoomTime = 2f;
+    private float zoomTime = 10f;
 
     private void Start()
     {

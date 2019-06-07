@@ -141,6 +141,19 @@ public class AnotherCharacterInput : NetworkBehaviour
                         cc.GrabCharacter();
                     }
                 }
+
+                if (Input.GetMouseButtonDown(0))
+                {
+                    if (cc.IsHoldingCharacter())
+                    {
+                        Vector2 shootDirection;
+                        shootDirection = Input.mousePosition - Camera.main.WorldToScreenPoint(cc.GetCharacterHoldingPoint().position);
+                        var velocity = cc.GetComponent<Rigidbody2D>().velocity;
+                        var applyVelocity = new Vector2(Util.LengthDirX(13f, shootDirection.GetAngle()), Util.LengthDirY(18f, shootDirection.GetAngle()));
+                        var finalVelocity = velocity + applyVelocity;
+                        cc.LaunchCharacter(finalVelocity.magnitude, finalVelocity.GetAngle());
+                    }
+                }
             }
 
             // run and turn if possible
