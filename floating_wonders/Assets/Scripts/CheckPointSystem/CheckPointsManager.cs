@@ -41,7 +41,7 @@ public class CheckPointsManager : NetworkBehaviour
         if (!isServer)
             return;
         this.activeCheckPoint = c;
-        Rpc_ShowBlackScreen();
+        Rpc_ShowColor(Color.white, GetActiveCheckPoint().gameObject);
         ResetEnemies();
         ResetPlayers();
     }
@@ -69,7 +69,7 @@ public class CheckPointsManager : NetworkBehaviour
             print("Non ci sono checkpoint attivi");
         else
         {
-            Rpc_ShowBlackScreen();
+            Rpc_ShowColor(Color.black, GetActiveCheckPoint().gameObject);
             ResetEnemies();
             ResetPlayers();
         }
@@ -78,18 +78,24 @@ public class CheckPointsManager : NetworkBehaviour
     public void ResetEnemies()
     {
         foreach (Enemy e in enemyList)
+        {
             Rpc_SetEnemyRespawnPosition(e.gameObject);
+            e.GetComponent<EnemyHealth>().SetFullHealth();
+        }
     }
 
     public void ResetPlayers()
     {
         foreach (GameObject p in playerList)
+        {
             Rpc_SetPlayerRespawnPosition(p, activeCheckPoint.gameObject);
+            GameManager.Instance.SetHealth(GameManager.Instance.GetMaxHealth());
+        }
     }
 
-    [ClientRpc] private void Rpc_ShowBlackScreen()
+    [ClientRpc] private void Rpc_ShowColor(Color c, GameObject ck)
     {
-        StartCoroutine("blackScreen");
+        StartCoroutine(ShowColor(c, ck));
     }
 
     [ClientRpc] private void Rpc_SetEnemyRespawnPosition(GameObject enemy)
@@ -106,10 +112,12 @@ public class CheckPointsManager : NetworkBehaviour
         player.SetActive(true);
     }
 
-    private IEnumerator blackScreen()
+    private IEnumerator ShowColor(Color c, GameObject ck)
     {
-        hud.showBlackScreen(true);
-        yield return new WaitForSeconds(2f);
-        hud.showBlackScreen(false);
+        ck.SetActive(false);
+        hud.ShowColor(true, c);
+        yield return new WaitForSeconds(1f);
+        hud.ShowColor(false, c);
+        ck.SetActive(true);
     }
 }

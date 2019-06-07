@@ -6,8 +6,8 @@ using UnityEngine.Networking;
 
 public class GameManager : NetworkBehaviour
 {
-    [SerializeField]  private int health;
-    [SerializeField]  private int keys;
+    [SerializeField] private int health;
+    [SerializeField] private int keys;
     [SerializeField] private int gems;
 
     [SerializeField] private int maxHealth;
@@ -60,9 +60,13 @@ public class GameManager : NetworkBehaviour
         this.health = health;
         if (health <= 0)
         {
-            SetHealth(maxHealth);
             CheckPointsManager.Instance.Respawn();
         }
+    }
+
+    public int GetMaxHealth()
+    {
+        return this.maxHealth;
     }
 
     public void SetKeys(int keys)

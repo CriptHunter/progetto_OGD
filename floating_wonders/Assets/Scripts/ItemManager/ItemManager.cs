@@ -108,11 +108,12 @@ public class ItemManager : NetworkBehaviour
     //restituisce un vettore 2D che va dal fire point al puntatore del mouse, usato per la direzione in cui lancio gli oggetti
     private Vector2 GetAimDirection()
     {
-        Vector3 shootDirection;
+        /*Vector3 shootDirection;
         shootDirection = Input.mousePosition;
         shootDirection.z = 0.0f;
         shootDirection = Camera.main.ScreenToWorldPoint(shootDirection);
-        shootDirection = shootDirection - firePoint.transform.position;
+        shootDirection = shootDirection - firePoint.transform.position;*/
+        shootDirection = Input.mousePosition - Camera.main.WorldToScreenPoint(firePoint.position);
         return (Vector2)shootDirection.normalized;
     }
 

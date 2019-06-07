@@ -11,7 +11,7 @@ public class EnemySimpleMovement : EnemyBehaviour
     [SerializeField] private Transform forwardDetection;
 
     private LayerMask groundMask;
-    private LayerMask ignoredLayer = ~((1 << 2) | (1 << 9) | (1 << 10) | (1 << 13));
+    //private LayerMask ignoredLayer = ~((1 << 2) | (1 << 9) | (1 << 10) | (1 << 13));
 
     private void Start()
     {
@@ -27,14 +27,20 @@ public class EnemySimpleMovement : EnemyBehaviour
         transform.Translate(Vector2.right * speed * Time.deltaTime);
         RaycastHit2D forwardHit;
         if (movingRight)
-            forwardHit = Physics2D.Raycast(forwardDetection.position, transform.right, 1, ignoredLayer);
+            forwardHit = Physics2D.Raycast(forwardDetection.position, transform.right, 1, groundMask);
         else
-            forwardHit = Physics2D.Raycast(forwardDetection.position, -transform.right, 1, ignoredLayer);
+            forwardHit = Physics2D.Raycast(forwardDetection.position, -transform.right, 1, groundMask);
         RaycastHit2D downwardHit = Physics2D.Raycast(groundDetection.position, Vector2.down, groundRayDistance, groundMask);
         if (forwardHit.collider != null)
+        {
             this.movingRight = !movingRight;
+            print("sto colpendo davanti " + forwardHit.collider.gameObject);
+        }
         else if (!downwardHit && !flying)
+        {
             this.movingRight = !movingRight;
+            print("sotto di me c'è solo il vuoto");
+        }
     }
 
     public override void ChangeDirection(bool movingRight)

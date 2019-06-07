@@ -6,8 +6,13 @@ using UnityEngine.Networking;
 
 public class EnemyHealth : NetworkBehaviour
 {
-    [SerializeField] [SyncVar(hook = "OnChangeHealth")] private int health;
+    [SerializeField] private int maxHealth;
+    [SyncVar(hook = "OnChangeHealth")] private int health;
 
+    private void Start()
+    {
+        this.health = maxHealth;
+    }
     public void TakeDamage(int damage)
     {
         if (!isServer)
@@ -15,14 +20,19 @@ public class EnemyHealth : NetworkBehaviour
         health = health - damage;
     }
 
+    public void SetFullHealth()
+    {
+        health = maxHealth;
+    }
+
     //viene chiamato ogni volta che la vita cambia
-    void OnChangeHealth(int newHealth)
+    private void OnChangeHealth(int newHealth)
     {
         health = newHealth;
         print("vita corrente: " + health);
         if (health <= 0)
             this.gameObject.SetActive(false);
-        else
+        else if(health != maxHealth)
             StartCoroutine(Stun(this.gameObject));
     }
 

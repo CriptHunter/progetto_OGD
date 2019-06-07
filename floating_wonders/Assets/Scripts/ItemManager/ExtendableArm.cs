@@ -33,8 +33,6 @@ public class ExtendableArm : NetworkBehaviour
     {
         if (state == State.anchoredToCrate)
         {
-            print("distanza dal giocatore: " + Vector2.Distance(hit.transform.position, transform.position));
-            print("velocità: " + hitRb.velocity.magnitude);
             //se la cassa si incastra in qualcosa o arriva al giocatore
             if (Vector2.Distance(hit.transform.position, transform.position) < 3f || hitRb.velocity.magnitude < 0.5f)
             {
@@ -61,7 +59,7 @@ public class ExtendableArm : NetworkBehaviour
 
         if(state == State.missed)
         {
-            print("missed");
+
         }
     }
 
@@ -71,6 +69,7 @@ public class ExtendableArm : NetworkBehaviour
         hit = Physics2D.Raycast(firePoint.position, direction, maxDistance, ignoredLayer);
         if (hit.collider != null)
         {
+            print("hit");
             //raccoglie collezionabili o oggetti
             if (hit.transform.GetComponent<Pickuppable>() != null)
             {

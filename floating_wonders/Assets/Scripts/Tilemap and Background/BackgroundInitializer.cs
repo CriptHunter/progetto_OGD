@@ -93,7 +93,7 @@ public class BackgroundInitializer : MonoBehaviour
             renderer2.sortingOrder = renderer.sortingOrder;
 
             float xshift = Util.RandomRange(-renderer.bounds.extents.x, renderer.bounds.extents.x);
-            print("shifting by "+xshift);
+            //print("shifting by "+xshift);
             go.transform.position += Vector3.right * xshift;
             go1.transform.position += Vector3.right * xshift;
             go2.transform.position += Vector3.right * xshift;

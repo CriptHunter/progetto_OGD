@@ -417,8 +417,8 @@ CapsuleCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
-  m_Size: {x: 1, y: 2.2}
+  m_Offset: {x: 0, y: 0.01350832}
+  m_Size: {x: 1, y: 2.1729834}
   m_Direction: 0
 --- !u!114 &6827212985945314183
 MonoBehaviour:
@@ -915,7 +915,7 @@ LineRenderer:
   m_SortingOrder: 0
   m_Positions:
   - {x: 0, y: 0, z: 0}
-  - {x: 2, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
   m_Parameters:
     serializedVersion: 3
     widthMultiplier: 0.3

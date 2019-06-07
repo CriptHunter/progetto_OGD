@@ -37,14 +37,17 @@ public class PlayerHUD : NetworkBehaviour
         gemsText.text = gems;
     }
 
-    public void showBlackScreen(bool visible)
+    public void ShowColor(bool visible, Color color)
     {
-        Image image = GetComponent<Image>();
+        /*Image image = GetComponent<Image>();
         var tempColor = image.color;
         if (visible)
             tempColor.a = 1f;
         else
             tempColor.a = 0f;
-        image.color = tempColor;
+        image.color = tempColor;*/
+        Image image = GetComponent<Image>();
+        image.color = new Color(color.r, color.g, color.b, visible ? 1f : 0f);
+        print("fucking color: " + image.color);
     }
 }
