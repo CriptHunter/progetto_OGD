@@ -39,15 +39,7 @@ public class PlayerHUD : NetworkBehaviour
 
     public void ShowColor(bool visible, Color color)
     {
-        /*Image image = GetComponent<Image>();
-        var tempColor = image.color;
-        if (visible)
-            tempColor.a = 1f;
-        else
-            tempColor.a = 0f;
-        image.color = tempColor;*/
         Image image = GetComponent<Image>();
         image.color = new Color(color.r, color.g, color.b, visible ? 1f : 0f);
-        print("fucking color: " + image.color);
     }
 }

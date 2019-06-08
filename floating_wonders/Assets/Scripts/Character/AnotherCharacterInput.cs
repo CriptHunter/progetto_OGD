@@ -170,7 +170,6 @@ public class AnotherCharacterInput : NetworkBehaviour
 
     [Command] private void Cmd_PerformStrike()
     {
-        print("ready to strike");
         strikeController.PerformStrike();
     }
 }

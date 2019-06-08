@@ -14,7 +14,7 @@ public class EnemyIsAttacked : Strikeable
         rb = GetComponent<Rigidbody2D>();
     }
 
-    public override void Strike(GameObject attacker)
+    public override void Strike(GameObject attacker, int damage)
     {
         EnemyHealth health = GetComponent<EnemyHealth>();
         if (health != null)
@@ -23,7 +23,7 @@ public class EnemyIsAttacked : Strikeable
                 rb.velocity = new Vector2(-1, 1) * 10;
             else
                 rb.velocity = new Vector2(1, 1) * 10;
-            health.TakeDamage(1);
+            health.TakeDamage(damage);
         }
     }
 

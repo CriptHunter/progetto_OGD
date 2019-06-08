@@ -29,7 +29,7 @@ public class EnemyHealth : NetworkBehaviour
     private void OnChangeHealth(int newHealth)
     {
         health = newHealth;
-        print("vita corrente: " + health);
+        print("vita nemico: " + this.gameObject + " = " + health);
         if (health <= 0)
             this.gameObject.SetActive(false);
         else if(health != maxHealth)
@@ -38,7 +38,6 @@ public class EnemyHealth : NetworkBehaviour
 
     public IEnumerator Stun(GameObject enemy)
     {
-        print("inizio coroutine");
         Rpc_SetSpineColor(enemy, Color.red);
         yield return new WaitForSeconds(.3f);
         Rpc_SetSpineColor(enemy, Color.white);
@@ -47,7 +46,6 @@ public class EnemyHealth : NetworkBehaviour
     [ClientRpc]
     public void Rpc_SetSpineColor(GameObject enemy, Color color)
     {
-        print("client rpc");
         enemy.GetComponentInChildren<SkeletonAnimation>().skeleton.SetColor(color);
     }
 }

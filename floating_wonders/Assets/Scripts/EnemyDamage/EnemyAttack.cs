@@ -10,15 +10,32 @@ public class EnemyAttack : NetworkBehaviour
     //se un giocatore entra in collisione con un altro
     private void OnCollisionEnter2D(Collision2D collision)
     {
+        if (!isServer)
+            return;
 
+        if (collision.gameObject.GetComponent<SetupLocalPlayer>() != null)
+        {
+            GameManager.Instance.TakeDamage(collision.gameObject, damage);
+            //calcolo in che direzione ha attaccato il nemico per spingere via il player dopo l'impatto
+            //controllo solo destra o sinistra, se l'impatto arriva dall'alto considero sempre se è più a destra o più a sinistra
+            //destra
+            if (collision.transform.position.x > transform.position.x)
+                Rpc_ApplyImpulse(collision.gameObject, 45, 15);
+            //sinistra
+            else
+                Rpc_ApplyImpulse(collision.gameObject, 135, 15);
+        }
     }
 
-    private void OnCollisionStay2D(Collision2D collision)
+    /*private void OnCollisionStay2D(Collision2D collision)
     {
-        if (collision.gameObject.GetComponent<SetupLocalPlayer>() != null && (timer == 0 || timer > 0.5f))
+        if (!isServer)
+            return;
+        print("timer " + timer);
+        if (collision.gameObject.GetComponent<SetupLocalPlayer>() != null)
         {
-            //controllo solo sul server la collisione con il nemico perchè il player del client è presente anche sul server
-            if (isServer)
+            timer = timer + Time.deltaTime;
+            if ((timer == 0 || timer > 0.5f))
             {
                 GameManager.Instance.TakeDamage(collision.gameObject, damage);
                 //calcolo in che direzione ha attaccato il nemico per spingere via il player dopo l'impatto
@@ -31,9 +48,8 @@ public class EnemyAttack : NetworkBehaviour
                     Rpc_ApplyImpulse(collision.gameObject, 135, 15);
                 timer = 0;
             }
-        }
-        timer = timer + Time.deltaTime;
-    }
+        }       
+    }*/
 
     [ClientRpc] private void Rpc_ApplyImpulse(GameObject player, float direction, float strength)
     {

@@ -63,5 +63,4 @@ public class EnemySimpleMovement : EnemyBehaviour
         if (collision.transform.gameObject.layer == playerMask)
             this.movingRight = !movingRight;
     }
-
 }

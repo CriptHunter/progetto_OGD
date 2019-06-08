@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 1745638993477316278}
   - component: {fileID: 5200282632166992132}
   - component: {fileID: 5729696167658125254}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: Bomb
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -174,8 +174,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 20
-  explosionCountdown: 5
+  explosionCountdown: 2.5
   radius: 5
+  explosion: {fileID: 3553570609905913463, guid: 4efb6b7a3c9fef34fabb413d43e80d78,
+    type: 3}
 --- !u!58 &5729696167658125254
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -203,7 +205,7 @@ GameObject:
   - component: {fileID: 7128346105786682280}
   - component: {fileID: 4712821954586534833}
   - component: {fileID: 4911629803504073784}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: StrikeCollider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -253,3 +255,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   parent: {fileID: 4347175937712634760}
+  damage: 10000

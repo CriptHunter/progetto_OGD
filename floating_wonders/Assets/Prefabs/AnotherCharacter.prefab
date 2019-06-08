@@ -999,6 +999,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   parent: {fileID: 631346588937936802}
+  damage: 1
 --- !u!1 &7086836459768604533
 GameObject:
   m_ObjectHideFlags: 0

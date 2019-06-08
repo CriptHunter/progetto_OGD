@@ -9,7 +9,7 @@ public class Crate : Strikeable
     private Rigidbody2D rb;
     private GameObject player;
 
-    public override void Strike(GameObject attacker)
+    public override void Strike(GameObject attacker, int damage)
     {
         if (attacker.transform.position.x < transform.position.x)
             GetComponent<Rigidbody2D>().velocity = Vector2.right * 10;
