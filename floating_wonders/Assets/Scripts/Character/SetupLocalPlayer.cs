@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -9,7 +10,18 @@ public class SetupLocalPlayer : NetworkBehaviour
     void Start()
     {
         //per il respawn ai checkpoint
-        CheckPointsManager.Instance.AddPlayer(this.gameObject);
+        try
+        {
+            var cpm = CheckPointsManager.Instance;
+            if (cpm != null)
+            {
+                CheckPointsManager.Instance.AddPlayer(this.gameObject);
+            }
+
+        } catch(NullReferenceException e)
+        {
+            print("there is no checpoint manager "+e);
+        }
 
         //Il server ha il braccio steampunk, il client il rampino
         var gh = GetComponent<GrapplingHook>();
