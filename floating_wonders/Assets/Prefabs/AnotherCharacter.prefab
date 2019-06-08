@@ -261,7 +261,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   firePoint: {fileID: 2948218886140739856}
   line: {fileID: 4692602657354117558}
-  maxDistance: 15
+  maxDistance: 20
   breakDistance: 1
   step: 0.4
 --- !u!232 &3032423062929762552
@@ -297,7 +297,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   firePoint: {fileID: 2948218886140739856}
   line: {fileID: 4692602657354117558}
-  maxDistance: 15
+  maxDistance: 20
   grabSpeed: 20
 --- !u!1 &631346589052460458
 GameObject:

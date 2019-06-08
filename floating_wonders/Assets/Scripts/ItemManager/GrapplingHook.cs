@@ -7,7 +7,7 @@ public class GrapplingHook : NetworkBehaviour
 {
     [SerializeField] private Transform firePoint = null;
     [SerializeField] private LineRenderer line; //fune del rampino
-    [SerializeField] private float maxDistance = 10f;  //massima distanza della fune del rampino
+    [SerializeField] private float maxDistance = 13f;  //massima distanza della fune del rampino
     [SerializeField] private float breakDistance = 1f; //distanza minima dal punto di aggancio, se la distanza diventa minore il rampino si sgancia
     [SerializeField] private float step = 0.2f; //di quanto si accorcia la corda ogni volta
     private DistanceJoint2D joint; //linea che collega il giocatore con il punto di attacco
