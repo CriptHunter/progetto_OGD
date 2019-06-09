@@ -10,6 +10,7 @@ public class ItemManager : NetworkBehaviour
     private bool canShoot;
     private bool pickupAllowed;
     private GameObject collidedObject;
+    private AnotherCharacterController controller;
     [SerializeField] private Transform firePoint = null; // da quale punto sono lanciati gli oggetti
     [SerializeField] private GameObject bombRBPrefab = null; //bomba con rigid body
 
@@ -17,6 +18,7 @@ public class ItemManager : NetworkBehaviour
     private void Start()
     {
         pickedUpItem = null;
+        controller = GetComponent<AnotherCharacterController>();
     }
 
     private void Update()
@@ -27,13 +29,13 @@ public class ItemManager : NetworkBehaviour
             Pickup(collidedObject);
         }
         //tenendo premuto R si mira
-        else if (Input.GetKey(KeyCode.R) && isLocalPlayer)
+        else if (Input.GetKey(KeyCode.Mouse1) && isLocalPlayer && !(controller.IsHoldingCharacter() || controller.IsBeingHeldByCharacter() || controller.IsClimbing() || controller.IsDanglingFromEdge()))
         {
             shootDirection = GetAimDirection();
             MoveArrowPointer(GetShootingAngle(shootDirection));
         }
         //quando rilascio R --> usa l'oggetto se l'angolazione è valida
-        else if (Input.GetKeyUp(KeyCode.R) && isLocalPlayer)
+        else if (Input.GetKeyUp(KeyCode.Mouse1) && isLocalPlayer && !(controller.IsHoldingCharacter() || controller.IsBeingHeldByCharacter() || controller.IsClimbing() || controller.IsDanglingFromEdge()))
         {
             //se lo sprite della freccia per mirare è visibile allora l'angolo è tra -90 e 90
             if (canShoot)

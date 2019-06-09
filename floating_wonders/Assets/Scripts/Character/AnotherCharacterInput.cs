@@ -121,7 +121,7 @@ public class AnotherCharacterInput : NetworkBehaviour
                 {
                     if (!cc.IsDanglingFromEdge())
                     {
-                        if (Input.GetKeyDown(KeyCode.Space))
+                        if (Input.GetKeyDown(KeyCode.Mouse0))
                         {
                             //strikeController.PerformStrike();
                             Cmd_PerformStrike();
@@ -142,7 +142,7 @@ public class AnotherCharacterInput : NetworkBehaviour
                     }
                 }
 
-                if (Input.GetMouseButtonDown(0))
+                if (Input.GetMouseButtonDown(1))
                 {
                     if (cc.IsHoldingCharacter())
                     {
