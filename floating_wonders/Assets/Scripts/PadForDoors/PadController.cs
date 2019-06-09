@@ -1,11 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 
-public class PadController : MonoBehaviour
+public class PadController : NetworkBehaviour
 {
-    [SerializeField]
-    private List<Pad> padsList;
+    /*[SerializeField] private List<Pad> padsList;
     private bool allPadPressed;
     private bool doorOpen;
 
@@ -56,5 +56,47 @@ public class PadController : MonoBehaviour
             transform.position -= new Vector3(0, 4, 0);
             doorOpen = false;
         }
+    }*/
+
+    [SerializeField] private List<Pad> padsList;
+    [SyncVar(hook = "ChangeStatus")] private bool isOpened = false;
+
+    private void Update()
+    {
+        if (!isServer)
+            return;
+
+        int padCont = 0;
+        foreach(Pad pad in padsList)
+        {
+            if (pad.GetPadPressed())
+                padCont++;
+        }
+        if (padCont == padsList.Count && !isOpened)
+            isOpened = true;
+        else if (padCont != padsList.Count && isOpened)
+            isOpened = false;
     }
+
+    private void ChangeStatus(bool isOpened)
+    {
+        this.isOpened = isOpened;
+        if (isOpened)
+            OpenDoor();
+        else
+            CloseDoor();
+    }
+
+    private void OpenDoor()
+    {
+        transform.position += new Vector3(0, 4, 0);
+    }
+
+    private void CloseDoor()
+    {
+        transform.position -= new Vector3(0, 4, 0);
+    }
+
+
+
 }

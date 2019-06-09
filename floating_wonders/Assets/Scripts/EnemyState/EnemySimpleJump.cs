@@ -36,11 +36,12 @@ public class EnemySimpleJump : EnemyBehaviour
         if (!isServer)
             return;
 
+        Rpc_ChangeAnimation(rigidbody.velocity.y);
+
         //se sta cadendo
         if (GetComponent<Rigidbody2D>().velocity.y < 0)
             return;
 
-        Rpc_ChangeAnimation(rigidbody.velocity.y);
         if (!grounded)
             return;
 
@@ -57,12 +58,10 @@ public class EnemySimpleJump : EnemyBehaviour
             if (forwardHit.collider != null)
             {
                 this.movingRight = !movingRight;
-                print("forward hit not null " + forwardHit.collider.name);
             }
             else if (downwardHit.collider == null)
             {
                 this.movingRight = !movingRight;
-                print("non c'è terreno sotto ");
             }
             Jump();
             timer = 0;
