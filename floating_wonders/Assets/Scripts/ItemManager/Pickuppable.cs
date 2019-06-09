@@ -34,7 +34,7 @@ public class Pickuppable : NetworkBehaviour
     public void Cmd_Respawn()
     {
         if(canRespawn)
-            StartCoroutine(WaitCoroutine(5));
+            StartCoroutine(WaitCoroutine(respawnTime));
     }
 
     private IEnumerator WaitCoroutine(int secondsToWait)

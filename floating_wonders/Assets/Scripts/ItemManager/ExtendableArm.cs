@@ -5,7 +5,7 @@ using UnityEngine.Networking;
 
 public class ExtendableArm : NetworkBehaviour
 {
-    private LayerMask ignoredLayer = ~((1 << 2) | (1 << 9));
+    private LayerMask ignoredLayer = ~((1 << 2) | (1 << 9) | (1 << 11) | (1 << 12));
     [SerializeField] private Transform firePoint;
     [SerializeField] private LineRenderer line; //braccio disegnato con una linea
     [SerializeField] private float maxDistance; //distanza massima del braccio

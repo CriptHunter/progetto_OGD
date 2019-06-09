@@ -130,7 +130,7 @@ public class AnotherCharacterInput : NetworkBehaviour
                     }
                 }
 
-                if (Input.GetKeyDown(KeyCode.Q))
+                if (Input.GetKeyDown(KeyCode.E))
                 {
                     if (cc.IsHoldingCharacter())
                     {
@@ -142,7 +142,7 @@ public class AnotherCharacterInput : NetworkBehaviour
                     }
                 }
 
-                if (Input.GetMouseButtonDown(1))
+                if (Input.GetMouseButtonDown(0))
                 {
                     if (cc.IsHoldingCharacter())
                     {

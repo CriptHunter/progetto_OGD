@@ -14,7 +14,7 @@ public class GrapplingHook : NetworkBehaviour
     private RaycastHit2D hit;
     private Vector3 missedPoint; //punto in cui ha missato il rampino
     private State state; //true se il personaggio è attaccato con il rampino
-    private LayerMask ignoredLayer = ~((1 << 2) | (1 << 9) | (1 << 13));
+    private LayerMask ignoredLayer = ~((1 << 2) | (1 << 9) | (1 << 11) | (1 << 12) | (1 << 13));
 
     private enum State : int
     {
@@ -36,7 +36,9 @@ public class GrapplingHook : NetworkBehaviour
         if (state == State.anchored)
         {
             Cmd_DrawLine(true, firePoint.position, hit.point);
-            if (joint.distance > breakDistance)
+            /*if (joint.distance > breakDistance)
+                joint.distance = joint.distance - step;*/
+            if (Vector2.Distance(transform.position, hit.point) > breakDistance)
                 joint.distance = joint.distance - step;
             else
             {

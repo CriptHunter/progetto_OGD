@@ -11,6 +11,7 @@ public class ItemManager : NetworkBehaviour
     private bool pickupAllowed;
     private GameObject collidedObject;
     private AnotherCharacterController controller;
+    private new CapsuleCollider2D collider;
     [SerializeField] private Transform firePoint = null; // da quale punto sono lanciati gli oggetti
     [SerializeField] private GameObject bombRBPrefab = null; //bomba con rigid body
 
@@ -19,6 +20,7 @@ public class ItemManager : NetworkBehaviour
     {
         pickedUpItem = null;
         controller = GetComponent<AnotherCharacterController>();
+        collider = GetComponents<CapsuleCollider2D>()[0];
     }
 
     private void Update()
@@ -63,21 +65,21 @@ public class ItemManager : NetworkBehaviour
         }
     }
 
-    //quando il giocatore collide con un oggetto
+    //quando il giocatore collide con un oggetto, controllo solo il collider capsula
     private void OnTriggerEnter2D(Collider2D collision)
     {
         //se collido con un oggetto che si può raccogliere, sono il local player e non ho oggetti in mano ---> posso raccogliere
-        if (collision.gameObject.GetComponent<Pickuppable>() != null && isLocalPlayer)
+        if (collision.gameObject.GetComponent<Pickuppable>() != null && isLocalPlayer && collider.IsTouching(collision))
         {
             pickupAllowed = true;
             collidedObject = collision.gameObject;
         }
     }
 
-    //quando il giocatore esce dall'area di collisione
+    //quando il giocatore esce dall'area di collisione, controllo solo il collider capsula
     private void OnTriggerExit2D(Collider2D collision)
     {
-        if (collision.gameObject.GetComponent<Pickuppable>() != null && isLocalPlayer)
+        if (collision.gameObject.GetComponent<Pickuppable>() != null && isLocalPlayer && !collider.IsTouching(collision))
         {
             pickupAllowed = false;
             collidedObject = null;

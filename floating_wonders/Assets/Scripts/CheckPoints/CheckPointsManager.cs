@@ -69,7 +69,7 @@ public class CheckPointsManager : NetworkBehaviour
             print("Non ci sono checkpoint attivi");
         else
         {
-            Rpc_ShowColor(Color.black, GetActiveCheckPoint().gameObject);
+            Rpc_ShowColor(Color.white, GetActiveCheckPoint().gameObject);
             ResetEnemies();
             ResetPlayers();
         }
@@ -107,6 +107,12 @@ public class CheckPointsManager : NetworkBehaviour
 
     [ClientRpc] private void Rpc_SetPlayerRespawnPosition(GameObject player, GameObject checkpoint)
     {
+        AnotherCharacterController controller = player.GetComponent<AnotherCharacterController>();
+        //stacco il personaggio dai bordi altrimenti non si teletrasporta
+        if(controller.IsDanglingFromEdge())
+            player.GetComponent<AnotherCharacterController>().ReleaseEdge();
+        if(controller.IsClimbing())
+            player.GetComponent<AnotherCharacterController>().ReleaseClimbable();
         player.SetActive(false);
         player.transform.position = checkpoint.transform.position;
         player.SetActive(true);
