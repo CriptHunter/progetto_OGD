@@ -144,6 +144,7 @@ public class AnotherCharacterController : NetworkBehaviour
     private bool climbUpRequest = false; // se è stata fatta richiesta di arrampicarsi su o giù
     private bool climbDownRequest = false;
     private Verse climbVerse = Verse.None;
+    private float dontGrabClimbableDelay = 0; // ritardo entro il quale non può richiappare un climbable
 
     void Awake()
     {
@@ -325,6 +326,8 @@ public class AnotherCharacterController : NetworkBehaviour
         }
         dontStickDelay = Mathf.Max(0, dontStickDelay - delta);
         dontGrabEdgeDelay = Mathf.Max(0, dontGrabEdgeDelay - delta);
+        dontGrabClimbableDelay = Mathf.Max(0, dontGrabClimbableDelay - delta);
+
         if (Active)
         {
             StickToGround();
@@ -591,7 +594,7 @@ public class AnotherCharacterController : NetworkBehaviour
     {
         if (Active)
         {
-            if (!IsClimbing() && !IsHoldingCharacter() && !IsBeingHeldByCharacter())
+            if (!IsClimbing() && !IsHoldingCharacter() && !IsBeingHeldByCharacter() && dontGrabEdgeDelay<=speedThreshold)
             {
                 if (!IsDanglingFromEdge())
                 {
@@ -631,7 +634,7 @@ public class AnotherCharacterController : NetworkBehaviour
     {
         if (Active)
         {
-            if (potentialClimbable != null && !IsTouchingGround() && !IsHoldingCharacter() && !IsBeingHeldByCharacter())
+            if (potentialClimbable != null && !IsTouchingGround() && !IsHoldingCharacter() && !IsBeingHeldByCharacter() && dontGrabClimbableDelay<=speedThreshold)
             {
                 ReleaseEdge();
                 ReleaseCharacter();
@@ -706,6 +709,8 @@ public class AnotherCharacterController : NetworkBehaviour
             {
                 PhysicsActive = true;
             }
+
+            dontGrabClimbableDelay = 0.25f;
             targetClimbable = null;
             climbUpRequest = false;
             climbDownRequest = false;

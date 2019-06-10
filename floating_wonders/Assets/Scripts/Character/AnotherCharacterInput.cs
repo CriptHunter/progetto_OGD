@@ -8,7 +8,10 @@ public class AnotherCharacterInput : NetworkBehaviour
 {
     public StrikeController strikeController;
 
+    [SerializeField] private SpriteRenderer freccia = null; // per la reference della freccia
+
     private AnotherCharacterController cc;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -29,6 +32,7 @@ public class AnotherCharacterInput : NetworkBehaviour
         if(isLocalPlayer)
         {
             Verse move = Verse.None;
+            bool aimingWithCharacter = false;
 
             // check which direction i want to move to
             if (Input.GetKey(KeyCode.A))
@@ -93,14 +97,24 @@ public class AnotherCharacterInput : NetworkBehaviour
             }
             else
             {
-                // if on ground jump, if already in air grab any eventual climbable
+                // if on ground jump
                 if (Input.GetKeyDown(KeyCode.W))
                 {
                     if (cc.IsTouchingGround() || cc.IsDanglingFromEdge())
                     {
                         cc.Jump();
                     }
-                    else
+                    /*else
+                    {
+                        if (!cc.IsClimbing())
+                            cc.GrabClimbable();
+                    }*/
+                }
+
+                // if in air and holding W, grab climbable
+                if (Input.GetKey(KeyCode.W))
+                {
+                    if (!cc.IsTouchingGround() && !cc.IsDanglingFromEdge())
                     {
                         if (!cc.IsClimbing())
                             cc.GrabClimbable();
@@ -119,7 +133,7 @@ public class AnotherCharacterInput : NetworkBehaviour
                 // attack
                 if (strikeController != null)
                 {
-                    if (!cc.IsDanglingFromEdge())
+                    if (!cc.IsDanglingFromEdge() && !cc.IsClimbing() && !cc.IsHoldingCharacter() )
                     {
                         if (Input.GetKeyDown(KeyCode.Mouse0))
                         {
@@ -130,6 +144,7 @@ public class AnotherCharacterInput : NetworkBehaviour
                     }
                 }
 
+                // grab or release character
                 if (Input.GetKeyDown(KeyCode.E))
                 {
                     if (cc.IsHoldingCharacter())
@@ -142,16 +157,45 @@ public class AnotherCharacterInput : NetworkBehaviour
                     }
                 }
 
-                if (Input.GetMouseButtonDown(0))
+                // start aiming
+                if (Input.GetMouseButtonDown(0) || Input.GetMouseButton(0))
+                {
+                    aimingWithCharacter = true;
+                }
+
+                // if aiming, rotate pointer toward mouse
+                if (freccia != null)
+                {
+                    freccia.enabled = aimingWithCharacter && cc.IsHoldingCharacter();
+                    if (freccia.enabled)
+                    {
+                        Vector2 shootDirection;
+                        shootDirection = Input.mousePosition - Camera.main.WorldToScreenPoint(cc.GetCharacterHoldingPoint().position);
+                        freccia.gameObject.transform.eulerAngles = new Vector3(0, 0, shootDirection.GetAngle() + ((cc.GetVerse() == Verse.Right) ? 0f : 180f));
+                    }
+                }
+
+                // at the end of the aim, throw character to desired direction
+                if (Input.GetMouseButtonUp(0))
                 {
                     if (cc.IsHoldingCharacter())
                     {
+                        aimingWithCharacter = false;
                         Vector2 shootDirection;
                         shootDirection = Input.mousePosition - Camera.main.WorldToScreenPoint(cc.GetCharacterHoldingPoint().position);
                         var velocity = cc.GetComponent<Rigidbody2D>().velocity;
                         var applyVelocity = new Vector2(Util.LengthDirX(13f, shootDirection.GetAngle()), Util.LengthDirY(18f, shootDirection.GetAngle()));
                         var finalVelocity = velocity + applyVelocity;
                         cc.LaunchCharacter(finalVelocity.magnitude, finalVelocity.GetAngle());
+                    }
+                }
+
+                // reset pointer if unused
+                if (!aimingWithCharacter)
+                {
+                    if (freccia != null)
+                    {
+                        freccia.gameObject.transform.eulerAngles = Vector3.zero;
                     }
                 }
             }
