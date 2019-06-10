@@ -142,6 +142,10 @@ MonoBehaviour:
   climbableLayer:
     serializedVersion: 2
     m_Bits: 4096
+  effectJumpstart: {fileID: 474280433229489253, guid: 6e9bab71a17c2724380edfa0dad5a757,
+    type: 3}
+  effectJumpend: {fileID: 362794128000427943, guid: 09090188719070546aec1ff258c28b3d,
+    type: 3}
   characterHoldingCollider: {fileID: 5931903348234891613}
   characterGrabCollider: {fileID: 2217803499235549614}
 --- !u!114 &2201379074857997326

@@ -65,7 +65,7 @@ public class BackgroundInitializer : MonoBehaviour
 
             var renderer = go.GetComponent<SpriteRenderer>();
             renderer.color = Util.FlatColor(Color.Lerp(Color.white, backcolor, zlayer));
-            renderer.sortingOrder = -(int)go.transform.position.z;
+            renderer.sortingOrder = Mathf.Min(-20,-(int)go.transform.position.z);
         }
 
         for (int i = 1; i < bottomLayerCount; i++)
@@ -76,7 +76,7 @@ public class BackgroundInitializer : MonoBehaviour
             go.transform.localScale = Vector3.one * Mathf.Lerp(20, 150, progress);
             var renderer = go.GetComponent<SpriteRenderer>();
             renderer.color = Util.FlatColor(Color.Lerp(Color.white, backcolor, progress));
-            renderer.sortingOrder = -(int)go.transform.position.z;
+            renderer.sortingOrder = Mathf.Min(-20, -(int)go.transform.position.z);
 
             var go1= Instantiate(bottomlayer);
             go1.transform.position = go.transform.position + new Vector3(renderer.bounds.extents.x * 2, 0, 0);

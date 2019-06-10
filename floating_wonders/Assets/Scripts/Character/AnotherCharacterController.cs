@@ -17,6 +17,12 @@ public class AnotherCharacterController : NetworkBehaviour
     public LayerMask groundLayer;
     public LayerMask climbableLayer;
 
+    [SerializeField]
+    private GameObject effectJumpstart;
+
+    [SerializeField]
+    private GameObject effectJumpend;
+
     private SpineCharacterAnimator animator;
 
     private CharacterEdgeGrab edgeGrabCollider;
@@ -438,6 +444,11 @@ public class AnotherCharacterController : NetworkBehaviour
                 {
                     if (grounded)
                     {
+                        if (effectJumpstart != null)
+                        {
+                            CmdSpawnEffect(effectJumpstart, transform.position+Vector3.down, verse);
+                        }
+
                         if (IsHoldingCharacter())
                         {
                             VerticalImpulse(jumpForce);// * 0.85f);
@@ -451,6 +462,17 @@ public class AnotherCharacterController : NetworkBehaviour
                 }
             }
         }
+    }
+
+    [Command]
+    private void CmdSpawnEffect(GameObject effect, Vector3 position, Verse verse)
+    {
+        GameObject go = Instantiate(effect, position, Quaternion.identity);
+        if (verse == Verse.Left)
+        {
+            go.transform.localScale = new Vector3(-go.transform.localScale.x, go.transform.localScale.y, go.transform.localScale.z);
+        }
+        NetworkServer.Spawn(go);
     }
 
     private void VerticalImpulse(float strength)
@@ -543,11 +565,20 @@ public class AnotherCharacterController : NetworkBehaviour
     {
         RaycastHit2D hit;
 
+        var wasGrounded = grounded;
         hit = Physics2D.CapsuleCast((Vector2)collider.bounds.center, collider.bounds.size, collider.direction, 0, Vector2.down, 0.1f, groundLayer);
         if (hit.collider != null)
             grounded = true;
         else
             grounded = false;
+
+        if (grounded && !wasGrounded)
+        {
+            if (effectJumpend != null)
+            {
+                CmdSpawnEffect(effectJumpend, transform.position + Vector3.down, verse);
+            }
+        }
 
         hit = Physics2D.CapsuleCast((Vector2)collider.bounds.center, collider.bounds.size, collider.direction, 0, Vector2.up, 0.1f, groundLayer);
         if (hit.collider != null)
@@ -734,11 +765,35 @@ public class AnotherCharacterController : NetworkBehaviour
                     {
                         if (verse == Verse.Left)
                         {
+                            var speedPrevious = speed;
                             speed = Mathf.Max(speed - runAcceleration * delta - (speed > 0 ? runFriction * delta : 0), -runSpeed);
+
+                            if (IsTouchingGround() && !nearWallLeft)
+                            {
+                                if (speedPrevious >= 0 && speed < 0)
+                                {
+                                    if (effectJumpstart != null)
+                                    {
+                                        CmdSpawnEffect(effectJumpstart, transform.position + Vector3.down, Verse.Left);
+                                    }
+                                }
+                            }
                         }
                         if (verse == Verse.Right)
                         {
+                            var speedPrevious = speed;
                             speed = Mathf.Min(speed + runAcceleration * delta + (speed < 0 ? runFriction * delta : 0), runSpeed);
+
+                            if (IsTouchingGround() && !nearWallRight)
+                            {
+                                if (speedPrevious <= 0 && speed > 0)
+                                {
+                                    if (effectJumpstart != null)
+                                    {
+                                        CmdSpawnEffect(effectJumpstart, transform.position + Vector3.down, Verse.Right);
+                                    }
+                                }
+                            }
                         }
                     }
                     else
@@ -747,13 +802,25 @@ public class AnotherCharacterController : NetworkBehaviour
                         {
                             speed = speed - runFriction * delta;
                             if (speed <= speedThreshold)
+                            {
                                 speed = 0;
+                                /*if (effectJumpstart != null)
+                                {
+                                    CmdSpawnEffect(effectJumpstart, transform.position + Vector3.down, Verse.Left);
+                                }*/
+                            }
                         }
                         if (speed < -speedThreshold)
                         {
                             speed = speed + runFriction * delta;
                             if (speed >= speedThreshold)
+                            {
                                 speed = 0;
+                                /*if (effectJumpstart != null)
+                                {
+                                    CmdSpawnEffect(effectJumpstart, transform.position + Vector3.down, Verse.Right);
+                                }*/
+                            }
                         }
                     }
 
