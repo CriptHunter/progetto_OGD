@@ -25,6 +25,8 @@ public class ItemManager : NetworkBehaviour
 
     private void Update()
     {
+        if (controller.IsBeingHeldByCharacter() || controller.IsHoldingCharacter())
+            firePoint.GetComponent<SpriteRenderer>().enabled = false;
         //se posso raccogliere qualcosa e premo E --> raccoglie oggetto
         if (Input.GetKeyDown(KeyCode.E) && isLocalPlayer && pickupAllowed)
         {

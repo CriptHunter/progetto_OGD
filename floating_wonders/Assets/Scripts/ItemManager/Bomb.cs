@@ -31,16 +31,16 @@ public class Bomb : NetworkBehaviour
     {
         yield return new WaitForSeconds(seconds);
         GameObject explosionObj = (GameObject)Instantiate(explosion, this.transform.position, Quaternion.identity);
-        explosionObj.transform.localScale = new Vector3(radius*2, radius*2, 1);
-        NetworkServer.Spawn(explosionObj);
+        explosionObj.transform.localScale = new Vector3(radius * 2, radius * 2, 1);
         collider.radius = this.radius;
         strikeController.PerformStrike();
-        //nascondo la bomba perché è esplosa
+        //nascondo la bomba perché è esplosa, così posso distruggere prima l'esplosione e poi la bomba
         this.GetComponent<SpriteRenderer>().enabled = false;
         //aspetto che finisca l'animazione dell'esplosione
         yield return new WaitForSeconds(1f);
         //distruggo bomba e esplosione
-        NetworkServer.Destroy(explosionObj);
-        NetworkServer.Destroy(this.gameObject);
+        Destroy(explosionObj);
+        yield return new WaitForSeconds(1f);
+        Destroy(this.gameObject);
     }
 }

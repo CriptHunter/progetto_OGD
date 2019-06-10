@@ -158,7 +158,7 @@ public class AnotherCharacterInput : NetworkBehaviour
                 }
 
                 // start aiming
-                if (Input.GetMouseButtonDown(0) || Input.GetMouseButton(0))
+                if (Input.GetMouseButtonDown(1) || Input.GetMouseButton(1))
                 {
                     aimingWithCharacter = true;
                 }
@@ -176,7 +176,7 @@ public class AnotherCharacterInput : NetworkBehaviour
                 }
 
                 // at the end of the aim, throw character to desired direction
-                if (Input.GetMouseButtonUp(0))
+                if (Input.GetMouseButtonUp(1))
                 {
                     if (cc.IsHoldingCharacter())
                     {
