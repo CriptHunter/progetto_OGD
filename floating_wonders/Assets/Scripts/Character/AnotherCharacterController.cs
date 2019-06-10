@@ -570,6 +570,7 @@ public class AnotherCharacterController : NetworkBehaviour
         else
             potentialClimbable = null;
 
+        potentialCharacter = null;
         RaycastHit2D[] hits = Physics2D.CircleCastAll(characterGrabCollider.bounds.center, characterGrabCollider.radius, Vector2.right, 0.0f);
         for (int i = 0; i < hits.Length; i++)
         {
