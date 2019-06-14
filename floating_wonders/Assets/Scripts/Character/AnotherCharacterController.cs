@@ -446,7 +446,7 @@ public class AnotherCharacterController : NetworkBehaviour
                     {
                         if (effectJumpstart != null)
                         {
-                            CmdSpawnEffect(effectJumpstart, transform.position+Vector3.down, verse);
+                            CmdSpawnEffectJumpstart(transform.position+Vector3.down, verse);
                         }
 
                         if (IsHoldingCharacter())
@@ -465,14 +465,35 @@ public class AnotherCharacterController : NetworkBehaviour
     }
 
     [Command]
-    private void CmdSpawnEffect(GameObject effect, Vector3 position, Verse verse)
+    private void CmdSpawnEffectJumpstart(Vector3 position, Verse verse)
     {
-        GameObject go = Instantiate(effect, position, Quaternion.identity);
+        RpcSpawnEffectJumpstart(position, verse);
+    }
+
+    [ClientRpc]
+    private void RpcSpawnEffectJumpstart(Vector3 position, Verse verse)
+    {
+        GameObject go = Instantiate(effectJumpstart, position, Quaternion.identity);
         if (verse == Verse.Left)
         {
             go.transform.localScale = new Vector3(-go.transform.localScale.x, go.transform.localScale.y, go.transform.localScale.z);
         }
-        NetworkServer.Spawn(go);
+    }
+
+    [Command]
+    private void CmdSpawnEffectJumpend(Vector3 position, Verse verse)
+    {
+        RpcSpawnEffectJumpend(position, verse);
+    }
+
+    [ClientRpc]
+    private void RpcSpawnEffectJumpend(Vector3 position, Verse verse)
+    {
+        GameObject go = Instantiate(effectJumpend, position, Quaternion.identity);
+        if (verse == Verse.Left)
+        {
+            go.transform.localScale = new Vector3(-go.transform.localScale.x, go.transform.localScale.y, go.transform.localScale.z);
+        }
     }
 
     private void VerticalImpulse(float strength)
@@ -516,7 +537,8 @@ public class AnotherCharacterController : NetworkBehaviour
                 transform.localScale = new Vector3((int)verse, 1, 1);
             if (IsDanglingFromEdge() && targetEdgeVerse != verse)
             {
-                ReleaseEdge();
+                Jump();
+                //ReleaseEdge();
             }
             return true;
         }
@@ -576,7 +598,7 @@ public class AnotherCharacterController : NetworkBehaviour
         {
             if (effectJumpend != null)
             {
-                CmdSpawnEffect(effectJumpend, transform.position + Vector3.down, verse);
+                CmdSpawnEffectJumpend(transform.position + Vector3.down, verse);
             }
         }
 
@@ -774,7 +796,7 @@ public class AnotherCharacterController : NetworkBehaviour
                                 {
                                     if (effectJumpstart != null)
                                     {
-                                        CmdSpawnEffect(effectJumpstart, transform.position + Vector3.down, Verse.Left);
+                                        CmdSpawnEffectJumpstart(transform.position + Vector3.down, Verse.Left);
                                     }
                                 }
                             }
@@ -790,7 +812,7 @@ public class AnotherCharacterController : NetworkBehaviour
                                 {
                                     if (effectJumpstart != null)
                                     {
-                                        CmdSpawnEffect(effectJumpstart, transform.position + Vector3.down, Verse.Right);
+                                        CmdSpawnEffectJumpstart(transform.position + Vector3.down, Verse.Right);
                                     }
                                 }
                             }

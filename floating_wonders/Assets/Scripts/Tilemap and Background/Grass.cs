@@ -41,15 +41,21 @@ public class Grass : MonoBehaviour
 
         float ang;
 
-        if (characters.Count > 0)
+        if (characters != null)
         {
-            foreach (GameObject g in characters)
+            if (characters.Count > 0)
             {
-                dist = Vector2.SqrMagnitude(g.transform.position - transform.position);
-                if (dist < neardist)
+                foreach (GameObject g in characters)
                 {
-                    nearest = g;
-                    neardist = dist;
+                    if (g != null)
+                    {
+                        dist = Vector2.SqrMagnitude(g.transform.position - transform.position);
+                        if (dist < neardist)
+                        {
+                            nearest = g;
+                            neardist = dist;
+                        }
+                    }
                 }
             }
         }

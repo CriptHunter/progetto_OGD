@@ -77,7 +77,7 @@ public class AnotherCharacterInput : NetworkBehaviour
                         if (Input.GetKey(KeyCode.W))
                             cc.Jump();
                         else
-                            cc.ReleaseClimbable();
+                            cc.Jump();//ReleaseClimbable();
                     }
                 }
 
@@ -91,7 +91,7 @@ public class AnotherCharacterInput : NetworkBehaviour
                         if (Input.GetKey(KeyCode.W))
                             cc.Jump();
                         else
-                            cc.ReleaseClimbable();
+                            cc.Jump();//ReleaseClimbable();
                     }
                 }
             }
@@ -112,7 +112,7 @@ public class AnotherCharacterInput : NetworkBehaviour
                 }
 
                 // if in air and holding W, grab climbable
-                if (Input.GetKey(KeyCode.W))
+                if (true)//Input.GetKey(KeyCode.W))
                 {
                     if (!cc.IsTouchingGround() && !cc.IsDanglingFromEdge())
                     {
@@ -184,7 +184,7 @@ public class AnotherCharacterInput : NetworkBehaviour
                         Vector2 shootDirection;
                         shootDirection = Input.mousePosition - Camera.main.WorldToScreenPoint(cc.GetCharacterHoldingPoint().position);
                         var velocity = cc.GetComponent<Rigidbody2D>().velocity;
-                        var applyVelocity = new Vector2(Util.LengthDirX(13f, shootDirection.GetAngle()), Util.LengthDirY(18f, shootDirection.GetAngle()));
+                        var applyVelocity = new Vector2(Util.LengthDirX(18f/*13f*/, shootDirection.GetAngle()), Util.LengthDirY(18f, shootDirection.GetAngle())); ;
                         var finalVelocity = velocity + applyVelocity;
                         cc.LaunchCharacter(finalVelocity.magnitude, finalVelocity.GetAngle());
                     }
