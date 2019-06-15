@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using Spine.Unity;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -47,8 +48,12 @@ public class Pickuppable : NetworkBehaviour
     [ClientRpc]
     void Rpc_setActive(bool active)
     {
-        //this.gameObject.GetComponent<Renderer>().enabled = active;
-        //this.gameObject.GetComponent<Collider2D>().enabled = active;
-        gameObject.SetActive(false);
+        //alcuni pickuppable hanno lo sprite renderer, altri spine skeleton
+        if(this.gameObject.GetComponent<SpriteRenderer>() != null)
+            this.gameObject.GetComponent<Renderer>().enabled = active;
+        if (this.gameObject.GetComponentInChildren<SkeletonAnimation>() != null)
+            this.gameObject.GetComponentInChildren<SkeletonAnimation>().skeleton.SetColor(new Color(0, 0, 0, 0));
+        this.gameObject.GetComponent<Collider2D>().enabled = active;
+        
     }
 }

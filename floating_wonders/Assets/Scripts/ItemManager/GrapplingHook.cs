@@ -40,10 +40,10 @@ public class GrapplingHook : NetworkBehaviour
         if (state == State.anchored)
         {
             Cmd_DrawLine(true, firePoint.position, hit.point);
-            /*if (joint.distance > breakDistance)
-                joint.distance = joint.distance - step;*/
-            if (Vector2.Distance(transform.position, hit.point) > breakDistance)
+            if (joint.distance > breakDistance)
                 joint.distance = joint.distance - step;
+            /*if (Vector2.Distance(transform.position, hit.point) > breakDistance)
+                joint.distance = joint.distance - step;*/
             else
             {
                 Cmd_DrawLine(false, firePoint.position, hit.point);

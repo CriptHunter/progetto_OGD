@@ -21,7 +21,6 @@ public class ItemManager : NetworkBehaviour
         pickedUpItem = null;
         controller = GetComponent<AnotherCharacterController>();
         collider = GetComponents<CapsuleCollider2D>()[0];
-        GetComponentInChildren<DrawCircle>().CreatePoints();
     }
 
     private void Update()

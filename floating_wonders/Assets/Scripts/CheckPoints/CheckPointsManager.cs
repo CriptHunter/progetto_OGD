@@ -41,9 +41,8 @@ public class CheckPointsManager : NetworkBehaviour
         if (!isServer)
             return;
         this.activeCheckPoint = c;
-        Rpc_ShowColor(Color.white, GetActiveCheckPoint().gameObject);
         ResetEnemies();
-        ResetPlayers();
+        GameManager.Instance.SetHealth(GameManager.Instance.GetMaxHealth());
     }
 
     public void AddCheckPoint(CheckPoint c)
@@ -69,7 +68,7 @@ public class CheckPointsManager : NetworkBehaviour
             print("Non ci sono checkpoint attivi");
         else
         {
-            Rpc_ShowColor(Color.white, GetActiveCheckPoint().gameObject);
+            Rpc_ShowColor(Color.black, GetActiveCheckPoint().gameObject);
             ResetEnemies();
             ResetPlayers();
         }

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using Spine.Unity;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -8,10 +9,16 @@ public class Pad : MonoBehaviour
     private bool padPressed;
     private List<GameObject> playerOnPad;
     private LayerMask playerMask;
+    private SkeletonAnimation skeletonAnimation;
 
     public void SetPadPressed(bool padPressed)
     {
-        padPressed = this.padPressed;
+        this.padPressed = padPressed;
+        if(padPressed)
+            skeletonAnimation.AnimationName = "down";
+        else
+            skeletonAnimation.AnimationName = "up";
+
     }
 
     public bool GetPadPressed()
@@ -24,11 +31,16 @@ public class Pad : MonoBehaviour
         padPressed = false;
         playerOnPad = new List<GameObject>();
         playerMask = LayerMask.NameToLayer("Player");
+        skeletonAnimation = GetComponentInChildren<SkeletonAnimation>();
     }
 
     void OnTriggerEnter2D(Collider2D collision)
     {
-        padPressed = true;
+        //per non far collidere con lo strike collider del giocatore
+        if (collision is CircleCollider2D)
+            return;
+
+        SetPadPressed(true);
         playerOnPad.Add(collision.gameObject);
 
     }
@@ -39,7 +51,7 @@ public class Pad : MonoBehaviour
         {
             playerOnPad.Remove(collision.gameObject);
             if (playerOnPad.Count == 0)
-                padPressed = false;
+                SetPadPressed(false);
         }
     }
 }
