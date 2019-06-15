@@ -35,6 +35,9 @@ public class GameManager : NetworkBehaviour
     public void Start()
     {
         hud = GameObject.Find("HUD").GetComponent<PlayerHUD>();
+        NetworkManagerHUD netHud = FindObjectOfType<NetworkManagerHUD>();
+        if (netHud != null)
+            netHud.showGUI = false;
     }
 
     public void Update()
