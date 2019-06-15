@@ -12,6 +12,7 @@ public class ItemManager : NetworkBehaviour
     private GameObject collidedObject;
     private AnotherCharacterController controller;
     private new CapsuleCollider2D collider;
+    private DrawCircle drawCircle;
     [SerializeField] private Transform firePoint = null; // da quale punto sono lanciati gli oggetti
     [SerializeField] private GameObject bombRBPrefab = null; //bomba con rigid body
 
@@ -21,6 +22,7 @@ public class ItemManager : NetworkBehaviour
         pickedUpItem = null;
         controller = GetComponent<AnotherCharacterController>();
         collider = GetComponents<CapsuleCollider2D>()[0];
+        drawCircle = GetComponentInChildren<DrawCircle>();
     }
 
     private void Update()
@@ -37,6 +39,7 @@ public class ItemManager : NetworkBehaviour
         {
             shootDirection = GetAimDirection();
             MoveArrowPointer(GetShootingAngle(shootDirection));
+            drawCircle.ShowCircle();
         }
         //quando rilascio R --> usa l'oggetto se l'angolazione è valida
         else if (Input.GetKeyUp(KeyCode.Mouse1) && isLocalPlayer && !(controller.IsHoldingCharacter() || controller.IsBeingHeldByCharacter() || controller.IsClimbing() || controller.IsDanglingFromEdge()))
@@ -45,6 +48,7 @@ public class ItemManager : NetworkBehaviour
             if (canShoot)
                 Shoot();
             firePoint.GetComponent<SpriteRenderer>().enabled = false;
+            drawCircle.HideCircle();
         }
     }
 

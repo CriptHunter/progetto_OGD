@@ -5,8 +5,8 @@ using UnityEngine;
 public class DrawCircle : MonoBehaviour
 {
     [Range(0, 50)] [SerializeField] private int segments = 50;
-    [Range(0, 10)] [SerializeField] private float xradius = 5;
-    [Range(0, 10)] [SerializeField] private float yradius = 5;
+    [Range(0, 30)] [SerializeField] private float xradius = 5;
+    [Range(0, 30)] [SerializeField] private float yradius = 5;
     //Centro del cerchio
     [SerializeField] private Transform center;
 
@@ -18,10 +18,9 @@ public class DrawCircle : MonoBehaviour
         line.transform.position = center.position;
         line.positionCount = segments + 1;
         line.useWorldSpace = false;
-        CreatePoints();
     }
 
-    public void CreatePoints()
+    public void ShowCircle()
     {
         float x;
         float y;
@@ -37,6 +36,12 @@ public class DrawCircle : MonoBehaviour
             }
             angle += (360f / segments);
         }
+        line.enabled = true;
+    }
+
+    public void HideCircle()
+    {
+        line.enabled = false;
     }
 }
 

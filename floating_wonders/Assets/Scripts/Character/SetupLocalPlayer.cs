@@ -12,6 +12,8 @@ public class SetupLocalPlayer : NetworkBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        //nasconde la freccia del mouse
+        Cursor.visible = false;
         //per il respawn ai checkpoint
         try
         {
@@ -23,7 +25,7 @@ public class SetupLocalPlayer : NetworkBehaviour
 
         } catch(NullReferenceException e)
         {
-            print("there is no checpoint manager "+e);
+            print("there is no checkpoint manager "+e);
         }
 
         //Il server ha il braccio steampunk, il client il rampino

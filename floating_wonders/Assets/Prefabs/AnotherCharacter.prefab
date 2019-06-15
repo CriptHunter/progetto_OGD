@@ -267,9 +267,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   firePoint: {fileID: 2948218886140739856}
   line: {fileID: 4692602657354117558}
-  maxDistance: 20
+  maxDistance: 15
   breakDistance: 1
-  step: 0.2
+  step: 0.4
 --- !u!232 &3032423062929762552
 DistanceJoint2D:
   m_ObjectHideFlags: 0
@@ -303,7 +303,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   firePoint: {fileID: 2948218886140739856}
   line: {fileID: 4692602657354117558}
-  maxDistance: 20
+  maxDistance: 15
   grabSpeed: 20
 --- !u!1 &631346589052460458
 GameObject:
@@ -708,7 +708,7 @@ Transform:
   m_GameObject: {fileID: 2858719906814462636}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0.53, y: 0.04, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 5.8, y: 2, z: 1}
   m_Children: []
   m_Father: {fileID: 631346588937936807}
   m_RootOrder: 8
@@ -750,7 +750,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 47ca8ae286bf06649bd992a584d36e02, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 5c0cf5008bb51b346821ef0f4a263cb0, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -955,7 +955,7 @@ GameObject:
   - component: {fileID: 7824779968610207195}
   - component: {fileID: 8143063738925309156}
   - component: {fileID: 8082254718759326309}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: CircleLineRender
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -989,8 +989,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   segments: 50
-  xradius: 5
-  yradius: 5
+  xradius: 15
+  yradius: 15
   center: {fileID: 2948218886140739856}
 --- !u!120 &8082254718759326309
 LineRenderer:
@@ -1028,13 +1028,13 @@ LineRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 1000
   m_Positions:
   - {x: 0, y: 0, z: 0}
   - {x: 0, y: 0, z: 1}
   m_Parameters:
     serializedVersion: 3
-    widthMultiplier: 0.2
+    widthMultiplier: 0.1
     widthCurve:
       serializedVersion: 2
       m_Curve:
