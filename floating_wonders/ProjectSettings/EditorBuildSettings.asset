@@ -29,4 +29,7 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Scenes/MoScene.unity
     guid: ca37e4f544b02ba43910677cbc6764fd
+  - enabled: 0
+    path: Assets/Scenes/TrailersimScene.unity
+    guid: 2b6f5cadff6798f4f8b2d56534408e62
   m_configObjects: {}
