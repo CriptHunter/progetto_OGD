@@ -14,6 +14,14 @@ public class EnemyHealth : NetworkBehaviour
         this.health = maxHealth;
     }
 
+    private void OnEnable()
+    {
+        if (!isServer)
+            return;
+        GetComponentInChildren<SkeletonAnimation>().skeleton.SetColor(Color.white);
+        Rpc_SetSpineColor(this.gameObject);
+    }
+
     public void TakeDamage(int damage)
     {
         if (!isServer)
@@ -35,6 +43,11 @@ public class EnemyHealth : NetworkBehaviour
             this.gameObject.SetActive(false);
         else if(health != maxHealth)
             StartCoroutine(Stun());
+    }
+
+    [ClientRpc] private void Rpc_SetSpineColor(GameObject o)
+    {
+        o.GetComponentInChildren<SkeletonAnimation>().skeleton.SetColor(Color.white);
     }
 
     public IEnumerator Stun()

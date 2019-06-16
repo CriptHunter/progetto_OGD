@@ -78,6 +78,11 @@ public class GrapplingHook : NetworkBehaviour
         }
     }
 
+    public float GetMaxDistance()
+    {
+        return this.maxDistance;
+    }
+
     [Command]
     private void Cmd_DrawLine(bool enabled, Vector3 start, Vector3 end)
     {

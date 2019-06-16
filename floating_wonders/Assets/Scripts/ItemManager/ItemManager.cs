@@ -37,6 +37,7 @@ public class ItemManager : NetworkBehaviour
         //tenendo premuto R si mira
         else if (Input.GetKey(KeyCode.Mouse1) && isLocalPlayer && !(controller.IsHoldingCharacter() || controller.IsBeingHeldByCharacter() || controller.IsClimbing() || controller.IsDanglingFromEdge()))
         {
+            MarkInteractiveObject();
             shootDirection = GetAimDirection();
             MoveArrowPointer(GetShootingAngle(shootDirection));
             drawCircle.ShowCircle();
@@ -44,6 +45,7 @@ public class ItemManager : NetworkBehaviour
         //quando rilascio R --> usa l'oggetto se l'angolazione è valida
         else if (Input.GetKeyUp(KeyCode.Mouse1) && isLocalPlayer && !(controller.IsHoldingCharacter() || controller.IsBeingHeldByCharacter() || controller.IsClimbing() || controller.IsDanglingFromEdge()))
         {
+            MarkInteractiveObject();
             //se lo sprite della freccia per mirare è visibile allora l'angolo è tra -90 e 90
             if (canShoot)
                 Shoot();
@@ -155,6 +157,43 @@ public class ItemManager : NetworkBehaviour
         else
             canShoot = true;
         return canShoot;
+    }
+
+    private void MarkInteractiveObject()
+    {
+        if (!canShoot)
+            return;
+        LayerMask ignoredLayer;
+        bool interestingHit = false;
+        if (uniqueItem == ItemType.grapplingHook)
+        {
+            ignoredLayer = ~((1 << 2) | (1 << 9) | (1 << 11) | (1 << 12) | (1 << 13));
+            RaycastHit2D hit = Physics2D.Raycast(firePoint.position, shootDirection, GetComponent<GrapplingHook>().GetMaxDistance(), ignoredLayer);
+            if (hit.transform != null && hit.transform.tag == "HookPoint")
+                interestingHit = true;
+            else
+                interestingHit = false;
+        }
+        else
+        {
+            ignoredLayer = ~((1 << 2) | (1 << 9) | (1 << 11) | (1 << 12));
+            RaycastHit2D hit = Physics2D.Raycast(firePoint.position, shootDirection, GetComponent<ExtendableArm>().GetMaxDistance(), ignoredLayer);
+            if(hit.transform != null && (hit.transform.gameObject.layer == LayerMask.NameToLayer("Items") || hit.transform.tag == "Crate"))
+                interestingHit = true;
+            else
+                interestingHit = false;
+        }
+
+        if(interestingHit)
+        {
+            firePoint.GetComponent<SpriteRenderer>().color = Color.red;
+            drawCircle.SetLineColor(Color.red);
+        }
+        else
+        {
+            firePoint.GetComponent<SpriteRenderer>().color = Color.white;
+            drawCircle.SetLineColor(Color.white);
+        }
     }
 
     //Ad un command non si può passare un gameobject / prefab da spawnare, quindi ho fatto un metodo specifico per la bomba

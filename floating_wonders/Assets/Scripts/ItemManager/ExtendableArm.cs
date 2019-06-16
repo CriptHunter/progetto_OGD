@@ -34,11 +34,13 @@ public class ExtendableArm : NetworkBehaviour
         if (state == State.anchoredToCrate)
         {
             //se la cassa si incastra in qualcosa o arriva al giocatore
-            if (Vector2.Distance(hit.transform.position, transform.position) < 3f || hitRb.velocity.magnitude < 0.5f)
+            if (Vector2.Distance(hit.transform.position, transform.position) < 2f || hitRb.velocity.magnitude < 0.5f)
             {
                 state = State.none;
                 hitRb.velocity = Vector2.zero;
                 Cmd_DrawLine(false, firePoint.position, hit.transform.position);
+                GetComponent<ItemManager>().enabled = true;
+                GetComponent<AnotherCharacterInput>().enabled = true;
             }
             if (state == State.anchoredToCrate)
             {
@@ -46,11 +48,13 @@ public class ExtendableArm : NetworkBehaviour
                 hitRb.velocity = (firePoint.position - hit.transform.position).normalized * grabSpeed;
             }
         }
+
         if(state == State.anchoredToItem)
         {
             hitPosition = Vector3.Lerp(firePoint.position, hitPosition, 0.92f);
             Cmd_DrawLine(true, firePoint.position, hitPosition);
-            if (Vector2.Distance(firePoint.position, hitPosition) < 2)
+            print(Vector2.Distance(firePoint.position, hitPosition));
+            if (Vector2.Distance(firePoint.position, hitPosition) < 3)
             {
                 state = State.none;
                 Cmd_DrawLine(false, Vector2.zero, Vector2.zero);
@@ -69,7 +73,6 @@ public class ExtendableArm : NetworkBehaviour
         hit = Physics2D.Raycast(firePoint.position, direction, maxDistance, ignoredLayer);
         if (hit.collider != null)
         {
-            print("hit");
             //raccoglie collezionabili o oggetti
             if (hit.transform.GetComponent<Pickuppable>() != null)
             {
@@ -83,6 +86,8 @@ public class ExtendableArm : NetworkBehaviour
                 state = State.anchoredToCrate;
                 hitRb = hit.collider.GetComponent<Rigidbody2D>();
                 hitRb.velocity = (firePoint.position - hit.transform.position).normalized * grabSpeed;
+                GetComponent<AnotherCharacterInput>().enabled = false;
+                GetComponent<ItemManager>().enabled = false;
                 Cmd_DrawLine(true, firePoint.position, hit.transform.position);
             }
             else
@@ -90,6 +95,11 @@ public class ExtendableArm : NetworkBehaviour
         }
         else
             state = State.missed;
+    }
+
+    public float GetMaxDistance()
+    {
+        return this.maxDistance;
     }
 
     [Command]
