@@ -11,6 +11,7 @@ public class AnotherCharacterInput : NetworkBehaviour
     [SerializeField] private SpriteRenderer freccia = null; // per la reference della freccia
 
     private AnotherCharacterController cc;
+    private SpineCharacterAnimator sca;
 
     // Start is called before the first frame update
     void Start()
@@ -24,6 +25,7 @@ public class AnotherCharacterInput : NetworkBehaviour
         {
             strikeController = gameObject.GetChild("StrikeCollider").GetComponent<StrikeController>();
         }
+        sca = GetComponent<SpineCharacterAnimator>();
     }
 
     // Update is called once per frame
@@ -97,6 +99,25 @@ public class AnotherCharacterInput : NetworkBehaviour
             }
             else
             {
+                // toggle hat
+                if (sca != null)
+                {
+                    if (Input.GetKeyDown(KeyCode.Q))
+                    {
+                        if (!cc.IsDanglingFromEdge() && !cc.IsHoldingSomething)
+                        {
+                            if (sca.HasHat)
+                            {
+                                sca.SkeletonAnimationOverlay("hat_off", true);
+                            }
+                            else
+                            {
+                                sca.SkeletonAnimationOverlay("hat_on", true);
+                            }
+                        }
+                    }
+                }
+
                 // jump if possible
                 if (Input.GetKeyDown(KeyCode.W))
                 {
@@ -131,7 +152,7 @@ public class AnotherCharacterInput : NetworkBehaviour
                 // attack
                 if (strikeController != null)
                 {
-                    if (!cc.IsDanglingFromEdge() && !cc.IsClimbing() && !cc.IsHoldingCharacter() )
+                    if (!cc.IsDanglingFromEdge() && !cc.IsClimbing() && !cc.IsHoldingSomething )
                     {
                         if (Input.GetKeyDown(KeyCode.Mouse0))
                         {

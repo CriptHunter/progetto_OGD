@@ -17,6 +17,15 @@ public class SpineCharacterAnimator : NetworkBehaviour
     private float resetTimer = 0;
     private bool resetPerformed = true;
 
+    private bool hasHat = true;
+    public bool HasHat
+    {
+        get
+        {
+            return hasHat;
+        }
+    }
+
     public bool DontReloadSameAnimation { get; set; }
     // Start is called before the first frame update
     private void Start()
@@ -25,7 +34,8 @@ public class SpineCharacterAnimator : NetworkBehaviour
         if (kid != null)
         {
             skeletonAnimation = kid.GetComponent<SkeletonAnimation>();
-            skeletonAnimation.AnimationState.Event += HandleEvent;
+            skeletonAnimation.state.Event += HandleEvent;
+            //skeletonAnimation.AnimationState.Event += HandleEvent;
         }
     }
     public string Animation
@@ -103,7 +113,8 @@ public class SpineCharacterAnimator : NetworkBehaviour
                 if (resetPerformed)
                 {
                     skeletonAnimation.state.SetAnimation(1, animation, false);
-                    resetTimer = 0.5f;
+                    var duration = skeletonAnimation.SkeletonDataAsset.GetSkeletonData(true).FindAnimation(animation).Duration;
+                    resetTimer = duration+0.1f;
                     resetPerformed = false;
                 }
             }
@@ -157,6 +168,7 @@ public class SpineCharacterAnimator : NetworkBehaviour
     {
         if (e.Data.Name == "ev_strike")
         {
+            print("STRIKE");
             if (OnAttack != null)
             {
                 OnAttack.Invoke();
@@ -169,6 +181,20 @@ public class SpineCharacterAnimator : NetworkBehaviour
             {
                 OnFootstep.Invoke();
             }
+        }
+
+        if (e.Data.Name == "ev_hat_on")
+        {
+            hasHat = true;
+            skeletonAnimation.skeleton.SetAttachment("slot_hat_front", "hat_front");
+            skeletonAnimation.skeleton.SetAttachment("slot_hat_back", "hat_back");
+        }
+
+        if (e.Data.Name == "ev_hat_off")
+        {
+            hasHat = false;
+            skeletonAnimation.skeleton.SetAttachment("slot_hat_front", null);
+            skeletonAnimation.skeleton.SetAttachment("slot_hat_back", null);
         }
     }
 }

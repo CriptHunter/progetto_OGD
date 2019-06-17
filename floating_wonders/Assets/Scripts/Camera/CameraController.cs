@@ -10,7 +10,7 @@ public class CameraController : MonoBehaviour
     private bool notSureIfDoesntHaveAcc=true;
 
     private float zoomProgress = 0;
-    private float zoomTime = 10f;
+    private float zoomTime = 7f;
 
     private void Start()
     {
@@ -63,7 +63,7 @@ public class CameraController : MonoBehaviour
                 if (zoomProgress >= zoomTime)
                 {
                     ocb.SetFocus(target.transform.position);
-                    ocb.SetZoom(0.5f);
+                    ocb.SetZoom(0.35f);
                 }
             }
             else
