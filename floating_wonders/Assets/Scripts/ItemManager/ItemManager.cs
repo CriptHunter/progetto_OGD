@@ -14,6 +14,8 @@ public class ItemManager : NetworkBehaviour
     private new BoxCollider2D collider;
     private DrawCircle drawCircle;
     [SerializeField] private Transform firePoint = null; // da quale punto sono lanciati gli oggetti
+    [SerializeField] private Transform itemHoldingPoint; //dove tiene gli oggetti il personaggio
+    [SerializeField] private Transform itemArrowPointer; //la freccia per gli oggetti è diversa
     [SerializeField] private GameObject bombRBPrefab = null; //bomba con rigid body
 
 
@@ -37,10 +39,20 @@ public class ItemManager : NetworkBehaviour
         //tenendo premuto R si mira
         else if (Input.GetKey(KeyCode.Mouse1) && isLocalPlayer && !(controller.IsHoldingCharacter() || controller.IsBeingHeldByCharacter() || controller.IsClimbing() || controller.IsDanglingFromEdge()))
         {
-            MarkInteractiveObject();
-            shootDirection = GetAimDirection();
-            MoveArrowPointer(GetShootingAngle(shootDirection));
-            drawCircle.ShowCircle();
+            //rampino o braccio
+            if (pickedUpItem == null)
+            {
+                MarkInteractiveObject();
+                shootDirection = GetAimDirection(firePoint);
+                MoveArrowPointer(GetShootingAngle(shootDirection), firePoint);
+                drawCircle.ShowCircle();
+            }
+            //tutti gli altri oggetti (bomba nel prototipo)
+            else
+            {
+                shootDirection = GetAimDirection(itemHoldingPoint);
+                MoveArrowPointer(GetShootingAngle(shootDirection), itemArrowPointer);
+            }
         }
         //quando rilascio R --> usa l'oggetto se l'angolazione è valida
         else if (Input.GetKeyUp(KeyCode.Mouse1) && isLocalPlayer && !(controller.IsHoldingCharacter() || controller.IsBeingHeldByCharacter() || controller.IsClimbing() || controller.IsDanglingFromEdge()))
@@ -50,6 +62,7 @@ public class ItemManager : NetworkBehaviour
             if (canShoot)
                 Shoot();
             firePoint.GetComponent<SpriteRenderer>().enabled = false;
+            itemArrowPointer.GetComponent<SpriteRenderer>().enabled = false;
             drawCircle.HideCircle();
         }
     }
@@ -59,16 +72,26 @@ public class ItemManager : NetworkBehaviour
         this.uniqueItem = uniqueItem;
     }
 
+    public bool IsHoldingAnItem()
+    {
+        return pickedUpItem != null ? true : false;
+    }
+
     public void Pickup(GameObject collidedObject)
     {
         //se sto raccogliendo un collezionabile
         if (collidedObject.GetComponent<Pickuppable>().collectible)
             Cmd_PickupItem(collidedObject);
-        //se sto raccogliendo un giocatore o un oggetto
+        //se sto raccogliendo un oggetto
         else if (pickedUpItem == null)
         {
             //salvo quale oggetto ho raccolto, serve per quando viene usato
             pickedUpItem = collidedObject;
+            //mette il giocatore con le braccia verso l'alto
+            controller.IsHoldingSomething = true;
+            //cerco il componente sprite renderer posto sopra la testa del giocatore
+            Cmd_SetHeldItemSprite(pickedUpItem);
+            //metto il personaggio in posizione di lancio
             Cmd_PickupItem(pickedUpItem);
         }
     }
@@ -114,18 +137,20 @@ public class ItemManager : NetworkBehaviour
                     break;
             }
             pickedUpItem = null;
+            controller.IsHoldingSomething = false;
+            Cmd_SetHeldItemSprite(null);
         }
     }
 
     //restituisce un vettore 2D che va dal fire point al puntatore del mouse, usato per la direzione in cui lancio gli oggetti
-    private Vector2 GetAimDirection()
+    private Vector2 GetAimDirection(Transform shootingPoint)
     {
         /*Vector3 shootDirection;
         shootDirection = Input.mousePosition;
         shootDirection.z = 0.0f;
         shootDirection = Camera.main.ScreenToWorldPoint(shootDirection);
         shootDirection = shootDirection - firePoint.transform.position;*/
-        shootDirection = Input.mousePosition - Camera.main.WorldToScreenPoint(firePoint.position);
+        shootDirection = Input.mousePosition - Camera.main.WorldToScreenPoint(shootingPoint.position);
         return (Vector2)shootDirection.normalized;
     }
 
@@ -142,12 +167,12 @@ public class ItemManager : NetworkBehaviour
 
     }
 
-    private void MoveArrowPointer(float shootingAngle)
+    private void MoveArrowPointer(float shootingAngle, Transform shootingPoint)
     {
         //ruoto la freccia sull'asse Z di un valore pari all'angolo
-        firePoint.eulerAngles = new Vector3(0, 0, shootingAngle);
+        shootingPoint.eulerAngles = new Vector3(0, 0, shootingAngle);
         //rendo la freccia visibile solo se posso sparare (dipende dall'angolo)
-        firePoint.GetComponent<SpriteRenderer>().enabled = CanShoot(shootingAngle);
+        shootingPoint.GetComponent<SpriteRenderer>().enabled = CanShoot(shootingAngle);
     }
 
     private bool CanShoot(float shootingAngle)
@@ -198,18 +223,31 @@ public class ItemManager : NetworkBehaviour
 
     //Ad un command non si può passare un gameobject / prefab da spawnare, quindi ho fatto un metodo specifico per la bomba
     //un'alternativa brutta è fare un Resource.load() del prefab
-    [Command]
-    private void Cmd_ThrowBomb(Vector2 shootDirection)
+    [Command] private void Cmd_ThrowBomb(Vector2 shootDirection)
     {
         //quaternion.identity è rotazione pari a 0,0,0
-        GameObject obj = (GameObject)Instantiate(bombRBPrefab, firePoint.position, Quaternion.identity);
+        GameObject obj = (GameObject)Instantiate(bombRBPrefab, itemHoldingPoint.position, Quaternion.identity);
         NetworkServer.Spawn(obj);
         obj.GetComponent<Bomb>().AddVelocity(shootDirection);
     }
 
-    [Command]
-    private void Cmd_PickupItem(GameObject item)
+    [Command] private void Cmd_PickupItem(GameObject item)
     {
         item.GetComponent<Pickuppable>().Pickup();
+    }
+
+    [Command] private void Cmd_SetHeldItemSprite(GameObject spriteToCopy)
+    {
+        Rpc_SetHeldItemSprite(spriteToCopy);
+    }
+
+    [ClientRpc] private void Rpc_SetHeldItemSprite(GameObject spriteToCopy)
+    {
+        print(spriteToCopy);
+        if (spriteToCopy == null)
+            itemHoldingPoint.GetComponent<SpriteRenderer>().sprite = null;
+        else
+            itemHoldingPoint.GetComponent<SpriteRenderer>().sprite = spriteToCopy.GetComponent<SpriteRenderer>().sprite;
+        itemHoldingPoint.localScale = new Vector2(1.5f, 1.5f);
     }
 }

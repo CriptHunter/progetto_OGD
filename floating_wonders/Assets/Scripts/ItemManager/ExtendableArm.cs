@@ -34,7 +34,7 @@ public class ExtendableArm : NetworkBehaviour
         if (state == State.anchoredToCrate)
         {
             //se la cassa si incastra in qualcosa o arriva al giocatore
-            if (Vector2.Distance(hit.transform.position, transform.position) < 2f || hitRb.velocity.magnitude < 0.5f)
+            if (Vector2.Distance(hit.transform.position, transform.position) < 2.5f || hitRb.velocity.magnitude < 0.5f)
             {
                 state = State.none;
                 hitRb.velocity = Vector2.zero;

@@ -9,6 +9,7 @@ TagManager:
   - HUD
   - StrikeCollider
   - Crate
+  - ItemHeldSprite
   layers:
   - Default
   - TransparentFX
