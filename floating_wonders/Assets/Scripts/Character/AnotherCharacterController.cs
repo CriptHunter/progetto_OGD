@@ -35,19 +35,25 @@ public class AnotherCharacterController : NetworkBehaviour
     private Verse verse = Verse.Right;
 
     private new Rigidbody2D rigidbody;
-    private new CapsuleCollider2D collider;
-    private bool nearWallLeft = false;
+    private new BoxCollider2D collider;
+    private bool nearWallLeft = false; // excludes slopes
     private bool nearWallRight = false;
+    private bool nearWallLeftHor = false; // includes slopes
+    private bool nearWallRightHor = false;
     private bool grounded = false;
+    public float groundedRecently = 0f;
+    private const float groundedRecentlyTime = 0.1f;
     private bool nearCeiling = false;
     //private float groundedDist = 0f;
     private bool running = false;
     private float runDelay = 0;
     private float groundedDelay = 0;
     private float dontStickDelay = 0;
+    private float jumpRequest = 0f;
+    private const float jumpRequestTime = 0.2f;
 
-    private CapsuleCollider2D normalCollider; // collider di quando non hai niente
-    public CapsuleCollider2D characterHoldingCollider; // collider di quando hai un compagno sopra di te
+    private BoxCollider2D normalCollider; // collider di quando non hai niente
+    public BoxCollider2D characterHoldingCollider; // collider di quando hai un compagno sopra di te
     public CircleCollider2D characterGrabCollider; // collider usato per raccogliere i persobnaggi
     private AnotherCharacterController potentialCharacter; // potenziale character che può raccogliere
     private AnotherCharacterController heldCharacter = null;
@@ -150,11 +156,13 @@ public class AnotherCharacterController : NetworkBehaviour
     private bool climbUpRequest = false; // se è stata fatta richiesta di arrampicarsi su o giù
     private bool climbDownRequest = false;
     private Verse climbVerse = Verse.None;
-    private float dontGrabClimbableDelay = 0; // ritardo entro il quale non può richiappare un climbable
+    private float dontGrabClimbableDelay = 0; // ritardo entro il quale non può richiappare un climbable diverso dall'ultimo
+    private float dontGrabSameClimbableDelay = 0; // ritardo entro il quale non può richiappare lo stesso climbable
+    private Climbable lastClimbable = null; // ultimo climbable in cui sono stato
 
     void Awake()
     {
-        collider = GetComponents<CapsuleCollider2D>()[0]; // the first collider is the good one
+        collider = GetComponents<BoxCollider2D>()[0]; // the first collider is the good one
         normalCollider = collider;
         rigidbody = GetComponent<Rigidbody2D>();
         animator = GetComponent<SpineCharacterAnimator>();
@@ -173,6 +181,7 @@ public class AnotherCharacterController : NetworkBehaviour
 
         speed = 0;
         initialGravityScale = rigidbody.gravityScale;
+        IsHoldingSomething = false;
     }
 
     public void Animate()
@@ -212,7 +221,7 @@ public class AnotherCharacterController : NetworkBehaviour
                     else
                     {
                         string suffix = "";
-                        if (IsHoldingCharacter())
+                        if (IsHoldingSomething)
                         {
                             suffix = "_holdingcharacter";
                         }
@@ -323,16 +332,24 @@ public class AnotherCharacterController : NetworkBehaviour
         {
             //rigidbody.gravityScale = initialGravityScale;
             groundedDelay = Mathf.Max(0, groundedDelay - delta);
+            groundedRecently = Mathf.Max(0, groundedRecently - delta);
             //dontStickDelay = 0.25f;
         }
         else
         {
             groundedDelay = 0.1f;
+            groundedRecently = groundedRecentlyTime;
+            if (jumpRequest > speedThreshold)
+            {
+                Jump();
+            }
             //MoveToSolid(270, 1.5f);
         }
         dontStickDelay = Mathf.Max(0, dontStickDelay - delta);
         dontGrabEdgeDelay = Mathf.Max(0, dontGrabEdgeDelay - delta);
         dontGrabClimbableDelay = Mathf.Max(0, dontGrabClimbableDelay - delta);
+        dontGrabSameClimbableDelay = Mathf.Max(0, dontGrabSameClimbableDelay - delta);
+        jumpRequest = Mathf.Max(0, jumpRequest - delta);
 
         if (Active)
         {
@@ -361,11 +378,11 @@ public class AnotherCharacterController : NetworkBehaviour
 
         Animate();
 
-        RaycastHit2D hit = Physics2D.CapsuleCast(collider.bounds.center, collider.bounds.size, collider.direction, 0, verse.Vector(), 0.99f, groundLayer);
-        bool spazio = hit.collider == null;
+        //RaycastHit2D hit = Physics2D.CapsuleCast(collider.bounds.center, collider.bounds.size, collider.direction, 0, verse.Vector(), 0.99f, groundLayer);
+        //bool spazio = hit.collider == null;
         debug.text = "grounded: " + grounded + "\n" +
                     "ceiling: " + nearCeiling + "\n" +
-                    "spazio di fronte: " + spazio + "\n" +
+                    //"spazio di fronte: " + spazio + "\n" +
                     "dont stick: " + dontStickDelay + "\n" +
                     "wall left: " + nearWallLeft + "\n" +
                     "wall right: " + nearWallRight + "\n" +
@@ -442,8 +459,10 @@ public class AnotherCharacterController : NetworkBehaviour
                 }
                 else
                 {
-                    if (grounded)
+                    if (grounded || (groundedRecently > speedThreshold))
                     {
+                        jumpRequest = 0;
+                        groundedRecently = 0;
                         if (effectJumpstart != null)
                         {
                             CmdSpawnEffectJumpstart(transform.position+Vector3.down, verse);
@@ -458,6 +477,10 @@ public class AnotherCharacterController : NetworkBehaviour
                             if (!IsBeingHeldByCharacter())
                                 VerticalImpulse(jumpForce);
                         }
+                    }
+                    else
+                    {
+                        jumpRequest = jumpRequestTime;
                     }
                 }
             }
@@ -548,7 +571,7 @@ public class AnotherCharacterController : NetworkBehaviour
             {
                 // girati solo se c'è spazio
                 // per qualche motivo ci va l'opposite
-                RaycastHit2D hit = Physics2D.CapsuleCast(collider.bounds.center, collider.bounds.size, collider.direction, 0, verse.Opposite().Vector(), 0.99f, groundLayer);
+                RaycastHit2D hit = Physics2D.BoxCast(collider.bounds.center, collider.bounds.size, 0, verse.Opposite().Vector(), 0.99f, groundLayer);
                 //Debug.Log("provo a girarmi, il collider è " + hit.collider);
                 if (hit.collider == null)
                 {
@@ -588,7 +611,7 @@ public class AnotherCharacterController : NetworkBehaviour
         RaycastHit2D hit;
 
         var wasGrounded = grounded;
-        hit = Physics2D.CapsuleCast((Vector2)collider.bounds.center, collider.bounds.size, collider.direction, 0, Vector2.down, 0.1f, groundLayer);
+        hit = Physics2D.BoxCast((Vector2)collider.bounds.center, collider.bounds.size, 0, Vector2.down, 0.1f, groundLayer);
         if (hit.collider != null)
             grounded = true;
         else
@@ -602,25 +625,37 @@ public class AnotherCharacterController : NetworkBehaviour
             }
         }
 
-        hit = Physics2D.CapsuleCast((Vector2)collider.bounds.center, collider.bounds.size, collider.direction, 0, Vector2.up, 0.1f, groundLayer);
+        hit = Physics2D.BoxCast((Vector2)collider.bounds.center, collider.bounds.size, 0, Vector2.up, 0.1f, groundLayer);
         if (hit.collider != null)
             nearCeiling = true;
         else
             nearCeiling = false;
 
-        hit = Physics2D.CapsuleCast((Vector2)collider.bounds.center, collider.bounds.size - new Vector3(0, 0.1f, 0), collider.direction, 0, new Vector2(1, 2), 0.05f, groundLayer);
+        hit = Physics2D.BoxCast((Vector2)collider.bounds.center, collider.bounds.size - new Vector3(0, 0.1f, 0), 0, new Vector2(1, 2), 0.05f, groundLayer);
         if (hit.collider != null)
             nearWallRight = true;
         else
             nearWallRight = false;
 
-        hit = Physics2D.CapsuleCast((Vector2)collider.bounds.center, collider.bounds.size - new Vector3(0, 0.1f, 0), collider.direction, 0, new Vector2(-1, 2), 0.05f, groundLayer);
+        hit = Physics2D.BoxCast((Vector2)collider.bounds.center, collider.bounds.size - new Vector3(0, 0.1f, 0), 0, new Vector2(-1, 2), 0.05f, groundLayer);
         if (hit.collider != null)
             nearWallLeft = true;
         else
             nearWallLeft = false;
 
-        hit = Physics2D.CapsuleCast((Vector2)collider.bounds.center, collider.bounds.size - new Vector3(0, 0.1f, 0), collider.direction, 0, Vector2.one, 0.0f, climbableLayer);
+        hit = Physics2D.BoxCast((Vector2)collider.bounds.center, collider.bounds.size - new Vector3(0, 0.1f, 0), 0, new Vector2(1, 0), 0.05f, groundLayer);
+        if (hit.collider != null)
+            nearWallRightHor = true;
+        else
+            nearWallRightHor = false;
+
+        hit = Physics2D.BoxCast((Vector2)collider.bounds.center, collider.bounds.size - new Vector3(0, 0.1f, 0), 0, new Vector2(-1, 0), 0.05f, groundLayer);
+        if (hit.collider != null)
+            nearWallLeftHor = true;
+        else
+            nearWallLeftHor = false;
+
+        hit = Physics2D.BoxCast((Vector2)collider.bounds.center, collider.bounds.size - new Vector3(0, 0.1f, 0), 0, Vector2.one, 0.0f, climbableLayer);
         if (hit.collider != null)
             potentialClimbable = hit.collider.gameObject.GetComponent<Climbable>();
         else
@@ -689,21 +724,29 @@ public class AnotherCharacterController : NetworkBehaviour
         {
             if (potentialClimbable != null && !IsTouchingGround() && !IsHoldingCharacter() && !IsBeingHeldByCharacter() && dontGrabClimbableDelay<=speedThreshold)
             {
-                ReleaseEdge();
-                ReleaseCharacter();
-                PhysicsActive = false;
-                targetClimbable = potentialClimbable;
-                if (rigidbody.position.x > targetClimbable.gameObject.transform.position.x)
+                if (potentialClimbable==lastClimbable && dontGrabSameClimbableDelay > speedThreshold)
                 {
-                    Turn(Verse.Left);
+                    return false;
                 }
                 else
                 {
-                    Turn(Verse.Right);
+                    ReleaseEdge();
+                    ReleaseCharacter();
+                    PhysicsActive = false;
+                    targetClimbable = potentialClimbable;
+                    lastClimbable = potentialClimbable;
+                    if (rigidbody.position.x > targetClimbable.gameObject.transform.position.x)
+                    {
+                        Turn(Verse.Left);
+                    }
+                    else
+                    {
+                        Turn(Verse.Right);
+                    }
+                    StickToClimbable(targetClimbable.gameObject);
+                    rigidbody.velocity = Vector2.zero;
+                    return true;
                 }
-                StickToClimbable(targetClimbable.gameObject);
-                rigidbody.velocity = Vector2.zero;
-                return true;
             }
             else
             {
@@ -754,7 +797,7 @@ public class AnotherCharacterController : NetworkBehaviour
         else return false;
     }
 
-    public void ReleaseClimbable()
+    public void ReleaseClimbable(bool gently = false)
     {
         if (IsClimbing())
         {
@@ -764,6 +807,10 @@ public class AnotherCharacterController : NetworkBehaviour
             }
 
             dontGrabClimbableDelay = 0.25f;
+            if (gently)
+            {
+                dontGrabSameClimbableDelay = 0.65f;
+            }
             targetClimbable = null;
             climbUpRequest = false;
             climbDownRequest = false;
@@ -846,16 +893,33 @@ public class AnotherCharacterController : NetworkBehaviour
                         }
                     }
 
-                    if (nearWallLeft && speed + impulseHSpeed < -speedThreshold)
+                    if (grounded) // to avoid locking at the exact edge of a platform
                     {
-                        speed = 0;
-                        impulseHSpeed = 0;
-                    }
+                        if (nearWallLeft && speed + impulseHSpeed < -speedThreshold)
+                        {
+                            speed = 0;
+                            impulseHSpeed = 0;
+                        }
 
-                    if (nearWallRight && speed + impulseHSpeed > speedThreshold)
+                        if (nearWallRight && speed + impulseHSpeed > speedThreshold)
+                        {
+                            speed = 0;
+                            impulseHSpeed = 0;
+                        }
+                    }
+                    else
                     {
-                        speed = 0;
-                        impulseHSpeed = 0;
+                        if (nearWallLeftHor && speed + impulseHSpeed < -speedThreshold)
+                        {
+                            speed = 0;
+                            impulseHSpeed = 0;
+                        }
+
+                        if (nearWallRightHor && speed + impulseHSpeed > speedThreshold)
+                        {
+                            speed = 0;
+                            impulseHSpeed = 0;
+                        }
                     }
                 }
                 else
@@ -892,7 +956,7 @@ public class AnotherCharacterController : NetworkBehaviour
     private bool MoveToSolid(float direction, float maxDist)
     {
         var dir = Util.DegreeToVector2(direction);
-        RaycastHit2D hit = Physics2D.CapsuleCast((Vector2)collider.bounds.center - collider.offset, collider.bounds.size, collider.direction, 0, dir, maxDist, groundLayer); ;
+        RaycastHit2D hit = Physics2D.BoxCast((Vector2)collider.bounds.center - collider.offset, collider.bounds.size, 0, dir, maxDist, groundLayer); ;
         if (hit.collider != null)
         {
             rigidbody.position = hit.centroid;
@@ -909,7 +973,7 @@ public class AnotherCharacterController : NetworkBehaviour
         var collider = characterHoldingCollider;
         if (collider != null)
         {
-            RaycastHit2D hit = Physics2D.CapsuleCast((Vector2)collider.bounds.center, collider.bounds.size, collider.direction, 0, Vector2.up, 0.1f, groundLayer);
+            RaycastHit2D hit = Physics2D.BoxCast((Vector2)collider.bounds.center, collider.bounds.size, 0, Vector2.up, 0.1f, groundLayer);
             if (hit.collider != null)
                 return false;
             else
@@ -1097,6 +1161,19 @@ public class AnotherCharacterController : NetworkBehaviour
             {
                 animator.SkeletonAnimationOverlay("attack0", true);
             }
+        }
+    }
+
+    private bool isHoldinSomething;
+    public bool IsHoldingSomething
+    {
+        get
+        {
+            return isHoldinSomething || IsHoldingCharacter();
+        }
+        set
+        {
+            isHoldinSomething = value;
         }
     }
 

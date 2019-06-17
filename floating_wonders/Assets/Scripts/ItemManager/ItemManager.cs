@@ -11,7 +11,7 @@ public class ItemManager : NetworkBehaviour
     private bool pickupAllowed;
     private GameObject collidedObject;
     private AnotherCharacterController controller;
-    private new CapsuleCollider2D collider;
+    private new BoxCollider2D collider;
     private DrawCircle drawCircle;
     [SerializeField] private Transform firePoint = null; // da quale punto sono lanciati gli oggetti
     [SerializeField] private GameObject bombRBPrefab = null; //bomba con rigid body
@@ -21,7 +21,7 @@ public class ItemManager : NetworkBehaviour
     {
         pickedUpItem = null;
         controller = GetComponent<AnotherCharacterController>();
-        collider = GetComponents<CapsuleCollider2D>()[0];
+        collider = GetComponents<BoxCollider2D>()[0];
         drawCircle = GetComponentInChildren<DrawCircle>();
     }
 

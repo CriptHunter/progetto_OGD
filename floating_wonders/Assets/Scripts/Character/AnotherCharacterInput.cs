@@ -57,7 +57,7 @@ public class AnotherCharacterInput : NetworkBehaviour
                 {
                     if (cc.IsNearBottomClimbable())
                     {
-                        cc.ReleaseClimbable();
+                        cc.ReleaseClimbable(true);
                     }
                 }
 
@@ -97,13 +97,11 @@ public class AnotherCharacterInput : NetworkBehaviour
             }
             else
             {
-                // if on ground jump
+                // jump if possible
                 if (Input.GetKeyDown(KeyCode.W))
                 {
-                    if (cc.IsTouchingGround() || cc.IsDanglingFromEdge())
-                    {
-                        cc.Jump();
-                    }
+                    
+                    cc.Jump();
                     /*else
                     {
                         if (!cc.IsClimbing())

@@ -9,8 +9,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 631346588937936807}
-  - component: {fileID: 631346588937936804}
-  - component: {fileID: 5931903348234891613}
+  - component: {fileID: 6170497767070538988}
+  - component: {fileID: 6567929554135537314}
   - component: {fileID: 631346588937936803}
   - component: {fileID: 631346588937936825}
   - component: {fileID: 631346588937936824}
@@ -52,8 +52,8 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!70 &631346588937936804
-CapsuleCollider2D:
+--- !u!61 &6170497767070538988
+BoxCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -61,15 +61,25 @@ CapsuleCollider2D:
   m_GameObject: {fileID: 631346588937936802}
   m_Enabled: 1
   m_Density: 1
-  m_Material: {fileID: 6200000, guid: 90f244763f5588c40ae5243177b57ed3, type: 2}
+  m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
-  m_Size: {x: 0.8, y: 1.95}
-  m_Direction: 0
---- !u!70 &5931903348234891613
-CapsuleCollider2D:
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 0.6, y: 1.95}
+  m_EdgeRadius: 0
+--- !u!61 &6567929554135537314
+BoxCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -77,13 +87,23 @@ CapsuleCollider2D:
   m_GameObject: {fileID: 631346588937936802}
   m_Enabled: 1
   m_Density: 1
-  m_Material: {fileID: 6200000, guid: 90f244763f5588c40ae5243177b57ed3, type: 2}
+  m_Material: {fileID: 0}
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0.425}
-  m_Size: {x: 0.8, y: 2.8}
-  m_Direction: 0
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 0.6, y: 2.8}
+  m_EdgeRadius: 0
 --- !u!50 &631346588937936803
 Rigidbody2D:
   serializedVersion: 4
@@ -147,7 +167,7 @@ MonoBehaviour:
     type: 3}
   effectJumpend: {fileID: 362794128000427943, guid: 09090188719070546aec1ff258c28b3d,
     type: 3}
-  characterHoldingCollider: {fileID: 5931903348234891613}
+  characterHoldingCollider: {fileID: 6567929554135537314}
   characterGrabCollider: {fileID: 2217803499235549614}
 --- !u!114 &2201379074857997326
 MonoBehaviour:
