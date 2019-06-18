@@ -13,7 +13,8 @@ public class SetupLocalPlayer : NetworkBehaviour
     void Start()
     {
         //nasconde la freccia del mouse
-        Cursor.visible = false;
+        //Cursor.visible = false;
+
         //per il respawn ai checkpoint
         try
         {
@@ -97,5 +98,9 @@ public class SetupLocalPlayer : NetworkBehaviour
                 controller.target = gameObject;
             }
         }
+
+        // setto l'icona nella minimappa
+        PlayerMinimapIndicator pmi = GameObject.Find("HUD").GetChild("Minimap").GetChild("player1").GetComponent<PlayerMinimapIndicator>();
+        pmi.SetTarget(gameObject);
     }
 }
