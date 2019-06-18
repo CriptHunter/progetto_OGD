@@ -30,6 +30,11 @@ public class MinimapGenerator : MonoBehaviour
         Vector3Int cellFrom = worldgrid.WorldToCell(worldFrom);
         Vector3Int cellTo = worldgrid.WorldToCell(worldTo);
 
+        foreach (PlayerMinimapIndicator pmi in GetComponentsInChildren<PlayerMinimapIndicator>())
+        {
+            pmi.SetBounds(worldFrom.x, worldFrom.y, worldTo.x, worldTo.y);
+        }
+
 
         minimap = new Texture2D(cellTo.x-cellFrom.x, cellTo.y-cellFrom.y);
         minimap.filterMode = FilterMode.Point;

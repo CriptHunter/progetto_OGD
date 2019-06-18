@@ -6,6 +6,12 @@ public class PlayerMinimapIndicator : MonoBehaviour
 {
     private RectTransform rt;
     private GameObject target = null;
+
+    private float xmin;
+    private float ymin;
+    private float xmax;
+    private float ymax;
+    private Vector2 parentSize;
     private void Start()
     {
         rt = GetComponent<RectTransform>();
@@ -14,6 +20,16 @@ public class PlayerMinimapIndicator : MonoBehaviour
     public void SetTarget(GameObject target)
     {
         this.target = target;
+        //print("map actual size is " + transform.parent.GetComponent<RectTransform>().ActualSize());
+        parentSize = transform.parent.GetComponent<RectTransform>().ActualSize();
+    }
+
+    public void SetBounds(float xmin, float ymin, float xmax, float ymax)
+    {
+        this.xmin = xmin;
+        this.ymin = ymin;
+        this.xmax = xmax;
+        this.ymax = ymax;
     }
 
     // Update is called once per frame
@@ -21,7 +37,9 @@ public class PlayerMinimapIndicator : MonoBehaviour
     {
         if (target != null)
         {
-            rt.localPosition = Vector2.zero;
+            float posx = Mathf.InverseLerp(xmin, xmax, target.transform.position.x);
+            float posy = Mathf.InverseLerp(ymin, ymax, target.transform.position.y);
+            rt.localPosition = new Vector2(-parentSize.x,0) + new Vector2(posx*parentSize.x,posy*parentSize.y);
         }
     }
 }

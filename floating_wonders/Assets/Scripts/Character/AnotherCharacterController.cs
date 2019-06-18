@@ -41,7 +41,7 @@ public class AnotherCharacterController : NetworkBehaviour
     private bool nearWallLeftHor = false; // includes slopes
     private bool nearWallRightHor = false;
     private bool grounded = false;
-    public float groundedRecently = 0f;
+    private float groundedRecently = 0f;
     private const float groundedRecentlyTime = 0.1f;
     private bool nearCeiling = false;
     //private float groundedDist = 0f;
