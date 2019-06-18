@@ -58,10 +58,16 @@ public class SetupLocalPlayer : NetworkBehaviour
                 if (isLocalPlayer)
                 {
                     skeletonAnimation.skeleton.SetSkin("sk_male");
+                    // setto l'icona nella minimappa
+                    PlayerMinimapIndicator pmi = GameObject.Find("HUD").GetChild("Minimap").GetChild("player1").GetComponent<PlayerMinimapIndicator>();
+                    pmi.SetTarget(gameObject);
                 }
                 else
                 {
                     skeletonAnimation.skeleton.SetSkin("sk_female");
+                    // setto l'icona nella minimappa
+                    PlayerMinimapIndicator pmi = GameObject.Find("HUD").GetChild("Minimap").GetChild("player2").GetComponent<PlayerMinimapIndicator>();
+                    pmi.SetTarget(gameObject);
                 }
             }
             else
@@ -69,10 +75,16 @@ public class SetupLocalPlayer : NetworkBehaviour
                 if (!isLocalPlayer)
                 {
                     skeletonAnimation.skeleton.SetSkin("sk_male");
+                    // setto l'icona nella minimappa
+                    PlayerMinimapIndicator pmi = GameObject.Find("HUD").GetChild("Minimap").GetChild("player1").GetComponent<PlayerMinimapIndicator>();
+                    pmi.SetTarget(gameObject);
                 }
                 else
                 {
                     skeletonAnimation.skeleton.SetSkin("sk_female");
+                    // setto l'icona nella minimappa
+                    PlayerMinimapIndicator pmi = GameObject.Find("HUD").GetChild("Minimap").GetChild("player2").GetComponent<PlayerMinimapIndicator>();
+                    pmi.SetTarget(gameObject);
                 }
             }
         }
@@ -98,9 +110,5 @@ public class SetupLocalPlayer : NetworkBehaviour
                 controller.target = gameObject;
             }
         }
-
-        // setto l'icona nella minimappa
-        PlayerMinimapIndicator pmi = GameObject.Find("HUD").GetChild("Minimap").GetChild("player1").GetComponent<PlayerMinimapIndicator>();
-        pmi.SetTarget(gameObject);
     }
 }

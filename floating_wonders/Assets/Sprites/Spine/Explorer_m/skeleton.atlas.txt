@@ -67,6 +67,13 @@ borsa
   orig: 33, 37
   offset: 0, 0
   index: -1
+empty
+  rotate: false
+  xy: 334, 18
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
 eyebrow_f_l
   rotate: false
   xy: 234, 374

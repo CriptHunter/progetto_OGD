@@ -8,13 +8,59 @@ using UnityEngine.UI;
 [RequireComponent(typeof(Image))]
 public class MinimapGenerator : MonoBehaviour
 {
+    public Color backColor;
+    public Color frontColor;
+    public Color playerColor;
+    public float playerScale;
+
     public Grid worldgrid;
     public Tilemap[] inputTilemaps;
 
     private Texture2D minimap;
     private Image image;
+
+    private bool minimapActive;
+    public bool MinimapActive
+    {
+        get
+        {
+            return minimapActive;
+        }
+        set
+        {
+            minimapActive = value;
+            if (!minimapActive)
+            {
+                minimapActive = false;
+                image.enabled = false;
+                for (int i = 0; i < transform.childCount; i++)
+                {
+                    transform.GetChild(0).gameObject.SetActive(false);
+                }
+            }
+            else
+            {
+                minimapActive = true;
+                image.enabled = true;
+
+                for (int i = 0; i < transform.childCount; i++)
+                {
+                    transform.GetChild(0).gameObject.SetActive(true);
+                }
+            }
+        }
+    }
     void Awake()
     {
+        minimapActive = true;
+
+        for(int i = 0; i < transform.childCount; i += 1)
+        {
+            Image img = transform.GetChild(i).GetComponent<Image>();
+            img.color = playerColor;
+            img.transform.localScale = Vector3.one * playerScale;
+        }
+
         image = GetComponent<Image>();
 
         Bounds bounds = new Bounds();
@@ -44,7 +90,7 @@ public class MinimapGenerator : MonoBehaviour
         Color[] minimapCol = minimap.GetPixels();
         for(int i = 0; i < minimapCol.Length; i++)
         {
-            minimapCol[i] = Color.white;
+            minimapCol[i] = backColor;
         }
 
         int yy = 0;
@@ -65,7 +111,7 @@ public class MinimapGenerator : MonoBehaviour
 
                 if (hasTile)
                 {
-                    minimapCol[index] = Color.black;
+                    minimapCol[index] = frontColor;
                 }
                 xx++;
             }
@@ -80,5 +126,13 @@ public class MinimapGenerator : MonoBehaviour
 
         image.sprite = Sprite.Create(minimap, new Rect(0, 0, minimap.width, minimap.height), new Vector2(1,0),64);
         image.SetNativeSize();
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.M))
+        {
+            MinimapActive = !MinimapActive;
+        }
     }
 }

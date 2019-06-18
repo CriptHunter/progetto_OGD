@@ -1,11 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerMinimapIndicator : MonoBehaviour
 {
     private RectTransform rt;
     private GameObject target = null;
+    private Image img;
 
     private float xmin;
     private float ymin;
@@ -14,6 +16,7 @@ public class PlayerMinimapIndicator : MonoBehaviour
     private Vector2 parentSize;
     private void Start()
     {
+        img = GetComponent<Image>();
         rt = GetComponent<RectTransform>();
     }
     // Start is called before the first frame update
@@ -37,9 +40,20 @@ public class PlayerMinimapIndicator : MonoBehaviour
     {
         if (target != null)
         {
+            if (!img.enabled)
+            {
+                img.enabled = true;
+            }
             float posx = Mathf.InverseLerp(xmin, xmax, target.transform.position.x);
             float posy = Mathf.InverseLerp(ymin, ymax, target.transform.position.y);
             rt.localPosition = new Vector2(-parentSize.x,0) + new Vector2(posx*parentSize.x,posy*parentSize.y);
+        }
+        else
+        {
+            if (img.enabled)
+            {
+                img.enabled = false;
+            }
         }
     }
 }

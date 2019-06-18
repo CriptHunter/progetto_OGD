@@ -168,13 +168,6 @@ MonoBehaviour:
     type: 3}
   effectJumpend: {fileID: 362794128000427943, guid: 09090188719070546aec1ff258c28b3d,
     type: 3}
-  speed: 0
-  nearWallLeft: 0
-  nearWallRight: 0
-  nearWallLeftHor: 0
-  nearWallRightHor: 0
-  grounded: 0
-  nearCeiling: 0
   characterHoldingCollider: {fileID: 6567929554135537314}
   characterGrabCollider: {fileID: 2217803499235549614}
 --- !u!114 &2201379074857997326
