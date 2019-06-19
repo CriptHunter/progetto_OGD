@@ -15,10 +15,11 @@ public class Grass : MonoBehaviour
     private float schiacciamentoSpeed = 0.25f;
     private float schiacciamentoAng = 0;
     private float schiacciamentoAngEffective = 0;
+    private float schiacciamentoRotspeed = 810f;
 
     private GameObject spriteObject;
     //private BoxCollider2D collider;
-    private SpriteRenderer renderer;
+    private new SpriteRenderer renderer;
 
     private HashSet<GameObject> characters;
     // Start is called before the first frame update
@@ -80,7 +81,7 @@ public class Grass : MonoBehaviour
 
         if (schiacciamentoAngEffective < schiacciamentoAng)
         {
-            schiacciamentoAngEffective += Time.deltaTime * 810f;
+            schiacciamentoAngEffective += Time.deltaTime * schiacciamentoRotspeed;
             if (schiacciamentoAngEffective >= schiacciamentoAng)
             {
                 schiacciamentoAngEffective = schiacciamentoAng;
@@ -88,7 +89,7 @@ public class Grass : MonoBehaviour
         }
         if (schiacciamentoAngEffective > schiacciamentoAng)
         {
-            schiacciamentoAngEffective -= Time.deltaTime * 810f;
+            schiacciamentoAngEffective -= Time.deltaTime * schiacciamentoRotspeed;
             if (schiacciamentoAngEffective <= schiacciamentoAng)
             {
                 schiacciamentoAngEffective = schiacciamentoAng;
