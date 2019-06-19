@@ -202,8 +202,8 @@ public class AnotherCharacterInput : NetworkBehaviour
                         aimingWithCharacter = false;
                         Vector2 shootDirection;
                         shootDirection = Input.mousePosition - Camera.main.WorldToScreenPoint(cc.GetCharacterHoldingPoint().position);
-                        var velocity = cc.GetComponent<Rigidbody2D>().velocity;
-                        var applyVelocity = new Vector2(Util.LengthDirX(18f/*13f*/, shootDirection.GetAngle()), Util.LengthDirY(18f, shootDirection.GetAngle())); ;
+                        var velocity = Vector2.zero;//cc.GetComponent<Rigidbody2D>().velocity;
+                        var applyVelocity = new Vector2(Util.LengthDirX(21f/*13f*/, shootDirection.GetAngle()), Util.LengthDirY(25f, shootDirection.GetAngle())); ;
                         var finalVelocity = velocity + applyVelocity;
                         cc.LaunchCharacter(finalVelocity.magnitude, finalVelocity.GetAngle());
                     }

@@ -473,7 +473,7 @@ public class AnotherCharacterController : NetworkBehaviour
 
                         if (IsHoldingCharacter())
                         {
-                            VerticalImpulse(jumpForce);// * 0.85f);
+                            VerticalImpulse(jumpForce * 0.85f);
                         }
                         else
                         {
@@ -749,7 +749,7 @@ public class AnotherCharacterController : NetworkBehaviour
     {
         if (Active)
         {
-            if (potentialClimbable != null && !IsTouchingGround() && !IsHoldingCharacter() && !IsBeingHeldByCharacter() && dontGrabClimbableDelay<=speedThreshold)
+            if (potentialClimbable != null && !IsTouchingGround() && !IsHoldingSomething && !IsBeingHeldByCharacter() && dontGrabClimbableDelay<=speedThreshold)
             {
                 if (potentialClimbable==lastClimbable && dontGrabSameClimbableDelay > speedThreshold)
                 {
