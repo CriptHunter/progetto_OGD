@@ -23,6 +23,9 @@ public class AnotherCharacterController : NetworkBehaviour
     [SerializeField]
     private GameObject effectJumpend;
 
+    [SerializeField]
+    private GameObject effectFootstep;
+
     private SpineCharacterAnimator animator;
 
     private CharacterEdgeGrab edgeGrabCollider;
@@ -484,6 +487,30 @@ public class AnotherCharacterController : NetworkBehaviour
                     }
                 }
             }
+        }
+    }
+
+    public void SpawnEffectFootstep()
+    {
+        if (enabled && Active)
+        {
+            CmdSpawnEffectFootstep((Vector2)transform.position + Vector2.down+verse.Vector()*0.75f, verse);
+        }
+    }
+
+    [Command]
+    private void CmdSpawnEffectFootstep(Vector3 position, Verse verse)
+    {
+        RpcSpawnEffectFootstep(position, verse);
+    }
+
+    [ClientRpc]
+    private void RpcSpawnEffectFootstep(Vector3 position, Verse verse)
+    {
+        GameObject go = Instantiate(effectFootstep, position, Quaternion.identity);
+        if (verse == Verse.Left)
+        {
+            go.transform.localScale = new Vector3(-go.transform.localScale.x, go.transform.localScale.y, go.transform.localScale.z);
         }
     }
 
