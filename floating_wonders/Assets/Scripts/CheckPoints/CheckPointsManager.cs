@@ -40,9 +40,22 @@ public class CheckPointsManager : NetworkBehaviour
     {
         if (!isServer)
             return;
-        this.activeCheckPoint = c;
+        //il primo checkpoint che attivo
+        if(activeCheckPoint == null)
+            this.activeCheckPoint = c;
+        else if (c != this.activeCheckPoint)
+        {
+            Rpc_SetActive(activeCheckPoint.gameObject, false);
+            this.activeCheckPoint = c;
+        }
+
         ResetEnemies();
         GameManager.Instance.SetHealth(GameManager.Instance.GetMaxHealth());
+    }
+
+    [ClientRpc] private void Rpc_SetActive(GameObject checkpoint, bool active)
+    {
+        checkpoint.GetComponent<CheckPoint>().SetSwitchedOn(active);
     }
 
     public void AddCheckPoint(CheckPoint c)
@@ -68,7 +81,8 @@ public class CheckPointsManager : NetworkBehaviour
             print("Non ci sono checkpoint attivi");
         else
         {
-            Rpc_ShowColor(Color.black, GetActiveCheckPoint().gameObject);
+            print("faccio rinascere i giocatori");
+            Rpc_ShowColor(Color.black);
             ResetEnemies();
             ResetPlayers();
         }
@@ -92,9 +106,9 @@ public class CheckPointsManager : NetworkBehaviour
         }
     }
 
-    [ClientRpc] private void Rpc_ShowColor(Color c, GameObject ck)
+    [ClientRpc] private void Rpc_ShowColor(Color c)
     {
-        StartCoroutine(ShowColor(c, ck));
+        StartCoroutine(ShowColor(c));
     }
 
     [ClientRpc] private void Rpc_SetEnemyRespawnPosition(GameObject enemy)
@@ -113,16 +127,20 @@ public class CheckPointsManager : NetworkBehaviour
         if(controller.IsClimbing())
             player.GetComponent<AnotherCharacterController>().ReleaseClimbable();
         player.SetActive(false);
-        player.transform.position = checkpoint.transform.position;
+        player.transform.position = checkpoint.transform.GetChild(0).position;
+        StartCoroutine(EnablePlayer(player));
+    }
+
+    private IEnumerator EnablePlayer(GameObject player)
+    {
+        yield return new WaitForSeconds(1f);
         player.SetActive(true);
     }
 
-    private IEnumerator ShowColor(Color c, GameObject ck)
+    private IEnumerator ShowColor(Color c)
     {
-        ck.SetActive(false);
         hud.ShowColor(true, c);
         yield return new WaitForSeconds(1f);
         hud.ShowColor(false, c);
-        ck.SetActive(true);
     }
 }
