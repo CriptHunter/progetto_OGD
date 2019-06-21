@@ -5,6 +5,7 @@ using UnityEngine.Networking;
 
 public class CheckPointsManager : NetworkBehaviour
 {
+    [SerializeField] GameObject firstCheckpoint;
     private List<CheckPoint> checkPointList;
     private List<Enemy> enemyList;
     private List<GameObject> playerList;
@@ -13,6 +14,7 @@ public class CheckPointsManager : NetworkBehaviour
     private static CheckPointsManager instance;
     public static CheckPointsManager Instance { get { return instance; } }
 
+   
 
     void Awake()
     {
@@ -29,6 +31,16 @@ public class CheckPointsManager : NetworkBehaviour
     public void Start()
     {
         hud = GameObject.Find("HUD").GetComponent<PlayerHUD>();
+        SetActiveCheckPoint(firstCheckpoint.GetComponent<CheckPoint>());
+    }
+
+    public void Update()
+    {
+        if (Input.GetKey(KeyCode.LeftControl) && Input.GetKey(KeyCode.R))
+        {
+            SetActiveCheckPoint(firstCheckpoint.GetComponent<CheckPoint>());
+            Respawn();
+        }
     }
 
     public CheckPoint GetActiveCheckPoint()

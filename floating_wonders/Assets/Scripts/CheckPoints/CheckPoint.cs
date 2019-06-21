@@ -56,6 +56,7 @@ public class CheckPoint : NetworkBehaviour
 
     public void SetSwitchedOn(bool on)
     {
+        print("switched on " + on);
         this.switchedOn = on;
     }
 }

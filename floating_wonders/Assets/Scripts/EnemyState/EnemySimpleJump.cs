@@ -49,7 +49,7 @@ public class EnemySimpleJump : EnemyBehaviour
         if (timer > jumpWaitingTime)
         {
             RaycastHit2D forwardHit;
-            RaycastHit2D downwardHit = Physics2D.Raycast(groundDetection.position + new Vector3(horizontalMovement, 0, 0), Vector2.down, jumpForce, 1<<8);
+            RaycastHit2D downwardHit = Physics2D.Raycast(groundDetection.position + new Vector3(horizontalMovement, 0, 0), Vector2.down, 2, 1<<8);
             if (movingRight)
                 forwardHit = Physics2D.Raycast(forwardDetection.position, -transform.right, horizontalMovement, groundRayCastMask);
             else
