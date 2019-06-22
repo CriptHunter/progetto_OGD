@@ -38,7 +38,6 @@ public class CheckPointsManager : NetworkBehaviour
     {
         if (Input.GetKey(KeyCode.LeftControl) && Input.GetKey(KeyCode.R))
         {
-            SetActiveCheckPoint(firstCheckpoint.GetComponent<CheckPoint>());
             Respawn();
         }
     }

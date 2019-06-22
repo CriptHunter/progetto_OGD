@@ -709,7 +709,7 @@ public class AnotherCharacterController : NetworkBehaviour
     {
         if (Active)
         {
-            if (!IsClimbing() && !IsHoldingCharacter() && !IsBeingHeldByCharacter() && dontGrabEdgeDelay<=speedThreshold)
+            if (!IsClimbing() && !IsHoldingSomething && !IsBeingHeldByCharacter() && dontGrabEdgeDelay<=speedThreshold)
             {
                 if (!IsDanglingFromEdge())
                 {
