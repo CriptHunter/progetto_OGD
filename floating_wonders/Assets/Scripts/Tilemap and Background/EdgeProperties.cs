@@ -4,5 +4,11 @@ using UnityEngine;
 
 public class EdgeProperties : MonoBehaviour
 {
-    public Verse EdgeVerse { get; set; }
+    [SerializeField]
+    private Verse verse;
+    public Verse EdgeVerse
+    {
+        get { return verse; }
+        set { verse = value; }
+    }
 }
