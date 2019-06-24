@@ -172,7 +172,7 @@ MonoBehaviour:
   m_AutoCreatePlayer: 1
   m_PlayerSpawnMethod: 1
   m_OfflineScene: PrototypeLobby
-  m_OnlineScene: PrototypeScene
+  m_OnlineScene: PrototypeSceneBaked
   m_SpawnPrefabs:
   - {fileID: 4347175937712634760, guid: 86a577b980bf7b24aa6db3ebf46b88c5, type: 3}
   - {fileID: 4347175937712634760, guid: 72a39f29716ddeb4e888b4a111780b7a, type: 3}

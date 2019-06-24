@@ -32,4 +32,7 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Scenes/TrailersimScene.unity
     guid: 2b6f5cadff6798f4f8b2d56534408e62
+  - enabled: 1
+    path: Assets/Scenes/Prototype/PrototypeSceneBaked.unity
+    guid: c097ef751d61a964f99cc7a38a484649
   m_configObjects: {}
