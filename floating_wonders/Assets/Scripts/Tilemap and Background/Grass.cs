@@ -31,6 +31,26 @@ public class Grass : MonoBehaviour
 
         renderer.sprite = Util.ChooseFrom(variants);
         characters = new HashSet<GameObject>();
+
+        // randomize
+        if (Util.Choose(true, true, true, true, true, true, false))
+        {
+            transform.GetChild(0).localScale = Util.RandomRange(Vector3.one * 0.3f, Vector3.one * 0.8f);
+        }
+        else
+        {
+            transform.GetChild(0).localScale = Util.RandomRange(Vector3.one * 0.85f, Vector3.one * 2f);
+        }
+
+        if (Util.Choose(true, false))
+        {
+            transform.GetChild(0).localScale = new Vector3(transform.localScale.x, transform.localScale.y, -transform.localScale.z);
+        }
+        Grass grs = this;//GetComponent<Grass>();
+        if (grs != null)
+        {
+            grs.SetOscillationOffset(Util.Random(180));
+        }
     }
 
     // Update is called once per frame

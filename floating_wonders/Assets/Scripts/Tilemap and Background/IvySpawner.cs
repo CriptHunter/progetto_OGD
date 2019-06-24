@@ -45,7 +45,7 @@ public class IvySpawner : MonoBehaviour
                     {
                         var sph = Instantiate(ivy);
                         sph.transform.position = place + new Vector3(Util.RandomRange(-0.5f, 0.5f),Util.RandomRange(-0.5f, 0.5f),Util.RandomRange(0,-0.75f));
-                        if (Util.Choose(true, true, true, true, true, true, false))
+                        /*if (Util.Choose(true, true, true, true, true, true, false))
                         {
                             var scale = Util.RandomRange(0.4f, 1.2f);
                             sph.transform.GetChild(0).localScale = new Vector3(Util.RandomRange(scale * 0.7f, scale * 1.3f), Util.RandomRange(scale * 0.7f, scale * 1.3f), 1);
@@ -78,7 +78,7 @@ public class IvySpawner : MonoBehaviour
                             {
                                 renderer.sortingOrder += Mathf.RoundToInt(-sph.transform.position.z);
                             }
-                        }
+                        }*/
                     }
                 }
                 else

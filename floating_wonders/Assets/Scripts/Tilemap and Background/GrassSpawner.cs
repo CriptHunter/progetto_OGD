@@ -54,7 +54,7 @@ public class GrassSpawner : MonoBehaviour
                         {
                             var sph = Instantiate(grass);
                             sph.transform.position = place + Vector3.right * Util.RandomRange(-0.5f, 0.5f);
-                            if (Util.Choose(true, true, true, true, true, true, false))
+                            /*if (Util.Choose(true, true, true, true, true, true, false))
                             {
                                 sph.transform.GetChild(0).localScale = Util.RandomRange(Vector3.one * 0.3f, Vector3.one * 0.8f);
                             }
@@ -71,7 +71,7 @@ public class GrassSpawner : MonoBehaviour
                             if (grs != null)
                             {
                                 grs.SetOscillationOffset(Util.Random(180));
-                            }
+                            }*/
                         }
 
                         tilemap.SetTile(localPlace + Vector3Int.up, grassMiddle);

@@ -30,6 +30,43 @@ public class Ivy : MonoBehaviour
 
         //renderer.sprite = Util.ChooseFrom(variants);
         characters = new HashSet<GameObject>();
+
+        //randomize
+        var sph = gameObject;
+        if (Util.Choose(true, true, true, true, true, true, false))
+        {
+            var scale = Util.RandomRange(0.4f, 1.2f);
+            sph.transform.GetChild(0).localScale = new Vector3(Util.RandomRange(scale * 0.7f, scale * 1.3f) * Util.Choose(-1,1), Util.RandomRange(scale * 0.7f, scale * 1.3f), 1);
+        }
+        else
+        {
+            var scale = Util.RandomRange(1.2f, 2f);
+            sph.transform.GetChild(0).localScale = new Vector3(Util.RandomRange(scale * 0.7f, scale * 1.3f), Util.RandomRange(scale * 0.7f, scale * 1.3f), 1);
+        }
+
+        if (Util.Choose(true, false))
+        {
+            sph.transform.GetChild(0).localScale = new Vector3(sph.transform.localScale.x, sph.transform.localScale.y, -sph.transform.localScale.z);
+        }
+        BoxCollider2D collider = sph.GetComponent<BoxCollider2D>();
+        if (collider != null)
+        {
+
+            var stacco = (collider.offset.y + collider.size.y / 2);
+            var finaloffset = stacco - collider.size.y / 2 * sph.transform.GetChild(0).localScale.y;
+            collider.size = new Vector2(collider.size.x, collider.size.y * sph.transform.GetChild(0).localScale.y);
+            collider.offset = new Vector2(collider.offset.x, finaloffset);
+        }
+        Ivy grs = sph.GetComponent<Ivy>();
+        if (grs != null)
+        {
+            grs.SetOscillationOffset(Util.Random(180));
+            var renderer = grs.transform.GetChild(0).GetComponent<SpriteRenderer>();
+            if (renderer != null)
+            {
+                renderer.sortingOrder += Mathf.RoundToInt(-sph.transform.position.z);
+            }
+        }
     }
 
     // Update is called once per frame
