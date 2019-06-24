@@ -139,7 +139,8 @@ public class CheckPointsManager : NetworkBehaviour
             player.GetComponent<AnotherCharacterController>().ReleaseClimbable();
         player.SetActive(false);
         player.transform.position = checkpoint.transform.GetChild(0).position;
-        StartCoroutine(EnablePlayer(player));
+        player.SetActive(true);
+        //StartCoroutine(EnablePlayer(player));
     }
 
     private IEnumerator EnablePlayer(GameObject player)
