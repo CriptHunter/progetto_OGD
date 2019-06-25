@@ -35,18 +35,18 @@ public class GrapplingHook : NetworkBehaviour
         line.enabled = false;
     }
 
-    public void Update()
+    public void FixedUpdate()
     {
         if (state == State.anchored)
         {
-            Cmd_DrawLine(true, firePoint.position, hit.point);
+            Cmd_DrawLine(true, firePoint.position, hit.transform.position);
             if (joint.distance > breakDistance)
                 joint.distance = joint.distance - step;
             /*if (Vector2.Distance(transform.position, hit.point) > breakDistance)
                 joint.distance = joint.distance - step;*/
             else
             {
-                Cmd_DrawLine(false, firePoint.position, hit.point);
+                Cmd_DrawLine(false, firePoint.position, hit.transform.position);
                 controller.Activate(true);
                 GetComponent<AnotherCharacterInput>().enabled = true;
                 itemManager.enabled = true;
@@ -71,7 +71,7 @@ public class GrapplingHook : NetworkBehaviour
             controller.Deactivate(true);
             GetComponent<AnotherCharacterInput>().enabled = false;
             itemManager.enabled = false;
-            Cmd_DrawLine(true, firePoint.position, hit.point);
+            Cmd_DrawLine(true, firePoint.position, hit.transform.position);
         }
         else
         {
