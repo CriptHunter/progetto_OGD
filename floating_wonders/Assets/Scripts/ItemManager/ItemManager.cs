@@ -29,8 +29,12 @@ public class ItemManager : NetworkBehaviour
 
     private void Update()
     {
-        if (controller.IsBeingHeldByCharacter() || controller.IsHoldingCharacter())
+        if (controller.IsHoldingCharacter() || controller.IsBeingHeldByCharacter() || controller.IsClimbing() || controller.IsDanglingFromEdge())
+        {
             firePoint.GetComponent<SpriteRenderer>().enabled = false;
+            itemArrowPointer.GetComponent<SpriteRenderer>().enabled = false;
+            drawCircle.HideCircle();
+        }
         //se posso raccogliere qualcosa e premo E --> raccoglie oggetto
         if (Input.GetKeyDown(KeyCode.E) && isLocalPlayer && pickupAllowed)
         {
@@ -39,9 +43,10 @@ public class ItemManager : NetworkBehaviour
         //tenendo premuto R si mira
         else if (Input.GetKey(KeyCode.Mouse1) && isLocalPlayer && !(controller.IsHoldingCharacter() || controller.IsBeingHeldByCharacter() || controller.IsClimbing() || controller.IsDanglingFromEdge()))
         {
-            //rampino o braccio
+            //rampino o braccio (la freccia è diversa)
             if (pickedUpItem == null)
             {
+                firePoint.GetComponent<SpriteRenderer>().enabled = true;
                 MarkInteractiveObject();
                 shootDirection = GetAimDirection(firePoint);
                 MoveArrowPointer(GetShootingAngle(shootDirection), firePoint);
@@ -50,6 +55,7 @@ public class ItemManager : NetworkBehaviour
             //tutti gli altri oggetti (bomba nel prototipo)
             else
             {
+                itemArrowPointer.GetComponent<SpriteRenderer>().enabled = true;
                 shootDirection = GetAimDirection(itemHoldingPoint);
                 MoveArrowPointer(GetShootingAngle(shootDirection), itemArrowPointer);
             }
@@ -58,9 +64,9 @@ public class ItemManager : NetworkBehaviour
         else if (Input.GetKeyUp(KeyCode.Mouse1) && isLocalPlayer && !(controller.IsHoldingCharacter() || controller.IsBeingHeldByCharacter() || controller.IsClimbing() || controller.IsDanglingFromEdge()))
         {
             MarkInteractiveObject();
-            //se lo sprite della freccia per mirare è visibile allora l'angolo è tra -90 e 90
-            if (canShoot)
-                Shoot();
+            Shoot();
+            /*if (canShoot)
+                Shoot();*/
             firePoint.GetComponent<SpriteRenderer>().enabled = false;
             itemArrowPointer.GetComponent<SpriteRenderer>().enabled = false;
             drawCircle.HideCircle();
@@ -172,7 +178,7 @@ public class ItemManager : NetworkBehaviour
         //ruoto la freccia sull'asse Z di un valore pari all'angolo
         shootingPoint.eulerAngles = new Vector3(0, 0, shootingAngle);
         //rendo la freccia visibile solo se posso sparare (dipende dall'angolo)
-        shootingPoint.GetComponent<SpriteRenderer>().enabled = CanShoot(shootingAngle);
+        //shootingPoint.GetComponent<SpriteRenderer>().enabled = CanShoot(shootingAngle);
     }
 
     private bool CanShoot(float shootingAngle)
@@ -186,13 +192,11 @@ public class ItemManager : NetworkBehaviour
 
     private void MarkInteractiveObject()
     {
-        if (!canShoot)
-            return;
         LayerMask ignoredLayer;
         bool interestingHit = false;
         if (uniqueItem == ItemType.grapplingHook)
         {
-            ignoredLayer = ~((1 << 2) | (1 << 9) | (1 << 11) | (1 << 12) | (1 << 13));
+            ignoredLayer = ~((1 << 2) | (1 << 9) | (1 << 11) | (1 << 12) | (1 << 13) | (1 << 16));
             RaycastHit2D hit = Physics2D.Raycast(firePoint.position, shootDirection, GetComponent<GrapplingHook>().GetMaxDistance(), ignoredLayer);
             if (hit.transform != null && hit.transform.tag == "HookPoint")
                 interestingHit = true;
@@ -201,7 +205,7 @@ public class ItemManager : NetworkBehaviour
         }
         else
         {
-            ignoredLayer = ~((1 << 2) | (1 << 9) | (1 << 11) | (1 << 12));
+            ignoredLayer = ~((1 << 2) | (1 << 9) | (1 << 11) | (1 << 12) | (1 << 16));
             RaycastHit2D hit = Physics2D.Raycast(firePoint.position, shootDirection, GetComponent<ExtendableArm>().GetMaxDistance(), ignoredLayer);
             if(hit.transform != null && (hit.transform.gameObject.layer == LayerMask.NameToLayer("Items") || hit.transform.tag == "Crate"))
                 interestingHit = true;

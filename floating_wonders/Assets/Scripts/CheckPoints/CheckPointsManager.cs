@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
+using UnityEngine.SceneManagement;
 
 public class CheckPointsManager : NetworkBehaviour
 {
@@ -36,10 +37,14 @@ public class CheckPointsManager : NetworkBehaviour
 
     public void Update()
     {
+        //fa rinascere i giocatori all'ultimo checkpoint
         if (Input.GetKey(KeyCode.LeftControl) && Input.GetKey(KeyCode.R))
-        {
             Respawn();
-        }
+        /*else if (Input.GetKey(KeyCode.LeftControl) && Input.GetKey(KeyCode.L))
+        {
+            SceneManager.UnloadSceneAsync("PrototypeSceneBaked");
+            SceneManager.LoadScene("PrototypeLobby", LoadSceneMode.Additive);
+        }*/
     }
 
     public CheckPoint GetActiveCheckPoint()

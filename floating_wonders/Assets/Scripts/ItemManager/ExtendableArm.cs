@@ -5,7 +5,7 @@ using UnityEngine.Networking;
 
 public class ExtendableArm : NetworkBehaviour
 {
-    private LayerMask ignoredLayer = ~((1 << 2) | (1 << 9) | (1 << 11) | (1 << 12));
+    private LayerMask ignoredLayer = ~((1 << 2) | (1 << 9) | (1 << 11) | (1 << 12) | (1 << 16));
     [SerializeField] private Transform firePoint;
     [SerializeField] private LineRenderer line; //braccio disegnato con una linea
     [SerializeField] private float maxDistance; //distanza massima del braccio
@@ -15,6 +15,7 @@ public class ExtendableArm : NetworkBehaviour
     private Rigidbody2D hitRb;
     private Vector2 hitPosition;
     private Vector2 direction;
+    private AnotherCharacterController controller;
 
     private enum State : int
     {
@@ -27,6 +28,7 @@ public class ExtendableArm : NetworkBehaviour
     private void Start()
     {
         state = State.none;
+        controller = GetComponent<AnotherCharacterController>();
     }
 
     private void FixedUpdate()
@@ -69,6 +71,7 @@ public class ExtendableArm : NetworkBehaviour
 
     public void Throw(Vector2 direction)
     {
+        print(direction);
         this.direction = direction;
         hit = Physics2D.Raycast(firePoint.position, direction, maxDistance, ignoredLayer);
         if (hit.collider != null)
@@ -76,6 +79,7 @@ public class ExtendableArm : NetworkBehaviour
             //raccoglie collezionabili o oggetti
             if (hit.transform.GetComponent<Pickuppable>() != null)
             {
+                Turn(hit.point);
                 GetComponent<ItemManager>().Pickup(hit.collider.gameObject);
                 state = State.anchoredToItem;
                 hitPosition = hit.transform.position;
@@ -83,6 +87,7 @@ public class ExtendableArm : NetworkBehaviour
             //trascina verso di se una cassa
             else if (hit.collider.tag == "Crate")
             {
+                Turn(hit.point);
                 state = State.anchoredToCrate;
                 hitRb = hit.collider.GetComponent<Rigidbody2D>();
                 hitRb.velocity = (firePoint.position - hit.transform.position).normalized * grabSpeed;
@@ -95,6 +100,17 @@ public class ExtendableArm : NetworkBehaviour
         }
         else
             state = State.missed;
+    }
+
+
+    private void Turn(Vector2 direction)
+    {
+        //se sparo verso sinistra e il personaggio è girato a destra ---> lo giro verso destra
+        if (direction.x < this.transform.position.x && controller.GetVerse() == Verse.Right)
+            controller.Turn(Verse.Left);
+        //se sparo verso destra e il personaggio è girato a sinistra
+        else if (direction.x > this.transform.position.x && controller.GetVerse() == Verse.Left)
+            controller.Turn(Verse.Right);
     }
 
     public float GetMaxDistance()

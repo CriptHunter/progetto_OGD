@@ -16,7 +16,7 @@ public class GrapplingHook : NetworkBehaviour
     private RaycastHit2D hit;
     private Vector3 missedPoint; //punto in cui ha missato il rampino
     private State state; //true se il personaggio è attaccato con il rampino
-    private LayerMask ignoredLayer = ~((1 << 2) | (1 << 9) | (1 << 11) | (1 << 12) | (1 << 13));
+    private LayerMask ignoredLayer = ~((1 << 2) | (1 << 9) | (1 << 11) | (1 << 12) | (1 << 13) | (1 << 16));
 
     private enum State : int
     {
@@ -48,6 +48,7 @@ public class GrapplingHook : NetworkBehaviour
             {
                 Cmd_DrawLine(false, firePoint.position, hit.point);
                 controller.Activate(true);
+                GetComponent<AnotherCharacterInput>().enabled = true;
                 itemManager.enabled = true;
                 joint.enabled = false;
                 state = State.none;
@@ -62,11 +63,13 @@ public class GrapplingHook : NetworkBehaviour
         //se colpisco un hook point, e non sto usando il rampino e sono a terra --> si attacca al punto
         if (hit.collider != null && hit.transform.gameObject.tag == "HookPoint" && state == State.none)
         {
+            Turn(hit.point);
             state = State.anchored;
             joint.enabled = true;
             joint.connectedBody = hit.collider.gameObject.GetComponent<Rigidbody2D>();
             joint.distance = Vector2.Distance(firePoint.position, hit.point);
             controller.Deactivate(true);
+            GetComponent<AnotherCharacterInput>().enabled = false;
             itemManager.enabled = false;
             Cmd_DrawLine(true, firePoint.position, hit.point);
         }
@@ -76,6 +79,16 @@ public class GrapplingHook : NetworkBehaviour
             print("missed");
             state = State.none;
         }
+    }
+
+    private void Turn(Vector2 direction)
+    {
+        //se sparo verso sinistra e il personaggio è girato a destra ---> lo giro verso destra
+        if (direction.x < this.transform.position.x && controller.GetVerse() == Verse.Right)
+            controller.Turn(Verse.Left);
+        //se sparo verso destra e il personaggio è girato a sinistra
+        else if (direction.x > this.transform.position.x && controller.GetVerse() == Verse.Left)
+            controller.Turn(Verse.Right);
     }
 
     public float GetMaxDistance()
